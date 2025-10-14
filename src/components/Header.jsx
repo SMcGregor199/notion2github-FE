@@ -13,7 +13,7 @@ function SiteHeader(){
     <Layout.Header style={{ background: "#fff", paddingInline: 24, boxShadow: "0 1px 0 rgba(0,0,0,0.06)", }}>
         <Flex align="center"  gap={16}>
         <div > 
-            <Typography.Text style={{ color: "black" }}>
+            <Typography.Text style={{ color: "black", fontWeight: "bold" }}>
                 Shayne McGregor
             </Typography.Text>  
         </div>
@@ -40,6 +40,4 @@ function SiteHeader(){
         
     );
 }
-export{
-    SiteHeader
-}
+export default SiteHeader

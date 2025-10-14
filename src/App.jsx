@@ -1,5 +1,6 @@
 import {ConfigProvider, Layout, theme as antdTheme} from "antd";
-import {SiteHeader} from "./components/Header";
+import SiteHeader from "./components/Header";
+import Hero from "./components/Hero";
 
 
 
@@ -15,18 +16,14 @@ function App() {
         },
         components: {
           Layout: { headerHeight: 64 },
-          Menu: { itemBorderRadius: 8 },
         },
       }}
     >
     <Layout>
       <SiteHeader/>
-      <Layout.Content
-        id="main"
-      >
-        <h1>Main Content Area</h1> 
+      <Layout.Content id="main">
+        <Hero/>
       </Layout.Content>
-
     </Layout>
     </ConfigProvider>
   );

@@ -1,4 +1,4 @@
-import {Typography, Flex, Button} from 'antd'
+import {Typography, Flex} from 'antd'
 function Hero(){
     return(
         <section

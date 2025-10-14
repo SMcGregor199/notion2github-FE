@@ -10,7 +10,7 @@ function SiteHeader(){
     return (
     <>
     <a className="skip-link" href="#main">Skip to main content</a>
-    <Layout.Header style={{ background: "#fff", paddingInline: 24, boxShadow: "0 1px 0 rgba(0,0,0,0.06)", }}>
+    <Layout.Header style={{ background: "#fff", paddingInline: 24, }}>
         <Flex align="center"  gap={16}>
         <div > 
             <Typography.Text style={{ color: "black", fontWeight: "bold" }}>

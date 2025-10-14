@@ -11,6 +11,7 @@ function App() {
         algorithm: antdTheme.defaultAlgorithm,
         token: {
           colorPrimary: "#395662",
+          colorBgLayout: "#fff",
           fontFamily: "'Noto Sans', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
           fontFamilyCode: "'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
         },
@@ -21,7 +22,7 @@ function App() {
     >
     <Layout>
       <SiteHeader/>
-      <Layout.Content id="main">
+      <Layout.Content style={{ padding: "24px" }} id="main">
         <Hero/>
       </Layout.Content>
     </Layout>

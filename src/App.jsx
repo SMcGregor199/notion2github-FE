@@ -12,6 +12,10 @@ function App() {
         token: {
           colorPrimary: "#395662",
           colorBgLayout: "#fff",
+          fontSize: "clamp(0.95rem, 2.8vw, 1.25rem)",
+          fontSizeHeading1: "clamp(1.5rem, 6.5vw, 4.0625rem)",
+          fontSizeHeading2: "clamp(1.25rem, 4vw, 2.25rem)",
+          fontSizeHeading3: "clamp(1.125rem, 3vw, 1.75rem)",
           fontFamily: "'Noto Sans', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
           fontFamilyCode: "'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
         },

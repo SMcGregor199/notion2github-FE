@@ -7,7 +7,6 @@ function Hero(){
             backgroundImage: "url('/background.png')",
             backgroundSize: "cover",
             backgroundPosition: "center",
-            height: "400px",
             borderRadius: "8px",
             display: "flex",
             alignItems: "center",
@@ -15,6 +14,7 @@ function Hero(){
             color: "#fff",
             textAlign: "center",
             overflow: "hidden",
+            paddingBlock: "clamp(48px, 12vh, 96px)", 
         }}
         >
             <Flex vertical align="center"style={{ position: "relative", zIndex: 1, maxWidth: 700, padding: "0 24px" }}>
@@ -23,13 +23,13 @@ function Hero(){
                     color: "white",
                     fontWeight: 800,
                     marginBottom: 16,
+                    wordBreak: "normal", 
                 }}>
                     Crafting Seamless Digital Experiences
                 </Typography.Title>
                 <Typography.Paragraph 
                 style={{
                     color: "white",
-                    fontSize: 16,
                     fontWeight: 400,
                     marginBottom: 16,
                 }}>

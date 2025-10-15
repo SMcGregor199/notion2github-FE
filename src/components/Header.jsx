@@ -1,4 +1,4 @@
-import { Layout, Menu, Button, Flex, Typography } from "antd";  
+import { Layout, Menu, Button, Avatar, Flex, Typography } from "antd";  
 import { GithubOutlined } from "@ant-design/icons";
 
 function SiteHeader(){
@@ -12,7 +12,12 @@ function SiteHeader(){
     <a className="skip-link" href="#main">Skip to main content</a>
     <Layout.Header style={{ background: "#fff", paddingInline: 24, }}>
         <Flex align="center"  gap={16}>
-        <div > 
+                        <Avatar
+            src="/profile-pic.png"
+            alt="Profile picture of Shayne McGregor"
+            size={60}
+            />
+        <div >
             <Typography.Text style={{ color: "black", fontWeight: "bold" }}>
                 Shayne McGregor
             </Typography.Text>  

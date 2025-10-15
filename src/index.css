@@ -1,3 +1,6 @@
+html{
+  font-size:clamp(14px, 0.25vw + 13px, 16px);
+}
 .skip-link {
   position: absolute;
   left: -999px;

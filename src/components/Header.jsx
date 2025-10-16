@@ -1,27 +1,35 @@
-import { Layout, Menu, Button, Avatar, Flex, Typography } from "antd";  
+import { Layout, Menu, Button, Avatar, Flex, Typography, Grid } from "antd";  
 import { GithubOutlined, LinkedinOutlined } from "@ant-design/icons";
+const { useBreakpoint } = Grid;
+
+
 
 function SiteHeader(){
     const navItems = [
         { key: "1", label: <a href="/">Home</a> },
         { key: "2", label: <a href="/blog">Blog</a> },
-        { key: "3", label: <a href="/login">Login</a> },
     ];
+    const screens = useBreakpoint();
+    const isMobile = screens.sm;
     return (
     <>
     <a className="skip-link" href="#main">Skip to main content</a>
     <Layout.Header style={{ background: "#fff", paddingInline: 24, }}>
         <Flex align="center"  gap={16}>
+        { isMobile &&
+            <>
             <Avatar
             src="/profile-pic.png"
             alt="Profile picture of Shayne McGregor"
             size={60}
             />
-        <div >
-            <Typography.Text style={{ color: "black", fontWeight: "bold" }}>
-                Shayne McGregor
-            </Typography.Text>  
-        </div>
+            <div >
+                <Typography.Text style={{ color: "black", fontWeight: "bold" }}>
+                    Shayne McGregor
+                </Typography.Text>  
+            </div>
+            </>
+        }
         
         <nav aria-label="Primary" style={{ flex: 1, minWidth: 0 }}>
             <Menu 

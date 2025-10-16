@@ -31,7 +31,7 @@ const BlogButton = styled(Button)`
   `}
 `;
 
-function BlogCardLong(){
+function BlogCardLong(props){
     return(
             <Card className="blog-card"
             
@@ -52,7 +52,7 @@ function BlogCardLong(){
                             fontSize: "clamp(0.8rem, 0.25vw + 0.78rem, 0.95rem)",
                             lineHeight: 1.2, }}
                         >
-                            Technology
+                            {props.tag}
                         </Tag>
                         <Typography.Title
                             level={3}
@@ -64,7 +64,7 @@ function BlogCardLong(){
                             fontSize: "clamp(1.25rem, 1.2vw + 1rem, 1.75rem)"
                             }}
                         >
-                            Building a Scalable E-commerce Platform
+                            {props.title}
                         </Typography.Title>
                         <Typography.Paragraph
                             style={{
@@ -75,16 +75,15 @@ function BlogCardLong(){
                             maxWidth: "62ch"
                             }}
                         >
-                            Learn how I designed and implemented a robust e-commerce platform using
-                            modern technologies.
+                            {props.summary}
                         </Typography.Paragraph>
                         <div style={{paddingTop:"1rem"}}>
-                            <BlogButton rootClassName="blog-btn" variant="solid"  type="default">Read More</BlogButton>
+                            <BlogButton rootClassName="blog-btn" variant="solid"   href={props.link} target="_blank" rel="noopener noreferrer"  type="default">Read More</BlogButton>
                         </div>
                     </Flex>
                 
                     <Image
-                        src="/blog-thumbnail.png"
+                        src={props.thumbnail}
                         alt="Abstract illustration for the article"
                         width={320}
                         height={180}

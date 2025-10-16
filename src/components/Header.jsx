@@ -12,7 +12,7 @@ function SiteHeader(){
     <a className="skip-link" href="#main">Skip to main content</a>
     <Layout.Header style={{ background: "#fff", paddingInline: 24, }}>
         <Flex align="center"  gap={16}>
-                        <Avatar
+            <Avatar
             src="/profile-pic.png"
             alt="Profile picture of Shayne McGregor"
             size={60}

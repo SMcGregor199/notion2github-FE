@@ -18,3 +18,7 @@ html{
   left: 16px;
   top: 16px;
 }
+
+.blog-card + .blog-card {
+  margin-top: 1rem;
+}

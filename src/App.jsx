@@ -1,6 +1,7 @@
 import {Layout, theme as antdTheme} from "antd";
 import { ThemeProvider } from "@emotion/react";
 import SiteHeader from "./components/Header";
+import SiteFooter from "./components/Footer";
 import Hero from "./components/Hero";
 import FeaturedBlogPosts from "./components/FeaturedBlogPosts";
 
@@ -16,6 +17,7 @@ function App() {
         <Hero/>
         <FeaturedBlogPosts/>
       </Layout.Content>
+      <SiteFooter/>
     </Layout>
     </ThemeProvider> 
   );

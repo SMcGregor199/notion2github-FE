@@ -1,5 +1,5 @@
 import { Layout, Menu, Button, Avatar, Flex, Typography } from "antd";  
-import { GithubOutlined } from "@ant-design/icons";
+import { GithubOutlined, LinkedinOutlined } from "@ant-design/icons";
 
 function SiteHeader(){
     const navItems = [
@@ -30,6 +30,15 @@ function SiteHeader(){
                 style={{ borderBottom: "none", justifyContent: "flex-end" }}
             />
         </nav>
+        <Button
+            type="default"
+            icon={<LinkedinOutlined />}
+            href="https://linkedin.com/in/shayne-mcgregor"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Open my LinkedIn profile in a new tab"
+        >
+        </Button>
         <Button
             type="default"
             icon={<GithubOutlined />}

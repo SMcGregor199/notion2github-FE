@@ -1,26 +1,22 @@
-import {Layout, theme as antdTheme} from "antd";
-import { ThemeProvider } from "@emotion/react";
-import SiteHeader from "./components/Header";
-import SiteFooter from "./components/Footer";
-import Hero from "./components/Hero";
-import FeaturedBlogPosts from "./components/FeaturedBlogPosts";
-
+import {Routes, Route } from 'react-router-dom';
+import AppLayout from "./components/AppLayout";
+import Home from "./components/Home";
 
 
 function App() {
-  const { token } = antdTheme.useToken();
+  
   return (
-    <ThemeProvider theme={{token}}>
-    <Layout>
-      <SiteHeader/>
-      <Layout.Content style={{ padding: "24px" }} id="main">
-        <Hero/>
-        <FeaturedBlogPosts/>
-      </Layout.Content>
-      <SiteFooter/>
-    </Layout>
-    </ThemeProvider> 
+      <Routes>
+      {/* Shared layout routes */}
+      <Route element={<AppLayout />}>
+        <Route path="/" element={<Home />} />
+       
+        {/* 404 */}
+        <Route path="*" element={<div style={{ padding: 24 }}>Not Found</div>} />
+      </Route>
+    </Routes>
   );
 }
 
 export default App
+

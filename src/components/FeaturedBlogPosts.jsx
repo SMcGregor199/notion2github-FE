@@ -1,4 +1,4 @@
-import {Card, Flex, Typography, Tag, Button, Image} from 'antd'
+import { Typography, Button} from 'antd'
 import styled from "@emotion/styled";
 import {blogPostsData} from "../data/notionBlogData.js";
 import BlogCardLong from "./BlogCardLong";

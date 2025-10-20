@@ -1,13 +1,14 @@
 import { Layout, Menu, Button, Avatar, Flex, Typography, Grid } from "antd";  
 import { GithubOutlined, LinkedinOutlined } from "@ant-design/icons";
 const { useBreakpoint } = Grid;
+import { Link } from "react-router-dom";
 
 
 
 function SiteHeader(){
     const navItems = [
-        { key: "1", label: <a href="/">Home</a> },
-        { key: "2", label: <a href="/blog">Blog</a> },
+        { key: "1", label: <Link to="/">Home</Link> },
+        { key: "2", label: <Link to="/blog">Blog</Link> },
     ];
     const screens = useBreakpoint();
     const isMobile = screens.sm;

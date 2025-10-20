@@ -1,9 +1,9 @@
 import { Layout, Typography, Tag, Row, Col, Card, Divider } from "antd";
 import {Link} from "react-router-dom";
 import {blogPostsData} from "../data/notionBlogData.js";
-import { Grid } from "antd";
-const screens = Grid.useBreakpoint();
-const isDesktop = screens.lg; // >= 992px
+//import { Grid } from "antd";
+//const screens = Grid.useBreakpoint();
+//const isDesktop = screens.lg; // >= 992px
 
 
 function BlogPage() {
@@ -33,7 +33,7 @@ function BlogPage() {
                     />
                     
                     <div style={{ marginTop: 12, display: "flex", gap: 8, flexWrap: "wrap" }}>
-                                                <Tag color="geekblue" style={{ width: "fit-content", background: "#eef2ff",     
+                        <Tag color="geekblue" style={{ width: "fit-content", background: "#eef2ff",     
                             color: "#1d4ed8",
                             border: "1px solid #c7d2fe",
                             padding: "2px 10px",
@@ -50,6 +50,8 @@ function BlogPage() {
         </Col>
         );
     });
+
+
     return (
     
     <Layout style={{ background: "transparent" }}>
@@ -57,7 +59,7 @@ function BlogPage() {
             <Typography.Title level={1} style={{ marginTop: 0 }}>Blog</Typography.Title>
             <Divider style={{ marginTop: 12 }} />
             <Row gutter={[24, 24]}>
-            {blogCards}
+                {blogCards}
             </Row>
 
         </Layout.Content>

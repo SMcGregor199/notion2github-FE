@@ -2,8 +2,38 @@ import { Layout, Typography, Tag, Row, Col, Card, Divider, Space } from "antd";
 import {Link} from "react-router-dom";
 import {blogPostsData} from "../data/notionBlogData.js";
 import { Grid } from "antd";
+import styled from "@emotion/styled";
+const {CheckableTag} = Tag;
 
+const StyledTag = styled(CheckableTag)`
+  border-radius: 8px;
+  background-color: #f5f5f5;
+  color: #000;
+  //font-weight: 600;
+  padding: 4px 10px;
+  border: 1px solid #e0e0e0;
+  transition: all 0.25s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 
+  ${({ theme }) => `
+    &&&:hover {
+      background-color: ${theme.token.colorPrimary};
+      color: ${theme.token.colorTextLightSolid};
+      transform: translateY(-2px);
+      box-shadow: 0 3px 6px ${theme.token.colorPrimaryShadow || "rgba(0,0,0,0.15)"};
+    }
+
+    &&&:active {
+      transform: translateY(0px);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+
+    &&&:focus-visible {
+      outline: 2px solid ${theme.token.colorPrimary};
+      outline-offset: 3px;
+    }
+  `}
+`;
 function BlogPage() {
     const screens = Grid.useBreakpoint();
     const isDesktop = screens.lg;
@@ -55,28 +85,27 @@ function BlogPage() {
     return (
     
     <Layout style={{ background: "transparent" }}>
-        <section>
-                    {!screens.lg &&(
-            <div style={{ marginBottom: "1.5em" }}>
-            <Typography.Title level={2} style={{ marginTop: 0 }}>Tags</Typography.Title>
-            <Space
+        {!screens.lg &&(
+        <div style={{ marginBottom: "1.5em" }}>
+        <Typography.Title level={2} style={{ marginTop: 0 }}>Tags</Typography.Title>
+        <Space
             wrap
-                size={[8, 8]}
-                aria-label="Filter by tag"
-            >
-                
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            size={[8, 8]}
+            aria-label="Filter by tag"
+        >
             
-                    <Tag.CheckableTag
-                    key={1}
-                    checked={true}
-                    >
-                    test
-                    </Tag.CheckableTag>
-                </div>
-            </Space>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        
+                <StyledTag
+                key={1}
+                >
+                test
+                </StyledTag>
             </div>
+        </Space>
+        </div>
         )}
+        <section>
             <Typography.Title level={1} style={{ marginTop: 0 }}>Blog</Typography.Title>
             <Divider style={{ marginTop: 12 }} />
 
@@ -102,12 +131,11 @@ function BlogPage() {
             <Typography.Title level={2} style={{ marginTop: 0 }}>Tags</Typography.Title>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             
-                    <Tag.CheckableTag
-                    key={1}
-                    checked={true}
-                    >
-                    test
-                    </Tag.CheckableTag>
+            
+                        <StyledTag 
+                        key={1}>
+                            Test
+                        </StyledTag>
             
                 </div>
         </Layout.Sider> }

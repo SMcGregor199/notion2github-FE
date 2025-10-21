@@ -32,6 +32,12 @@ const StyledTag = styled(CheckableTag)`
       outline: 2px solid ${theme.token.colorPrimary};
       outline-offset: 3px;
     }
+    &&&.ant-tag-checkable-checked {
+      background-color: ${theme.token.colorPrimary};
+      color: ${theme.token.colorTextLightSolid};
+      transform: translateY(-2px);
+      box-shadow: 0 3px 6px ${theme.token.colorPrimaryShadow || "rgba(0,0,0,0.15)"};                              
+    }
   `}
 `;
 function BlogPage() {
@@ -98,8 +104,9 @@ function BlogPage() {
         
                 <StyledTag
                 key={1}
+                checked={true}
                 >
-                test
+                Web Development
                 </StyledTag>
             </div>
         </Space>
@@ -133,8 +140,8 @@ function BlogPage() {
             
             
                         <StyledTag 
-                        key={1}>
-                            Test
+                        key={1} checked={false}>
+                            Web Development
                         </StyledTag>
             
                 </div>

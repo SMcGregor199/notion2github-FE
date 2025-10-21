@@ -1,12 +1,12 @@
-import { Layout, Typography, Tag, Row, Col, Card, Divider } from "antd";
+import { Layout, Typography, Tag, Row, Col, Card, Divider, Space } from "antd";
 import {Link} from "react-router-dom";
 import {blogPostsData} from "../data/notionBlogData.js";
-//import { Grid } from "antd";
-//const screens = Grid.useBreakpoint();
-//const isDesktop = screens.lg; // >= 992px
+import { Grid } from "antd";
 
 
 function BlogPage() {
+    const screens = Grid.useBreakpoint();
+    const isDesktop = screens.lg;
     const blogCards = blogPostsData.map((post)=>{
         return(
             <Col key={post.id} xs={24} sm={12} lg={8}>
@@ -55,16 +55,39 @@ function BlogPage() {
     return (
     
     <Layout style={{ background: "transparent" }}>
-        <Layout.Content>
+        <section>
+                    {!screens.lg &&(
+            <div style={{ marginBottom: "1.5em" }}>
+            <Typography.Title level={2} style={{ marginTop: 0 }}>Tags</Typography.Title>
+            <Space
+            wrap
+                size={[8, 8]}
+                aria-label="Filter by tag"
+            >
+                
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            
+                    <Tag.CheckableTag
+                    key={1}
+                    checked={true}
+                    >
+                    test
+                    </Tag.CheckableTag>
+                </div>
+            </Space>
+            </div>
+        )}
             <Typography.Title level={1} style={{ marginTop: 0 }}>Blog</Typography.Title>
             <Divider style={{ marginTop: 12 }} />
+
             <Row gutter={[24, 24]}>
                 {blogCards}
             </Row>
+        </section>
 
-        </Layout.Content>
 
-        <Layout.Sider
+
+       {isDesktop && <Layout.Sider
         width={280}
         breakpoint="lg"
         collapsedWidth={0}
@@ -87,7 +110,8 @@ function BlogPage() {
                     </Tag.CheckableTag>
             
                 </div>
-        </Layout.Sider>
+        </Layout.Sider> }
+        
     </Layout>
     
     );

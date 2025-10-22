@@ -1,5 +1,5 @@
-import Hero from "./Hero";
-import FeaturedBlogs from "./FeaturedBlogPosts"
+import Hero from "../components/Hero";
+import FeaturedBlogs from "../components/FeaturedBlogPosts"
 function Home() {
     return (
         <>

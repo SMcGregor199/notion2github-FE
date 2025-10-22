@@ -9,9 +9,10 @@ function SiteHeader(){
     const navItems = [
         { key: "1", label: <Link to="/">Home</Link> },
         { key: "2", label: <Link to="/blog">Blog</Link> },
+        { key: "3", label: <Link to="/contact">Contact Me</Link> }
     ];
     const screens = useBreakpoint();
-    const isMobile = screens.sm;
+    const isMobile = screens.md;
     return (
     <>
     <a className="skip-link" href="#main">Skip to main content</a>

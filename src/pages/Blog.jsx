@@ -1,51 +1,33 @@
-import { Layout, Typography, Tag, Row, Col, Card, Divider, Space } from "antd";
+import { Layout, Typography, Space, Row, Col, Card, Divider, Tag } from "antd";
 import {Link} from "react-router-dom";
-import {blogPostsData} from "../data/notionBlogData.js";
 import { Grid } from "antd";
-import styled from "@emotion/styled";
-const {CheckableTag} = Tag;
+import {blogPostsData} from "../data/notionBlogData.js";
+import {useState} from "react";
+import {StyledTag} from "../components/styledTag";
 
-const StyledTag = styled(CheckableTag)`
-  border-radius: 8px;
-  background-color: #f5f5f5;
-  color: #000;
-  //font-weight: 600;
-  padding: 4px 10px;
-  border: 1px solid #e0e0e0;
-  transition: all 0.25s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 
-  ${({ theme }) => `
-    &&&:hover {
-      background-color: ${theme.token.colorPrimary};
-      color: ${theme.token.colorTextLightSolid};
-      transform: translateY(-2px);
-      box-shadow: 0 3px 6px ${theme.token.colorPrimaryShadow || "rgba(0,0,0,0.15)"};
-    }
-
-    &&&:active {
-      transform: translateY(0px);
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
-    }
-
-    &&&:focus-visible {
-      outline: 2px solid ${theme.token.colorPrimary};
-      outline-offset: 3px;
-    }
-    &&&.ant-tag-checkable-checked {
-      background-color: ${theme.token.colorPrimary};
-      color: ${theme.token.colorTextLightSolid};
-      transform: translateY(-2px);
-      box-shadow: 0 3px 6px ${theme.token.colorPrimaryShadow || "rgba(0,0,0,0.15)"};                              
-    }
-  `}
-`;
 function BlogPage() {
     const screens = Grid.useBreakpoint();
     const isDesktop = screens.lg;
-    const blogCards = blogPostsData.map((post)=>{
+    let tags = new Set();
+    tags.add("All")
+    const [selectedTags, setSelectedTags] = useState(new Set());
+    let filteredPosts = blogPostsData;
+
+    blogPostsData.forEach((post) => {
+        tags.add(post.tag);
+    });
+    if(selectedTags.size>0){
+        if(selectedTags.has("All")){
+            filteredPosts = blogPostsData;
+        }else{
+            filteredPosts = blogPostsData.filter((post)=> selectedTags.has(post.tag));
+        }
+    }
+   
+    const blogCards = filteredPosts.map((post)=>{
         return(
-            <Col key={post.id} xs={24} sm={12} lg={8}>
+             <Col key={post.id} xs={24} sm={12} lg={8}>
             <Link to={post.link} aria-label="test">
                 <Card
                 hoverable
@@ -86,33 +68,37 @@ function BlogPage() {
         </Col>
         );
     });
-
-
-    return (
     
-    <Layout style={{ background: "transparent" }}>
-        {!screens.lg &&(
-        <div style={{ marginBottom: "1.5em" }}>
-        <Typography.Title level={2} style={{ marginTop: 0 }}>Tags</Typography.Title>
-        <Space
-            wrap
-            size={[8, 8]}
-            aria-label="Filter by tag"
-        >
-            
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        
-                <StyledTag
-                key={1}
-                checked={true}
-                >
-                Web Development
-                </StyledTag>
+    
+    function handleTagState(tag){
+        setSelectedTags(()=>{
+            const newSet = new Set();
+            newSet.add(tag);
+            return newSet;
+        });
+    }
+    return(
+        <Layout>
+            {!isDesktop &&(
+            <div style={{ marginBottom: "1.5em" }}>
+            <Typography.Title level={2} style={{ marginTop: 0 }}>Tags</Typography.Title>
+            <Space
+                wrap
+                size={[8, 8]}
+                aria-label="Filter by tag"
+            >
+                
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    {[...tags].map((tag)=>{
+                        return(
+                            <StyledTag onChange={() => handleTagState(tag)} key={tag} checked={selectedTags.has(tag)}>{tag}</StyledTag>
+                        );
+                    })}
+                </div>
+            </Space>
             </div>
-        </Space>
-        </div>
-        )}
-        <section>
+            )}
+            <section>
             <Typography.Title level={1} style={{ marginTop: 0 }}>Blog</Typography.Title>
             <Divider style={{ marginTop: 12 }} />
 
@@ -122,34 +108,30 @@ function BlogPage() {
         </section>
 
 
+               {isDesktop && <Layout.Sider
+                width={280}
+                breakpoint="lg"
+                collapsedWidth={0}
+                theme="light"
+                style={{
+                  background: "transparent",
+                  paddingInline: 16,
+                  paddingBlock: 24,
+                  borderLeft: "1px solid rgba(5,5,5,0.06)",
+                  marginLeft: 24,
+                }}>
+                <Typography.Title level={2} style={{ marginTop: 0 }}>Tags</Typography.Title>
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    {[...tags].map((tag)=>{
+                        return(
+                            <StyledTag onChange={() => handleTagState(tag)} key={tag} checked={selectedTags.has(tag)}>{tag}</StyledTag>
+                        );
+                    })}
+                    </div>
+                </Layout.Sider> }
+        </Layout>
 
-       {isDesktop && <Layout.Sider
-        width={280}
-        breakpoint="lg"
-        collapsedWidth={0}
-        theme="light"
-        style={{
-          background: "transparent",
-          paddingInline: 16,
-          paddingBlock: 24,
-          borderLeft: "1px solid rgba(5,5,5,0.06)",
-          marginLeft: 24,
-        }}>
-            <Typography.Title level={2} style={{ marginTop: 0 }}>Tags</Typography.Title>
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            
-            
-                        <StyledTag 
-                        key={1} checked={false}>
-                            Web Development
-                        </StyledTag>
-            
-                </div>
-        </Layout.Sider> }
-        
-    </Layout>
-    
-    );
+    )
 }
 
 export default BlogPage;

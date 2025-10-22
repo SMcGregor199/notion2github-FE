@@ -9,6 +9,7 @@ import {StyledTag} from "../components/styledTag";
 function BlogPage() {
     const screens = Grid.useBreakpoint();
     const isDesktop = screens.lg;
+ 
     let tags = new Set();
     tags.add("All")
     const [selectedTags, setSelectedTags] = useState(new Set());
@@ -78,7 +79,9 @@ function BlogPage() {
         });
     }
     return(
-        <Layout>
+        <Layout
+
+        >
             {!isDesktop &&(
             <div style={{ marginBottom: "1.5em" }}>
             <Typography.Title level={2} style={{ marginTop: 0 }}>Tags</Typography.Title>
@@ -98,14 +101,14 @@ function BlogPage() {
             </Space>
             </div>
             )}
-            <section>
-            <Typography.Title level={1} style={{ marginTop: 0 }}>Blog</Typography.Title>
-            <Divider style={{ marginTop: 12 }} />
+            <section style={{ flex: isDesktop ? "2 1 auto" : "0 1 auto"}}>
+                <Typography.Title level={1} style={{ marginTop: 0 }}>Blog</Typography.Title>
+                <Divider style={{ marginTop: 12 }} />
 
-            <Row gutter={[24, 24]}>
-                {blogCards}
-            </Row>
-        </section>
+                <Row gutter={[24, 24]}>
+                    {blogCards}
+                </Row>
+            </section>
 
 
                {isDesktop && <Layout.Sider

@@ -26,7 +26,7 @@ createRoot(document.getElementById('root')).render(
       fontFamilyCode: "'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
       },
       components: {
-      Layout: { headerHeight: 64 },
+        Layout: { headerHeight: 64 },
       },
       }}
     >

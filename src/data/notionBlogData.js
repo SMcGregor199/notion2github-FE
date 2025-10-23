@@ -12,7 +12,10 @@ export const blogPostsData = [
     "But there’s also a cultural layer to it. Tech loves to believe in meritocracy—the idea that brilliance naturally rises to the top. It sounds noble, but it often leads to subtle hierarchies. If your worth is tied to being the smartest in the room, then you protect that image. You correct, you scoff, you signal mastery. And somewhere along the way, the joy of learning—and helping others learn—gets lost.",
     "The irony, of course, is that the best engineers I’ve met aren’t like that at all. They’re grounded. They remember how fast the field moves, how fragile expertise really is. They know that humility and curiosity are what keep you employable—and human.",
     "Maybe the next phase of software maturity isn’t about cleaner abstractions or faster compilers. Maybe it’s about empathy. About remembering that good code is collaborative, and the most generous thing a senior engineer can do is teach like they still remember how it felt to ask."
-   ]
+   ],
+   publishedDate: "2025-10-23T00:00:00",
+   updatedDate: "2025-10-23T00:00:00",
+   
   },
   {
     id: 1,

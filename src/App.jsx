@@ -2,6 +2,7 @@ import {Routes, Route } from 'react-router-dom';
 import AppLayout from "./AppLayout";
 import Home from "./pages/Home";
 import BlogPage from "./pages/Blog";
+import BlogDetail from "./pages/BlogDetail";
 
 function App() {
   
@@ -11,6 +12,7 @@ function App() {
       <Route element={<AppLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/blog" element={<BlogPage />} />
+        <Route path="/blog/:slug" element={<BlogDetail />} />
         {/* 404 */}
         <Route path="*" element={<div style={{ padding: 24 }}>Not Found</div>} />
       </Route>

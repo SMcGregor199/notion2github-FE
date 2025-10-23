@@ -78,7 +78,7 @@ function BlogCardLong(props){
                             {props.summary}
                         </Typography.Paragraph>
                         <div style={{paddingTop:"1rem"}}>
-                            <BlogButton rootClassName="blog-btn" variant="solid"   href={props.link} target="_blank" rel="noopener noreferrer"  type="default">Read More</BlogButton>
+                            <BlogButton rootClassName="blog-btn" variant="solid"   href={`/blog/${props.link}`} target="_blank" rel="noopener noreferrer"  type="default">Read More</BlogButton>
                         </div>
                     </Flex>
                 

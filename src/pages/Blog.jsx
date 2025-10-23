@@ -29,7 +29,7 @@ function BlogPage() {
     const blogCards = filteredPosts.map((post)=>{
         return(
              <Col key={post.id} xs={24} sm={12} lg={8}>
-            <Link to={post.link} aria-label="test">
+            <Link to={`/blog/${post.link}`} aria-label="test">
                 <Card
                 hoverable
                 style={{ height: "100%" }}

@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import {Typography,Tag,Divider,Image} from "antd";
 import {blogPostsData} from "../data/notionBlogData.js";
-import styled from "@emotion/styled";
+
 
 
 function BlogDetail() {
@@ -25,17 +25,22 @@ function BlogDetail() {
         day: "numeric",
         });
     }
-    const articleContent = body.map((paragraph,i)=>{
-        if(i===0){
-            return <Typography.Paragraph key={i} style={{lineHeight: 2,textIndent: "2em"}}>{paragraph}</Typography.Paragraph>
-        } else {
+    const articleContent = body.map((section,i)=>{
+        const {heading, paras} = section;
+        const paragraphs = paras.map((paragraph)=>{
             return <Typography.Paragraph key={i} style={{lineHeight: 2}}>{paragraph}</Typography.Paragraph>
-        }
+        });
+        return(
+            <>
+            <Typography.Title level={3} key={i} style={{alignSelf:"start"}}>{heading}</Typography.Title>
+            {paragraphs}
+            </>
+        )
     
-    })
+    });
     return (
         <section style={{padding:"2rem", maxWidth:"74ch", margin:"0 auto"}}>
-            <article style={{display:"flex", flexDirection:"column", alignItems:"center", gap:"1rem"}}>
+            <article style={{display:"flex", flexDirection:"column", gap:"1rem"}}>
                 <Typography.Title level={1}>{post.title}</Typography.Title>
                 <Typography.Text type="secondary" style={{alignSelf:"start"}}>{`Published on ${formattedDate}`}</Typography.Text>
                 {formattedUpdatedDate != "" && <Typography.Text type="secondary" style={{alignSelf:"start"}}>{`Last Updated on ${formattedUpdatedDate}`}</Typography.Text>}
@@ -51,9 +56,9 @@ function BlogDetail() {
                     {post.tag}
                 </Tag>
                 <Divider/>
-                <Typography.Title level={3}>{post.summary}</Typography.Title>
+                <Typography.Title level={2}>{post.summary}</Typography.Title>
                 {articleContent}
-                <Image src={`/${post.thumbnail}`} alt={post.title} preview={false}></Image>
+                <Image src={`${post.thumbnail}`} alt={post.title} preview={false}></Image>
             </article>
         </section>        
     );

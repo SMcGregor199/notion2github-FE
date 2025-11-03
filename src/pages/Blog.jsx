@@ -1,28 +1,27 @@
 import { Layout, Typography, Space, Row, Col, Card, Divider, Tag } from "antd";
 import {Link} from "react-router-dom";
 import { Grid } from "antd";
-
 import {useState} from "react";
 import {StyledTag} from "../components/styledTag";
 
 
-function BlogPage() {
+function BlogPage({initialData}) {
     const screens = Grid.useBreakpoint();
     const isDesktop = screens.lg;
  
     let tags = new Set();
     tags.add("All")
     const [selectedTags, setSelectedTags] = useState(new Set());
-    let filteredPosts = blogPostsData;
+    let filteredPosts = initialData;
 
-    blogPostsData.forEach((post) => {
+    initialData.forEach((post) => {
         tags.add(post.tag);
     });
     if(selectedTags.size>0){
         if(selectedTags.has("All")){
-            filteredPosts = blogPostsData;
+            filteredPosts = initialData;
         }else{
-            filteredPosts = blogPostsData.filter((post)=> selectedTags.has(post.tag));
+            filteredPosts = initialData.filter((post)=> selectedTags.has(post.tag));
         }
     }
    

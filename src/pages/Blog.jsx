@@ -1,7 +1,7 @@
 import { Layout, Typography, Space, Row, Col, Card, Divider, Tag } from "antd";
 import {Link} from "react-router-dom";
 import { Grid } from "antd";
-import {blogPostsData} from "../data/notionBlogData.js";
+
 import {useState} from "react";
 import {StyledTag} from "../components/styledTag";
 

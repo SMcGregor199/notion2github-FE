@@ -6,6 +6,12 @@ import "antd/dist/reset.css";
 import "./index.css";
 import App from './App.jsx'
 import { ConfigProvider, theme as antdTheme } from 'antd';
+const API = "https://shaynemcgregordev-be.netlify.app/.netlify/functions/notion-blog-data";
+
+const initialPostData = fetch(API)
+    .then(response => response.json())
+    .then(data => data)
+    .catch(error => console.error(error));
 
 createRoot(document.getElementById('root')).render(
 
@@ -30,7 +36,7 @@ createRoot(document.getElementById('root')).render(
       },
       }}
     >
-      <App/>
+      <App initialData={initialPostData}/>
     </ConfigProvider>
   </Router>
 </React.StrictMode>

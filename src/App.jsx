@@ -4,15 +4,15 @@ import Home from "./pages/Home";
 import BlogPage from "./pages/Blog";
 import BlogDetail from "./pages/BlogDetail";
 
-function App() {
+function App({initialData}) {
   
   return (
       <Routes>
       {/* Shared layout routes */}
       <Route element={<AppLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/blog" element={<BlogPage />} />
-        <Route path="/blog/:slug" element={<BlogDetail />} />
+        <Route path="/" element={<Home initialData={initialData}/>} />
+        <Route path="/blog" element={<BlogPage initialData={initialData}/>} />
+        <Route path="/blog/:slug" element={<BlogDetail initialData={initialData}/>} />
         {/* 404 */}
         <Route path="*" element={<div style={{ padding: 24 }}>Not Found</div>} />
       </Route>

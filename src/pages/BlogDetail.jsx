@@ -1,12 +1,12 @@
 import { useParams } from "react-router-dom";
 import {Typography,Tag,Divider,Image} from "antd";
-import {blogPostsData} from "../data/notionBlogData.js";
 
 
 
-function BlogDetail() {
+
+function BlogDetail({initialData}) {
     const { slug } = useParams();
-    const post = blogPostsData.find((post)=>post.link===slug);
+    const post = initialData.find((post)=>post.link===slug);
     if (!post){
         return <h1>404 — Post not found</h1>;
     } 

@@ -7,11 +7,9 @@ import "./index.css";
 import App from './App.jsx'
 import { ConfigProvider, theme as antdTheme } from 'antd';
 const API = "https://shaynemcgregordev-be.netlify.app/.netlify/functions/notion-blog-data";
-
-const initialPostData = fetch(API)
-    .then(response => response.json())
-    .then(data => data)
-    .catch(error => console.error(error));
+let response =  await fetch(API);
+let data = await response.json();
+let initialPostData = data;
 
 createRoot(document.getElementById('root')).render(
 

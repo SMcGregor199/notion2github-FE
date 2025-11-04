@@ -6,10 +6,8 @@ import "antd/dist/reset.css";
 import "./index.css";
 import App from './App.jsx'
 import { ConfigProvider, theme as antdTheme } from 'antd';
-const MANIFEST_API = "https://shaynemcgregordev-be.netlify.app/.netlify/blobs/content/content/manifest.json";
-const response = await fetch(MANIFEST_API);
-const data = await response.json();
-console.log(data);
+localStorage.setItem("name", "shayne");
+console.log(localStorage.getItem("name"));
 const tempData = [
   {
     "id": "2990721d-8085-8058-8854-c85568a0d1a0",

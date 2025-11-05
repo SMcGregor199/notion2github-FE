@@ -86,7 +86,8 @@ function BlogCardLong(props){
                         src={props.thumbnail}
                         alt="Abstract illustration for the article"
                         width={320}
-                        height={180}
+                        height={"auto"}
+                        aspectRatio={8/5}
                         style={{ borderRadius: 12, objectFit: "cover",flexShrink: 0,
                                 boxShadow: "0 1px 2px rgba(0,0,0,0.06)" 
                         }}

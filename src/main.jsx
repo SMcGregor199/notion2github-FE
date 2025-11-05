@@ -26,7 +26,7 @@ async function revalidateBlogDataInBg(){
     if (res.status === 304) return;
     if(res.ok){
        const fresh = await res.json();
-       const newVersion = res.headers.get("ETag") || "";
+       const newVersion = res.headers.get("etag") || "";
        localStorage.setItem(CACHE_DATA, JSON.stringify(fresh));
        localStorage.setItem(CACHE_VER, newVersion);
     }

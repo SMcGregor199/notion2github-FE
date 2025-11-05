@@ -20,7 +20,7 @@ async function revalidateBlogDataInBg(){
  try{
   //make a fetch (GET) request to the server, but only return data if the key I'm including in the If-None-Match header is different than the key returned in the ETag header
   // I'm using the cache: "no-store" option to ensure the browser doesn't use its own cache and to make a full network request. I'm controlling caching.
-    const res = await fetch(LATEST_API, { headers: cachedVersion ? { "If-None-Match": cachedVersion } : {}, cache: "no-store"});
+    const res = await fetch(LATEST_API, { headers: cachedVersion ? { "if-none-match": cachedVersion } : {}, cache: "no-store"});
     //the server will respond with a 304 if the key I'm including in the If-None-Match header is the same as the key returned in the ETag header
     //we then return early if this is the case. 
     if (res.status === 304) return;

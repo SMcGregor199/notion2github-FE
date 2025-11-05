@@ -35,7 +35,12 @@ async function revalidateBlogDataInBg(){
     console.error("Failed to revalidate blog data", err);
  }
 }
+
+  
 let initialPostData = fetchCachedData();
+if(!initialPostData){
+  initialPostData = await fetch(LATEST_API,{cache: "no-store"}).then(res => res.json()); 
+}
 revalidateBlogDataInBg()
 
 createRoot(document.getElementById('root')).render(

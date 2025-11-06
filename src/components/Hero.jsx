@@ -4,7 +4,7 @@ function Hero(){
         <section
         style={{
             position: "relative",
-            backgroundImage: "url('/background.png')",
+            backgroundImage: "url('/background-v2.png')",
             backgroundSize: "cover",
             backgroundPosition: "center",
             borderRadius: "8px",

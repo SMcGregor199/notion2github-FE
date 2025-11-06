@@ -36,7 +36,7 @@ function BlogPage({initialData}) {
                     <img
                         src={post.thumbnail}
                         alt=""
-                        style={{ width: "100%", aspectRatio: "16 / 9", objectFit: "cover" }}
+                        style={{ width: "100%", objectFit: "cover" }}
                         loading="lazy"
                     />    
                 >

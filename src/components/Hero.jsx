@@ -1,10 +1,10 @@
 import {Typography, Flex} from 'antd'
-function Hero(){
+function Hero({background}){
     return(
         <section
         style={{
             position: "relative",
-            backgroundImage: "url('/background-v2.png')",
+            backgroundImage: `url(${background})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             borderRadius: "8px",

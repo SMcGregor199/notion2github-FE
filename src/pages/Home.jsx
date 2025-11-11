@@ -1,9 +1,10 @@
 import Hero from "../components/Hero";
 import FeaturedBlogs from "../components/FeaturedBlogPosts"
+import background from "../img/background-v2.webp";
 function Home({initialData}) {
     return (
         <>
-            <Hero/>
+            <Hero background={background}/>
             <FeaturedBlogs initialData={initialData}/>
         </>
     );

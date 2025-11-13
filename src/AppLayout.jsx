@@ -11,9 +11,9 @@ function AppLayout() {
         <ThemeProvider theme={{token}}>
             <Layout style={{paddingBlock: "2rem"}}>
                 <SiteHeader/>
-                    <Layout.Content style={{ padding: "24px" }} id="main">
-                        <Outlet/>
-                    </Layout.Content>
+                <Layout.Content style={{ padding: "24px" }} id="main">
+                    <Outlet/>
+                </Layout.Content>
                 <SiteFooter/>
             </Layout>
         </ThemeProvider> 

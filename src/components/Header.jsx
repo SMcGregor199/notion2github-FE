@@ -9,7 +9,8 @@ function SiteHeader(){
     const navItems = [
         { key: "1", label: <Link to="/">Home</Link> },
         { key: "2", label: <Link to="/blog">Blog</Link> },
-        { key: "3", label: <Link to="/contact">Contact Me</Link> }
+        {key:"3", label: <Link to="/case-studies">Case Studies</Link> },
+        { key: "4", label: <Link to="/contact">Contact Me</Link> }
     ];
     const screens = useBreakpoint();
     const isMobile = screens.md;

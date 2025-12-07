@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
-import {Typography,Tag,Image,Space} from "antd";
+import {Typography,Tag,Image,Space,Divider} from "antd";
+import PublishUpdateDates from "../components/PublishUpdateDates";
 import ReactionsBar from "../components/ReactionsBar";
 
 
@@ -42,12 +43,8 @@ function BlogDetail({initialData}) {
     return (
        
             <article style={{display:"flex", flexDirection:"column", gap:"1rem", maxWidth:"64ch",justifySelf:"center"}}>
-                
                 <Typography.Title level={1}>{post.title}</Typography.Title>
-                <Space>
-                    <Typography.Text type="secondary" style={{fontSize:"1rem"}}>{`Published on ${formattedDate}`}</Typography.Text>
-                    {formattedUpdatedDate != "" && <Typography.Text type="secondary" style={{fontSize:"1rem"}}>{`Last Updated on ${formattedUpdatedDate}`}</Typography.Text>}
-                </Space>
+                <PublishUpdateDates publishedDate={formattedDate} updatedDate={formattedUpdatedDate}/>
                 <Tag color="geekblue" style={{ width: "fit-content", background: "#eef2ff",     
                                 color: "#1d4ed8",
                                 border: "1px solid #c7d2fe",

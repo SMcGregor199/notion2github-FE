@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
-import {Typography,Tag,Divider,Image} from "antd";
+import {Typography,Tag,Image,Space} from "antd";
+import ReactionsBar from "../components/ReactionsBar";
 
 
 
@@ -39,12 +40,15 @@ function BlogDetail({initialData}) {
     
     });
     return (
-        <section style={{padding:"2rem", maxWidth:"74ch", margin:"0 auto"}}>
-            <article style={{display:"flex", flexDirection:"column", gap:"1rem"}}>
+       
+            <article style={{display:"flex", flexDirection:"column", gap:"1rem", maxWidth:"64ch",justifySelf:"center"}}>
+                
                 <Typography.Title level={1}>{post.title}</Typography.Title>
-                <Typography.Text type="secondary" style={{alignSelf:"start"}}>{`Published on ${formattedDate}`}</Typography.Text>
-                {formattedUpdatedDate != "" && <Typography.Text type="secondary" style={{alignSelf:"start"}}>{`Last Updated on ${formattedUpdatedDate}`}</Typography.Text>}
-                <Tag color="geekblue" style={{ width: "fit-content", alignSelf:"start", background: "#eef2ff",     
+                <Space>
+                    <Typography.Text type="secondary" style={{fontSize:"1rem"}}>{`Published on ${formattedDate}`}</Typography.Text>
+                    {formattedUpdatedDate != "" && <Typography.Text type="secondary" style={{fontSize:"1rem"}}>{`Last Updated on ${formattedUpdatedDate}`}</Typography.Text>}
+                </Space>
+                <Tag color="geekblue" style={{ width: "fit-content", background: "#eef2ff",     
                                 color: "#1d4ed8",
                                 border: "1px solid #c7d2fe",
                                 padding: "2px 10px",
@@ -55,12 +59,11 @@ function BlogDetail({initialData}) {
                 >
                     {post.tag}
                 </Tag>
-                <Divider/>
                 <Typography.Title level={2}>{post.summary}</Typography.Title>
+                <ReactionsBar articleTitle={post.title}/>
                 {articleContent}
                 <Image src={`${post.thumbnail}`} alt={post.title} preview={false}></Image>
-            </article>
-        </section>        
+            </article>     
     );
 }
 

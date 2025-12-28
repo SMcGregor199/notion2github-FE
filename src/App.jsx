@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import BlogPage from "./pages/Blog";
 import BlogDetail from "./pages/BlogDetail";
 import Contact from "./pages/Contact";
+import CaseStudies from "./pages/CaseStudies";
 function App({initialData}) {
   
   return (
@@ -14,6 +15,7 @@ function App({initialData}) {
         <Route path="/blog" element={<BlogPage initialData={initialData}/>} />
         <Route path="/blog/:slug" element={<BlogDetail initialData={initialData}/>} />
         <Route path="/contact" element={<Contact/>}/>
+        <Route path="/case-studies" element={<CaseStudies />} />
         {/* 404 */}
         <Route path="*" element={<div style={{ padding: 24 }}>Not Found</div>} />
       </Route>

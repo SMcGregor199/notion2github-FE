@@ -63,6 +63,9 @@ createRoot(document.getElementById('root')).render(
       },
       components: {
         Layout: { headerHeight: 64 },
+        Button: {
+          colorPrimaryHover: "#D86F44",   // hover text/icon color
+        }
       },
       }}
     >

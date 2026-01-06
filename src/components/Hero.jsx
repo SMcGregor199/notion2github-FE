@@ -25,7 +25,7 @@ function Hero({background}){
                     marginBottom: 16,
                     wordBreak: "normal", 
                 }}>
-                    Crafting Seamless Digital Experiences
+                  This isn’t hype-driven development
                 </Typography.Title>
                 <Typography.Paragraph 
                 style={{
@@ -33,8 +33,7 @@ function Hero({background}){
                     fontWeight: 400,
                     marginBottom: 16,
                 }}>
-                    I’m a full-stack developer passionate about building innovative and
-                    user-centric web applications.
+                  I build full-stack web applications with an emphasis on clarity, tradeoffs, and software that holds up over time.
                 </Typography.Paragraph>
             </Flex>
         </section>

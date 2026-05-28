@@ -6,6 +6,7 @@ import type {ReactionsState,ReactionKey, ShareData} from "../types/index.ts";
 import type { JSX } from "react";
 
 export default function ReactionsBar({title, id}:{title:string,id:string}):JSX.Element{
+    
     const [reactions, setReactions] = useState<ReactionsState>({
         love:{active:false,count:0},
         confusing:{active:false,count:0},

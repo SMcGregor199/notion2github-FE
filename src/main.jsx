@@ -12,47 +12,50 @@ const CACHE_DATA = "blogDataCache";
 const CACHE_VER  = "blogDataVersion";
 
 function fetchCachedData(){
-  const cachedData = localStorage.getItem(CACHE_DATA);
-  return cachedData ? JSON.parse(cachedData) : null;
-  
+  try {
+    const cachedData = localStorage.getItem(CACHE_DATA);
+    return cachedData ? JSON.parse(cachedData) : null;
+  } catch (err) {
+    console.warn("Ignoring invalid cached blog data", err);
+    localStorage.removeItem(CACHE_DATA);
+    localStorage.removeItem(CACHE_VER);
+    return null;
+  }
 }
+
 async function revalidateBlogDataInBg(){
- const cachedVersion = localStorage.getItem(CACHE_VER) || "";
  try{
-  //make a fetch (GET) request to the server, but only return data if the key I'm including in the If-None-Match header is different than the key returned in the ETag header
-  // I'm using the cache: "no-store" option to ensure the browser doesn't use its own cache and to make a full network request. I'm controlling caching.
-    const res = await fetch(LATEST_API, { headers: cachedVersion ? { "if-none-match": cachedVersion } : {}, cache: "no-store"});
-    //the server will respond with a 304 if the key I'm including in the If-None-Match header is the same as the key returned in the ETag header
-    //we then return early if this is the case. 
-    if (res.status === 304) return;
-    if(res.ok){
-       const fresh = await res.json();
-       const newVersion = res.headers.get("etag") || "";
-       localStorage.setItem(CACHE_DATA, JSON.stringify(fresh));
-       localStorage.setItem(CACHE_VER, newVersion);
+    const res = await fetch(LATEST_API, { cache: "no-store"});
+    if(!res.ok){
+      return;
     }
+    const fresh = await res.json();
+    const newVersion = res.headers.get("etag") || "";
+    localStorage.setItem(CACHE_DATA, JSON.stringify(fresh));
+    localStorage.setItem(CACHE_VER, newVersion);
  }
  catch(err){
-    console.error("Failed to revalidate blog data", err);
+    console.warn("Blog data revalidation skipped", err);
  }
 }
 
 async function loadInitialBlogData(){
   const cachedData = fetchCachedData();
-  if(cachedData){
-    return cachedData;
-  }
 
   try{
     const res = await fetch(LATEST_API,{cache: "no-store"});
     if(!res.ok){
       throw new Error(`Blog API request failed with status ${res.status}`);
     }
-    return await res.json();
+    const fresh = await res.json();
+    const newVersion = res.headers.get("etag") || "";
+    localStorage.setItem(CACHE_DATA, JSON.stringify(fresh));
+    localStorage.setItem(CACHE_VER, newVersion);
+    return fresh;
   }
   catch(err){
-    console.error("Falling back to bundled blog data", err);
-    return fallbackBlogPostsData;
+    console.warn("Falling back to cached or bundled blog data", err);
+    return cachedData ?? fallbackBlogPostsData;
   }
 }
 

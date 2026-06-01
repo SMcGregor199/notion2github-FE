@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { useParams } from "react-router-dom";
 import {Typography,Tag,Image} from "antd";
 import PublishUpdateDates from "../components/PublishUpdateDates";
@@ -29,14 +30,14 @@ function BlogDetail({initialData}) {
     }
     const articleContent = body.map((section,i)=>{
         const {heading, paras} = section;
-        const paragraphs = paras.map((paragraph)=>{
-            return <Typography.Paragraph key={i} style={{lineHeight: 2}}>{paragraph}</Typography.Paragraph>
+        const paragraphs = paras.map((paragraph, paragraphIndex)=>{
+            return <Typography.Paragraph key={`${i}-${paragraphIndex}`} style={{lineHeight: 2}}>{paragraph}</Typography.Paragraph>
         });
         return(
-            <>
-            <Typography.Title level={3} key={i} style={{alignSelf:"start"}}>{heading}</Typography.Title>
+            <Fragment key={`${heading}-${i}`}>
+            <Typography.Title level={3} style={{alignSelf:"start"}}>{heading}</Typography.Title>
             {paragraphs}
-            </>
+            </Fragment>
         )
     
     });

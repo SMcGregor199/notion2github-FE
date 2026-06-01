@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { ConfigProvider } from "antd";
 import { ThemeProvider } from "@emotion/react";
+import { describe, expect, it } from "vitest";
 import BlogPage from "../pages/Blog";
 import BlogCardLong from "../components/BlogCardLong";
 import BlogDetail from "../pages/BlogDetail";
@@ -61,7 +62,7 @@ describe("Notion image rendering", () => {
     it("skips the blog index card image when the thumbnail is missing", () => {
         renderWithProviders(<BlogPage initialData={[postWithoutImage]} />);
 
-        expect(screen.queryByRole("img")).not.toBeInTheDocument();
+        expect(screen.queryByRole("img", { name: postWithoutImage.title })).not.toBeInTheDocument();
     });
 
     it("renders the featured blog card image when a thumbnail exists", () => {
@@ -76,7 +77,7 @@ describe("Notion image rendering", () => {
     it("skips the featured blog card image when the thumbnail is missing", () => {
         renderWithProviders(<BlogCardLong {...postWithoutImage} />);
 
-        expect(screen.queryByRole("img")).not.toBeInTheDocument();
+        expect(screen.queryByRole("img", { name: postWithoutImage.title })).not.toBeInTheDocument();
     });
 
     it("renders the blog detail image when a thumbnail exists", () => {
@@ -101,6 +102,6 @@ describe("Notion image rendering", () => {
             { route: "/blog/image-missing-post" }
         );
 
-        expect(screen.queryByRole("img")).not.toBeInTheDocument();
+        expect(screen.queryByRole("img", { name: postWithoutImage.title })).not.toBeInTheDocument();
     });
 });

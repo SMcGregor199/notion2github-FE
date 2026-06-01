@@ -7,6 +7,7 @@ import "./index.css";
 import App from './App.jsx'
 import { ConfigProvider, theme as antdTheme } from 'antd';
 import { blogPostsData as fallbackBlogPostsData } from "./data/notionBlogData.js";
+import { sortBlogPostsByNewest } from "./utils/sortBlogPosts.js";
 const LATEST_API = "https://shaynemcgregordev-be.netlify.app/.netlify/functions/notion-blog-data";
 const CACHE_DATA = "blogDataCache";
 const CACHE_VER  = "blogDataVersion";
@@ -14,7 +15,16 @@ const CACHE_VER  = "blogDataVersion";
 function fetchCachedData(){
   try {
     const cachedData = localStorage.getItem(CACHE_DATA);
-    return cachedData ? JSON.parse(cachedData) : null;
+    if (!cachedData) {
+      return null;
+    }
+    const parsedData = JSON.parse(cachedData);
+    if (!Array.isArray(parsedData)) {
+      localStorage.removeItem(CACHE_DATA);
+      localStorage.removeItem(CACHE_VER);
+      return null;
+    }
+    return parsedData;
   } catch (err) {
     console.warn("Ignoring invalid cached blog data", err);
     localStorage.removeItem(CACHE_DATA);
@@ -29,7 +39,7 @@ async function revalidateBlogDataInBg(){
     if(!res.ok){
       return;
     }
-    const fresh = await res.json();
+    const fresh = sortBlogPostsByNewest(await res.json());
     const newVersion = res.headers.get("etag") || "";
     localStorage.setItem(CACHE_DATA, JSON.stringify(fresh));
     localStorage.setItem(CACHE_VER, newVersion);
@@ -47,7 +57,7 @@ async function loadInitialBlogData(){
     if(!res.ok){
       throw new Error(`Blog API request failed with status ${res.status}`);
     }
-    const fresh = await res.json();
+    const fresh = sortBlogPostsByNewest(await res.json());
     const newVersion = res.headers.get("etag") || "";
     localStorage.setItem(CACHE_DATA, JSON.stringify(fresh));
     localStorage.setItem(CACHE_VER, newVersion);
@@ -55,7 +65,7 @@ async function loadInitialBlogData(){
   }
   catch(err){
     console.warn("Falling back to cached or bundled blog data", err);
-    return cachedData ?? fallbackBlogPostsData;
+    return sortBlogPostsByNewest(cachedData ?? fallbackBlogPostsData);
   }
 }
 

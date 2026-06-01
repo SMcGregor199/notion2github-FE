@@ -26,19 +26,22 @@ function BlogPage({initialData}) {
     }
    
     const blogCards = filteredPosts.map((post)=>{
+        const coverImage = post.thumbnail ? (
+            <img
+                src={post.thumbnail}
+                alt={post.title}
+                style={{ width: "100%", objectFit: "cover" }}
+                loading="lazy"
+            />
+        ) : null;
+
         return(
              <Col key={post.id} xs={24} sm={12} lg={8}>
             <Link to={`/blog/${post.link}`} aria-label="test">
                 <Card
                 hoverable
                 style={{ height: "100%" }}
-                cover=
-                    <img
-                        src={post.thumbnail}
-                        alt=""
-                        style={{ width: "100%", objectFit: "cover" }}
-                        loading="lazy"
-                    />    
+                cover={coverImage}
                 >
                             
                     <Card.Meta

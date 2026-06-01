@@ -6,6 +6,7 @@ import "antd/dist/reset.css";
 import "./index.css";
 import App from './App.jsx'
 import { ConfigProvider, theme as antdTheme } from 'antd';
+import { blogPostsData as fallbackBlogPostsData } from "./data/notionBlogData.js";
 const LATEST_API = "https://shaynemcgregordev-be.netlify.app/.netlify/functions/notion-blog-data";
 const CACHE_DATA = "blogDataCache";
 const CACHE_VER  = "blogDataVersion";
@@ -36,11 +37,26 @@ async function revalidateBlogDataInBg(){
  }
 }
 
-  
-let initialPostData = fetchCachedData();
-if(!initialPostData){
-  initialPostData = await fetch(LATEST_API,{cache: "no-store"}).then(res => res.json()); 
+async function loadInitialBlogData(){
+  const cachedData = fetchCachedData();
+  if(cachedData){
+    return cachedData;
+  }
+
+  try{
+    const res = await fetch(LATEST_API,{cache: "no-store"});
+    if(!res.ok){
+      throw new Error(`Blog API request failed with status ${res.status}`);
+    }
+    return await res.json();
+  }
+  catch(err){
+    console.error("Falling back to bundled blog data", err);
+    return fallbackBlogPostsData;
+  }
 }
+
+let initialPostData = await loadInitialBlogData();
 revalidateBlogDataInBg()
 
 createRoot(document.getElementById('root')).render(

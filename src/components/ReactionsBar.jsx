@@ -13,7 +13,7 @@ export default function ReactionsBar({articleTitle}){
 function toggle(type) {
     setReactions((prev) => {
         const wasActive = prev[type].active;
-        
+
         if (wasActive) {
             return {
                 ...prev,
@@ -23,7 +23,7 @@ function toggle(type) {
                 }
             };
         }
-        
+
         // Deactivate all others and activate the new one
         const newReactions = {};
         Object.keys(prev).forEach(key => {
@@ -41,7 +41,7 @@ function toggle(type) {
                 newReactions[key] = prev[key];
             }
         });
-        
+
         return newReactions;
     });
 }
@@ -62,17 +62,17 @@ function toggle(type) {
         <>
             <Divider></Divider>
                 <Space style={{minWidth:"0",maxWidth:"100%",gap:"1.5rem", flexWrap:"wrap"}}>
-                    <Button type="default" 
+                    <Button type="default"
                     icon={reactions.love.active ? <HeartFilled/> : <HeartOutlined/>} onClick={()=>toggle("love")}
                     style={{color: reactions.love.active ? "white":"rgba(0, 0, 0, 0.88)",backgroundColor: reactions.love.active ? "#D86F44" : "#ffffff"}}
                     >Loved {reactions.love.count}
                     </Button>
-                    <Button type="default" 
+                    <Button type="default"
                     icon={reactions.confusing.active ? <QuestionCircleFilled/> : <QuestionCircleOutlined/>} onClick={()=>toggle("confusing")}
                     style={{color: reactions.confusing.active ? "white":"rgba(0, 0, 0, 0.88)",backgroundColor: reactions.confusing.active ? "#D86F44" : "#ffffff"}}
                     >Confusing {reactions.confusing.count}
                     </Button>
-                    <Button type="default" 
+                    <Button type="default"
                     icon={reactions.thoughtProvoking.active ? <BulbFilled/> : <BulbOutlined/>} onClick={()=>toggle("thoughtProvoking")}
                     style={{color: reactions.thoughtProvoking.active ? "white":"rgba(0, 0, 0, 0.88)",backgroundColor: reactions.thoughtProvoking.active ? "#D86F44" : "#ffffff"}}
                     >Thought Provoking {reactions.thoughtProvoking.count}

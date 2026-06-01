@@ -6,7 +6,7 @@ import type {ReactionsState,ReactionKey, ShareData} from "../types/index.ts";
 import type { JSX } from "react";
 
 export default function ReactionsBar({title, id}:{title:string,id:string}):JSX.Element{
-    
+
     const [reactions, setReactions] = useState<ReactionsState>({
         love:{active:false,count:0},
         confusing:{active:false,count:0},
@@ -16,7 +16,7 @@ export default function ReactionsBar({title, id}:{title:string,id:string}):JSX.E
 function toggle(type: ReactionKey):void {
     setReactions((prev:ReactionsState):ReactionsState => {
         const wasActive: boolean = prev[type].active;
-        
+
         if (wasActive) {
             const next: ReactionsState = {
                 ...prev,
@@ -27,7 +27,7 @@ function toggle(type: ReactionKey):void {
             }
             return next;
         }
-        
+
         // Deactivate all others and activate the new one
         const newReactions: ReactionsState = {...prev};
         (Object.keys(prev) as ReactionKey[]).forEach((key:ReactionKey) => {
@@ -45,7 +45,7 @@ function toggle(type: ReactionKey):void {
                 newReactions[key] = prev[key];
             }
         });
-        
+
         return newReactions;
     });
 }
@@ -73,17 +73,17 @@ function toggle(type: ReactionKey):void {
         <>
             <Divider></Divider>
                 <Space style={{minWidth:"0",maxWidth:"100%",gap:"1.5rem", flexWrap:"wrap"}}>
-                    <Button type="default" 
+                    <Button type="default"
                     icon={reactions.love.active ? <HeartFilled/> : <HeartOutlined/>} onClick={()=>toggle("love")}
                     style={{color: reactions.love.active ? "white":"rgba(0, 0, 0, 0.88)",backgroundColor: reactions.love.active ? "#D86F44" : "#ffffff"}}
                     >Loved {reactions.love.count}
                     </Button>
-                    <Button type="default" 
+                    <Button type="default"
                     icon={reactions.confusing.active ? <QuestionCircleFilled/> : <QuestionCircleOutlined/>} onClick={()=>toggle("confusing")}
                     style={{color: reactions.confusing.active ? "white":"rgba(0, 0, 0, 0.88)",backgroundColor: reactions.confusing.active ? "#D86F44" : "#ffffff"}}
                     >Confusing {reactions.confusing.count}
                     </Button>
-                    <Button type="default" 
+                    <Button type="default"
                     icon={reactions.thoughtProvoking.active ? <BulbFilled/> : <BulbOutlined/>} onClick={()=>toggle("thoughtProvoking")}
                     style={{color: reactions.thoughtProvoking.active ? "white":"rgba(0, 0, 0, 0.88)",backgroundColor: reactions.thoughtProvoking.active ? "#D86F44" : "#ffffff"}}
                     >Thought Provoking {reactions.thoughtProvoking.count}

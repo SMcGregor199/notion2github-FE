@@ -82,17 +82,19 @@ function BlogCardLong(props){
                         </div>
                     </Flex>
                 
-                    <Image
-                        src={props.thumbnail}
-                        alt="Abstract illustration for the article"
-                        width={320}
-                        height={"auto"}
-                        aspectRatio={8/5}
-                        style={{ borderRadius: 12, objectFit: "cover",flexShrink: 0,
-                                boxShadow: "0 1px 2px rgba(0,0,0,0.06)" 
-                        }}
-                        preview={false}
-                    />
+                    {props.thumbnail ? (
+                        <Image
+                            src={props.thumbnail}
+                            alt={props.title}
+                            width={320}
+                            height={"auto"}
+                            aspectRatio={8/5}
+                            style={{ borderRadius: 12, objectFit: "cover",flexShrink: 0,
+                                    boxShadow: "0 1px 2px rgba(0,0,0,0.06)"
+                            }}
+                            preview={false}
+                        />
+                    ) : null}
                 </Flex>
             </Card>
         

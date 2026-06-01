@@ -59,7 +59,9 @@ function BlogDetail({initialData}) {
                 <Typography.Title level={2}>{post.summary}</Typography.Title>
                 <ReactionsBar articleTitle={post.title}/>
                 {articleContent}
-                <Image src={`${post.thumbnail}`} alt={post.title} preview={false}></Image>
+                {post.thumbnail ? (
+                    <Image src={`${post.thumbnail}`} alt={post.title} preview={false}></Image>
+                ) : null}
             </article>     
     );
 }

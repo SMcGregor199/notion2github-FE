@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
-import {Typography,Tag,Image,Space,Divider} from "antd";
+import {Typography,Tag,Image} from "antd";
 import PublishUpdateDates from "../components/PublishUpdateDates";
-import ReactionsBar from "../components/ReactionsBar";
+import ReactionsBar from "../components/ReactionsBar.tsx";
 
 
 

@@ -2,31 +2,35 @@ import{useState} from "react";
 import {Divider, Space, Button} from "antd";
 import {QuestionCircleOutlined, QuestionCircleFilled, HeartOutlined, HeartFilled,BulbOutlined,
     BulbFilled,MailOutlined} from "@ant-design/icons";
+import type {ReactionsState,ReactionKey, ShareData} from "../types/index.ts";
+import type { JSX } from "react";
 
-export default function ReactionsBar({articleTitle}){
-    const [reactions, setReactions] = useState({
+export default function ReactionsBar({title, id}:{title:string,id:string}):JSX.Element{
+
+    const [reactions, setReactions] = useState<ReactionsState>({
         love:{active:false,count:0},
         confusing:{active:false,count:0},
         thoughtProvoking:{active:false,count:0},
     });
 
-function toggle(type) {
-    setReactions((prev) => {
-        const wasActive = prev[type].active;
+function toggle(type: ReactionKey):void {
+    setReactions((prev:ReactionsState):ReactionsState => {
+        const wasActive: boolean = prev[type].active;
 
         if (wasActive) {
-            return {
+            const next: ReactionsState = {
                 ...prev,
                 [type]: {
                     active: false,
                     count: prev[type].count - 1,
                 }
-            };
+            }
+            return next;
         }
 
         // Deactivate all others and activate the new one
-        const newReactions = {};
-        Object.keys(prev).forEach(key => {
+        const newReactions: ReactionsState = {...prev};
+        (Object.keys(prev) as ReactionKey[]).forEach((key:ReactionKey) => {
             if (key === type) {
                 newReactions[key] = {
                     active: true,
@@ -46,17 +50,24 @@ function toggle(type) {
     });
 }
 
-    function handleShare(){
-        const shareData = {
-            title:articleTitle,
+    async function handleShare():Promise<void> {
+        const shareData: ShareData = {
+            title,
             text:"Check out this article",
             url: window.location.href,
         }
-        if(navigator.share){
-            navigator.share(shareData);
-        }else {
-            window.location.href = `mailto:?subject=${encodeURIComponent(shareData.title)}&body=${encodeURIComponent(shareData.url)}`;
+        const encodedTitle: string = encodeURIComponent(shareData.title ?? "");
+        const encodedBody : string = encodeURIComponent(window.location.href);
+        if("share" in navigator && typeof navigator.share === "function"){
+          try {
+            await navigator.share(shareData);
+          } catch {
+            const emailurl: string = `mailto:?subject=${encodedTitle}&body=${encodedBody}`;
+            window.location.href = emailurl;
+          }
+          return;
         }
+        window.location.href = `mailto:?subject=${encodedTitle}&body=${encodedBody}`;
     }
     return(
         <>

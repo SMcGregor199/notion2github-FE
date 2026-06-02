@@ -5,14 +5,14 @@ import BlogPage from "./pages/Blog";
 import BlogDetail from "./pages/BlogDetail";
 import Contact from "./pages/Contact";
 import CaseStudies from "./pages/CaseStudies";
-function App({initialData}) {
+function App({initialData, isBlogDataLoading = false}) {
   
   return (
       <Routes>
       {/* Shared layout routes */}
       <Route element={<AppLayout />}>
         <Route path="/" element={<Home initialData={initialData}/>} />
-        <Route path="/blog" element={<BlogPage initialData={initialData}/>} />
+        <Route path="/blog" element={<BlogPage initialData={initialData} isBlogDataLoading={isBlogDataLoading}/>} />
         <Route path="/blog/:slug" element={<BlogDetail initialData={initialData}/>} />
         <Route path="/contact" element={<Contact/>}/>
         <Route path="/case-studies" element={<CaseStudies />} />
@@ -24,4 +24,3 @@ function App({initialData}) {
 }
 
 export default App
-

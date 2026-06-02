@@ -1,5 +1,6 @@
 
 import React from 'react'
+import { useEffect, useState } from "react";
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router} from 'react-router-dom';
 import "antd/dist/reset.css";
@@ -11,6 +12,10 @@ import { sortBlogPostsByNewest } from "./utils/sortBlogPosts.js";
 const LATEST_API = "https://shaynemcgregordev-be.netlify.app/.netlify/functions/notion-blog-data";
 const CACHE_DATA = "blogDataCache";
 const CACHE_VER  = "blogDataVersion";
+
+function getBootstrapBlogData(){
+  return sortBlogPostsByNewest(fetchCachedData() ?? fallbackBlogPostsData);
+}
 
 function fetchCachedData(){
   try {
@@ -69,8 +74,38 @@ async function loadInitialBlogData(){
   }
 }
 
-let initialPostData = await loadInitialBlogData();
-revalidateBlogDataInBg()
+export function BlogAppShell(){
+  const [initialPostData, setInitialPostData] = useState(() => getBootstrapBlogData());
+  const [isBlogDataLoading, setIsBlogDataLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function bootstrapBlogData(){
+      try{
+        const fresh = await loadInitialBlogData();
+        if (!cancelled) {
+          setInitialPostData(fresh);
+        }
+      }
+      finally{
+        if (!cancelled) {
+          setIsBlogDataLoading(false);
+        }
+      }
+
+      void revalidateBlogDataInBg();
+    }
+
+    void bootstrapBlogData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return <App initialData={initialPostData} isBlogDataLoading={isBlogDataLoading}/>;
+}
 
 createRoot(document.getElementById('root')).render(
 
@@ -98,7 +133,7 @@ createRoot(document.getElementById('root')).render(
       },
       }}
     >
-      <App initialData={initialPostData}/>
+      <BlogAppShell/>
     </ConfigProvider>
   </Router>
 </React.StrictMode>

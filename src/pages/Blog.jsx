@@ -1,11 +1,11 @@
-import { Layout, Typography, Space, Row, Col, Card, Divider, Tag } from "antd";
+import { Layout, Typography, Space, Row, Col, Card, Divider, Tag, Spin } from "antd";
 import {Link} from "react-router-dom";
 import { Grid } from "antd";
 import {useState} from "react";
 import {StyledTag} from "../components/styledTag";
 
 
-function BlogPage({initialData}) {
+function BlogPage({initialData, isBlogDataLoading = false}) {
     const screens = Grid.useBreakpoint();
     const isDesktop = screens.lg;
  
@@ -106,6 +106,23 @@ function BlogPage({initialData}) {
             <section style={{ flex: isDesktop ? "2 1 auto" : "0 1 auto"}}>
                 <Typography.Title level={1} style={{ marginTop: 0 }}>Blog</Typography.Title>
                 <Divider style={{ marginTop: 12 }} />
+
+                {isBlogDataLoading && (
+                    <div
+                        role="status"
+                        aria-live="polite"
+                        aria-busy="true"
+                        style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 8,
+                            marginBottom: 16,
+                        }}
+                    >
+                        <Spin size="small" />
+                        <Typography.Text type="secondary">Loading latest posts...</Typography.Text>
+                    </div>
+                )}
 
                 <Row gutter={[24, 24]}>
                     {blogCards}

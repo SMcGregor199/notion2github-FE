@@ -65,6 +65,14 @@ describe("Notion image rendering", () => {
         expect(screen.queryByRole("img", { name: postWithoutImage.title })).not.toBeInTheDocument();
     });
 
+    it("shows a loading status on the blog page while data is fetching", () => {
+        renderWithProviders(
+            <BlogPage initialData={[postWithImage]} isBlogDataLoading={true} />
+        );
+
+        expect(screen.getByRole("status")).toHaveTextContent(/loading latest posts/i);
+    });
+
     it("renders the featured blog card image when a thumbnail exists", () => {
         renderWithProviders(<BlogCardLong {...postWithImage} />);
 

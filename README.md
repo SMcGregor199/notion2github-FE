@@ -1,12 +1,40 @@
-# React + Vite
+# notion2github-FE
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React/Vite frontend for `shaynemcgregor.dev`.
 
-Currently, two official plugins are available:
+## What This Repo Does
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Renders the public site.
+- Fetches blog data from the backend Netlify Function.
+- Caches blog data and version metadata in browser `localStorage`.
+- Renders blog list and blog detail pages from the shared backend contract.
+- Renders backend-hosted Notion image URLs.
 
-## Expanding the ESLint configuration
+## Commands
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- `npm run dev`: start the Vite dev server.
+- `npm run build`: build the frontend.
+- `npm run lint`: run ESLint.
+- `npm run test`: run Vitest.
+- `npm run test:ui`: run Vitest UI.
+- `npm run preview`: preview the production build locally.
+- `npm run img-optimize`: optimize local public PNGs into WebP files.
+
+## Local Development Notes
+
+- This repo consumes backend data from the Netlify-hosted `notion2github-BE`.
+- The repo has local `.netlify/` state in the workspace, but no clear repo-level Netlify configuration was found in the audit.
+- The current source of truth for runtime blog data is the backend contract, not local static content.
+
+## Artifact And Generated File Cautions
+
+- `public/rss.xml` is tracked and should be changed intentionally.
+- `dist/` is ignored local build output.
+- Do not commit local caches or build output unless the change is explicitly about a tracked artifact.
+
+## Relation To The Other Repos
+
+- Depends on `notion2github-BE` for blog JSON.
+- Depends on `notion2github-BE` for image URLs.
+- Shares the blog data contract with `notion2github-BE` and `xml-feed-gen`.
+- Has a tracked RSS artifact in `public/rss.xml`, which should stay aligned with the generator output in `xml-feed-gen`.

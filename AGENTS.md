@@ -16,6 +16,9 @@ Frontend for `shaynemcgregor.dev`.
 - `public/rss.xml` is tracked.
 - `dist/` is ignored build output and should not be committed.
 - Do not inspect `.env` or secret files.
+- For frontend UI work, inspect existing components and styles before proposing changes. Preserve current Ant Design, global CSS, Emotion, inline style, layout, responsive, accessibility, and motion patterns where appropriate.
+- Document accessibility, responsive, motion, performance, and dependency considerations for UI changes. Avoid new dependencies unless an approved feature spec explicitly justifies them.
+- Do not touch app/source code unless the approved feature spec explicitly requires it.
 
 ## Verification Expectations
 

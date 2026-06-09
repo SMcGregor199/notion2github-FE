@@ -1,23 +1,15 @@
 import {Typography, Flex} from 'antd'
-function Hero({background}){
+function Hero(){
     return(
-        <section
-        style={{
-            position: "relative",
-            backgroundImage: `url(${background})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            borderRadius: "8px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#fff",
-            textAlign: "center",
-            overflow: "hidden",
-            paddingBlock: "clamp(48px, 12vh, 96px)", 
-        }}
+        <a
+            className="discourse-hero-link"
+            href="https://www.discourse.center/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Visit Discourse Center in a new tab"
         >
-            <Flex vertical align="center"style={{ position: "relative", zIndex: 1, maxWidth: 700, padding: "0 24px" }}>
+            <section className="discourse-hero">
+            <Flex vertical align="center" style={{ position: "relative", zIndex: 1, maxWidth: 700, padding: "0 24px" }}>
                 <Typography.Title level={1} 
                 style={{
                     color: "white",
@@ -25,18 +17,21 @@ function Hero({background}){
                     marginBottom: 16,
                     wordBreak: "normal", 
                 }}>
-                  This isn’t hype-driven development
+                  Discourse Center
                 </Typography.Title>
                 <Typography.Paragraph 
                 style={{
-                    color: "white",
+                    color: "rgba(226, 246, 255, 0.92)",
                     fontWeight: 400,
-                    marginBottom: 16,
+                    marginBottom: 0,
+                    fontSize: "1.15rem",
+                    lineHeight: 1.6,
                 }}>
-                  I build full-stack web applications with an emphasis on clarity, tradeoffs, and software that holds up over time.
+                  the future of research writing workflows.
                 </Typography.Paragraph>
             </Flex>
-        </section>
+            </section>
+        </a>
     )
 }
 

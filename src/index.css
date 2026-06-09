@@ -37,6 +37,7 @@ html{
 
 .discourse-hero {
   position: relative;
+  isolation: isolate;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -57,8 +58,58 @@ html{
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 0;
   background:
     linear-gradient(115deg, transparent 0 36%, rgba(94, 231, 255, 0.16) 42%, transparent 50%),
     linear-gradient(300deg, transparent 0 58%, rgba(43, 137, 255, 0.18) 64%, transparent 74%);
   pointer-events: none;
+}
+
+.discourse-hero::after {
+  content: "";
+  position: absolute;
+  top: 18%;
+  left: 12%;
+  z-index: 0;
+  width: 3px;
+  height: 3px;
+  border-radius: 1px;
+  background: rgba(190, 245, 255, 0.9);
+  box-shadow:
+    8vw 6vh 0 rgba(94, 231, 255, 0.64),
+    18vw 18vh 0 rgba(43, 137, 255, 0.46),
+    28vw 4vh 0 rgba(209, 250, 255, 0.72),
+    42vw 16vh 0 rgba(94, 231, 255, 0.5),
+    54vw 8vh 0 rgba(43, 137, 255, 0.42),
+    64vw 24vh 0 rgba(209, 250, 255, 0.54),
+    72vw 3vh 0 rgba(94, 231, 255, 0.48),
+    2vw 26vh 0 rgba(43, 137, 255, 0.4),
+    22vw 31vh 0 rgba(209, 250, 255, 0.5),
+    36vw 28vh 0 rgba(94, 231, 255, 0.45),
+    50vw 35vh 0 rgba(43, 137, 255, 0.36),
+    68vw 32vh 0 rgba(209, 250, 255, 0.42);
+  filter: drop-shadow(0 0 6px rgba(94, 231, 255, 0.7));
+  opacity: 0.72;
+  pointer-events: none;
+  animation: discourse-pixels-drift 16s ease-in-out infinite alternate;
+}
+
+@keyframes discourse-pixels-drift {
+  from {
+    opacity: 0.46;
+    transform: translate3d(-8px, 6px, 0);
+  }
+
+  to {
+    opacity: 0.78;
+    transform: translate3d(14px, -10px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .discourse-hero::after {
+    animation: none;
+    opacity: 0.34;
+    transform: none;
+  }
 }

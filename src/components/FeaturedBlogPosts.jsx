@@ -78,6 +78,7 @@ function SecondaryPostCard({ post }) {
                         style={{
                             margin: 0,
                             fontSize: "clamp(1.05rem, 0.65vw + 0.95rem, 1.35rem)",
+                            color: "black",
                             letterSpacing: "-0.01em",
                             lineHeight: 1.25,
                         }}
@@ -94,7 +95,7 @@ function SecondaryPostCard({ post }) {
                         <Typography.Paragraph
                             type="secondary"
                             ellipsis={{ rows: 2 }}
-                            style={{ margin: 0, lineHeight: 1.55 }}
+                            style={{ margin: 0, color: "rgba(0,0,0,0.62)", lineHeight: 1.55 }}
                         >
                             {post.summary}
                         </Typography.Paragraph>

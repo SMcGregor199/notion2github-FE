@@ -28,42 +28,6 @@ html{
   isolation: isolate;
 }
 
-.homepage-motif::before,
-.homepage-motif::after {
-  content: "";
-  position: absolute;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.homepage-motif::before {
-  top: clamp(60px, 9vw, 120px);
-  right: 0;
-  width: clamp(320px, 44vw, 680px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  opacity: 0.28;
-  background:
-    radial-gradient(circle at center, transparent 0 42%, rgba(245, 126, 45, 0.22) 43% 44%, transparent 45%),
-    radial-gradient(circle at center, transparent 0 57%, rgba(17, 86, 170, 0.2) 58% 59%, transparent 60%),
-    linear-gradient(72deg, transparent 0 47%, rgba(245, 126, 45, 0.18) 48% 50%, transparent 51%),
-    linear-gradient(118deg, transparent 0 48%, rgba(17, 86, 170, 0.16) 49% 51%, transparent 52%);
-  filter: blur(0.2px);
-}
-
-.homepage-motif::after {
-  top: clamp(180px, 28vw, 360px);
-  left: 0;
-  width: clamp(280px, 38vw, 560px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  opacity: 0.3;
-  background:
-    radial-gradient(circle at 35% 40%, rgba(245, 126, 45, 0.2), transparent 44%),
-    radial-gradient(circle at 62% 58%, rgba(17, 86, 170, 0.18), transparent 48%),
-    linear-gradient(24deg, transparent 0 52%, rgba(245, 126, 45, 0.14) 53% 55%, transparent 56%);
-}
-
 .homepage-motif > * {
   position: relative;
   z-index: 1;
@@ -222,20 +186,6 @@ html{
 }
 
 @media (max-width: 640px) {
-  .homepage-motif::before {
-    top: 96px;
-    right: 0;
-    width: 380px;
-    opacity: 0.18;
-  }
-
-  .homepage-motif::after {
-    top: 360px;
-    left: 0;
-    width: 320px;
-    opacity: 0.18;
-  }
-
   .homepage-blog-thumb {
     width: 68px;
   }

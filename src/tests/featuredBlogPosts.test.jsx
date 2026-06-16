@@ -41,12 +41,12 @@ function renderWithProviders(ui) {
 describe("FeaturedBlogPosts", () => {
     it("organizes sorted posts into featured, secondary, remaining, and archive links", () => {
         const posts = [
-            makePost(1, { title: "Latest Post", link: "latest-post" }),
-            makePost(2, { title: "Second Post", link: "second-post" }),
-            makePost(3, { title: "Third Post", link: "third-post" }),
-            makePost(4, { title: "Fourth Post", link: "fourth-post" }),
-            makePost(5, { title: "Fifth Post", link: "fifth-post" }),
-            makePost(6, { title: "Sixth Post", link: "sixth-post" }),
+            makePost(1, { title: "Latest Post", link: "latest-post", thumbnail: "" }),
+            makePost(2, { title: "Second Post", link: "second-post", thumbnail: "" }),
+            makePost(3, { title: "Third Post", link: "third-post", thumbnail: "" }),
+            makePost(4, { title: "Fourth Post", link: "fourth-post", thumbnail: "" }),
+            makePost(5, { title: "Fifth Post", link: "fifth-post", thumbnail: "" }),
+            makePost(6, { title: "Sixth Post", link: "sixth-post", thumbnail: "" }),
         ];
 
         renderWithProviders(<FeaturedBlogPosts initialData={posts} />);

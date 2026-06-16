@@ -46,6 +46,15 @@ html{
   transition: color 0.2s ease, text-decoration-color 0.2s ease;
 }
 
+.homepage-blog-secondary-card .homepage-blog-link {
+  color: #000;
+}
+
+.homepage-blog-secondary-card .homepage-blog-link:hover {
+  color: #d86f44;
+  text-decoration-color: currentColor;
+}
+
 .homepage-blog-link:hover {
   color: #d86f44;
   text-decoration-color: currentColor;

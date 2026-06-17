@@ -13,6 +13,12 @@ type ShareData = {
 }
 
 
+type ReactionCounts = Record<ReactionKey, number>;
 
+type ReactionApiState = {
+  postId: string;
+  counts: ReactionCounts;
+  selectedReaction: ReactionKey | null;
+};
 
-export type {ReactionsState,ReactionKey,Reaction, ShareData}
+export type {ReactionsState,ReactionKey,Reaction, ShareData, ReactionCounts, ReactionApiState}

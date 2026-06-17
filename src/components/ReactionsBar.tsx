@@ -1,96 +1,224 @@
-import{useState} from "react";
-import {Divider, Space, Button} from "antd";
-import {QuestionCircleOutlined, QuestionCircleFilled, HeartOutlined, HeartFilled,BulbOutlined,
-    BulbFilled,MailOutlined} from "@ant-design/icons";
-import type {ReactionsState,ReactionKey, ShareData} from "../types/index.ts";
+import { useEffect, useMemo, useState } from "react";
+import { Alert, Button, Divider, Space } from "antd";
+import {
+  BulbFilled,
+  BulbOutlined,
+  HeartFilled,
+  HeartOutlined,
+  MailOutlined,
+  QuestionCircleFilled,
+  QuestionCircleOutlined,
+} from "@ant-design/icons";
 import type { JSX } from "react";
+import type { ReactionCounts, ReactionKey, ShareData } from "../types/index.ts";
+import {
+  fetchReactionState,
+  getReactionVisitor,
+  getStoredSelectedReaction,
+  storeSelectedReaction,
+  submitReaction,
+} from "../utils/index.ts";
 
-export default function ReactionsBar({title, id}:{title:string,id:string}):JSX.Element{
+type ReactionsBarProps = {
+  postId: string;
+  slug: string;
+  title: string;
+};
 
-    const [reactions, setReactions] = useState<ReactionsState>({
-        love:{active:false,count:0},
-        confusing:{active:false,count:0},
-        thoughtProvoking:{active:false,count:0},
+type VisitorState = {
+  storageAvailable: boolean;
+  visitorId: string | null;
+};
+
+const EMPTY_COUNTS: ReactionCounts = {
+  love: 0,
+  confusing: 0,
+  thoughtProvoking: 0,
+};
+
+const REACTION_OPTIONS: Array<{
+  key: ReactionKey;
+  label: string;
+  inactiveIcon: JSX.Element;
+  activeIcon: JSX.Element;
+}> = [
+  {
+    key: "love",
+    label: "Loved",
+    inactiveIcon: <HeartOutlined />,
+    activeIcon: <HeartFilled />,
+  },
+  {
+    key: "confusing",
+    label: "Confusing",
+    inactiveIcon: <QuestionCircleOutlined />,
+    activeIcon: <QuestionCircleFilled />,
+  },
+  {
+    key: "thoughtProvoking",
+    label: "Thought Provoking",
+    inactiveIcon: <BulbOutlined />,
+    activeIcon: <BulbFilled />,
+  },
+];
+
+export default function ReactionsBar({ postId, slug, title }: ReactionsBarProps): JSX.Element {
+  const stablePostId = postId || slug;
+  const [counts, setCounts] = useState<ReactionCounts>(EMPTY_COUNTS);
+  const [selectedReaction, setSelectedReaction] = useState<ReactionKey | null>(() =>
+    getStoredSelectedReaction(stablePostId),
+  );
+  const [visitor, setVisitor] = useState<VisitorState>({
+    storageAvailable: true,
+    visitorId: null,
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [statusMessage, setStatusMessage] = useState("Loading reactions.");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const canReact = visitor.storageAvailable && Boolean(visitor.visitorId) && !isLoading;
+
+  useEffect(() => {
+    let cancelled = false;
+    const reactionVisitor = getReactionVisitor();
+    setVisitor({
+      storageAvailable: reactionVisitor.available,
+      visitorId: reactionVisitor.visitorId,
     });
 
-function toggle(type: ReactionKey):void {
-    setReactions((prev:ReactionsState):ReactionsState => {
-        const wasActive: boolean = prev[type].active;
-
-        if (wasActive) {
-            const next: ReactionsState = {
-                ...prev,
-                [type]: {
-                    active: false,
-                    count: prev[type].count - 1,
-                }
-            }
-            return next;
-        }
-
-        // Deactivate all others and activate the new one
-        const newReactions: ReactionsState = {...prev};
-        (Object.keys(prev) as ReactionKey[]).forEach((key:ReactionKey) => {
-            if (key === type) {
-                newReactions[key] = {
-                    active: true,
-                    count: prev[key].count + 1,
-                };
-            } else if (prev[key].active) {
-                newReactions[key] = {
-                    active: false,
-                    count: prev[key].count - 1,
-                };
-            } else {
-                newReactions[key] = prev[key];
-            }
+    async function loadReactions(): Promise<void> {
+      setIsLoading(true);
+      setErrorMessage(null);
+      try {
+        const state = await fetchReactionState({
+          postId: stablePostId,
+          blogTitle: title,
+          visitorId: reactionVisitor.visitorId,
         });
-
-        return newReactions;
-    });
-}
-
-    async function handleShare():Promise<void> {
-        const shareData: ShareData = {
-            title,
-            text:"Check out this article",
-            url: window.location.href,
-        }
-        const encodedTitle: string = encodeURIComponent(shareData.title ?? "");
-        const encodedBody : string = encodeURIComponent(window.location.href);
-        if("share" in navigator && typeof navigator.share === "function"){
-          try {
-            await navigator.share(shareData);
-          } catch {
-            const emailurl: string = `mailto:?subject=${encodedTitle}&body=${encodedBody}`;
-            window.location.href = emailurl;
-          }
+        if (cancelled) {
           return;
         }
-        window.location.href = `mailto:?subject=${encodedTitle}&body=${encodedBody}`;
+        setCounts(state.counts);
+        setSelectedReaction(state.selectedReaction);
+        storeSelectedReaction(stablePostId, state.selectedReaction);
+        setStatusMessage("Reactions loaded.");
+      } catch {
+        if (cancelled) {
+          return;
+        }
+        setErrorMessage("Reaction counts could not be loaded.");
+        setStatusMessage("Reaction counts could not be loaded.");
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      }
     }
-    return(
-        <>
-            <Divider></Divider>
-                <Space style={{minWidth:"0",maxWidth:"100%",gap:"1.5rem", flexWrap:"wrap"}}>
-                    <Button type="default"
-                    icon={reactions.love.active ? <HeartFilled/> : <HeartOutlined/>} onClick={()=>toggle("love")}
-                    style={{color: reactions.love.active ? "white":"rgba(0, 0, 0, 0.88)",backgroundColor: reactions.love.active ? "#D86F44" : "#ffffff"}}
-                    >Loved {reactions.love.count}
-                    </Button>
-                    <Button type="default"
-                    icon={reactions.confusing.active ? <QuestionCircleFilled/> : <QuestionCircleOutlined/>} onClick={()=>toggle("confusing")}
-                    style={{color: reactions.confusing.active ? "white":"rgba(0, 0, 0, 0.88)",backgroundColor: reactions.confusing.active ? "#D86F44" : "#ffffff"}}
-                    >Confusing {reactions.confusing.count}
-                    </Button>
-                    <Button type="default"
-                    icon={reactions.thoughtProvoking.active ? <BulbFilled/> : <BulbOutlined/>} onClick={()=>toggle("thoughtProvoking")}
-                    style={{color: reactions.thoughtProvoking.active ? "white":"rgba(0, 0, 0, 0.88)",backgroundColor: reactions.thoughtProvoking.active ? "#D86F44" : "#ffffff"}}
-                    >Thought Provoking {reactions.thoughtProvoking.count}
-                    </Button>
-                    <Button type="default" icon={<MailOutlined/>} onClick={handleShare}>Share</Button>
-                </Space>
-            <Divider></Divider>
-        </>
-    )
+
+    void loadReactions();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [stablePostId, title]);
+
+  const storageWarning = useMemo(() => {
+    if (visitor.storageAvailable) {
+      return null;
+    }
+    return "Reactions are read-only because browser storage is unavailable.";
+  }, [visitor.storageAvailable]);
+
+  async function toggleReaction(reaction: ReactionKey): Promise<void> {
+    if (!canReact || !visitor.visitorId || isUpdating) {
+      return;
+    }
+
+    const nextReaction = selectedReaction === reaction ? null : reaction;
+    setIsUpdating(true);
+    setErrorMessage(null);
+    setStatusMessage(nextReaction ? `Saving ${labelFor(reaction)} reaction.` : "Removing reaction.");
+
+    try {
+      const state = await submitReaction({
+        postId: stablePostId,
+        blogTitle: title,
+        visitorId: visitor.visitorId,
+        reaction: nextReaction,
+      });
+      setCounts(state.counts);
+      setSelectedReaction(state.selectedReaction);
+      storeSelectedReaction(stablePostId, state.selectedReaction);
+      setStatusMessage(state.selectedReaction ? `${labelFor(state.selectedReaction)} saved.` : "Reaction removed.");
+    } catch {
+      setErrorMessage("Reaction update failed. Counts were not changed.");
+      setStatusMessage("Reaction update failed. Counts were not changed.");
+    } finally {
+      setIsUpdating(false);
+    }
+  }
+
+  async function handleShare(): Promise<void> {
+    const shareData: ShareData = {
+      title,
+      text: "Check out this article",
+      url: window.location.href,
+    };
+    const encodedTitle = encodeURIComponent(shareData.title ?? "");
+    const encodedBody = encodeURIComponent(window.location.href);
+    if ("share" in navigator && typeof navigator.share === "function") {
+      try {
+        await navigator.share(shareData);
+      } catch {
+        window.location.href = `mailto:?subject=${encodedTitle}&body=${encodedBody}`;
+      }
+      return;
+    }
+    window.location.href = `mailto:?subject=${encodedTitle}&body=${encodedBody}`;
+  }
+
+  return (
+    <section className="reaction-bar" aria-label="Blog post reactions">
+      <Divider />
+      <Space className="reaction-bar__controls">
+        {REACTION_OPTIONS.map((option) => {
+          const isSelected = selectedReaction === option.key;
+          const count = counts[option.key] ?? 0;
+          return (
+            <Button
+              key={option.key}
+              type="default"
+              icon={isSelected ? option.activeIcon : option.inactiveIcon}
+              onClick={() => void toggleReaction(option.key)}
+              aria-pressed={isSelected}
+              aria-label={`${option.label}. ${count} ${count === 1 ? "reaction" : "reactions"}${
+                isSelected ? ". Selected." : "."
+              }`}
+              disabled={!canReact || isUpdating}
+              loading={isUpdating && isSelected}
+              className={isSelected ? "reaction-bar__button reaction-bar__button--selected" : "reaction-bar__button"}
+            >
+              {option.label} <span aria-hidden="true">{count}</span>
+            </Button>
+          );
+        })}
+        <Button type="default" icon={<MailOutlined />} onClick={handleShare}>
+          Share
+        </Button>
+      </Space>
+      <div className="reaction-bar__status" aria-live="polite" aria-atomic="true">
+        {statusMessage}
+      </div>
+      {storageWarning ? (
+        <Alert className="reaction-bar__alert" type="info" showIcon message={storageWarning} />
+      ) : null}
+      {errorMessage ? <Alert className="reaction-bar__alert" type="warning" showIcon message={errorMessage} /> : null}
+      <Divider />
+    </section>
+  );
+}
+
+function labelFor(reaction: ReactionKey): string {
+  return REACTION_OPTIONS.find((option) => option.key === reaction)?.label ?? reaction;
 }

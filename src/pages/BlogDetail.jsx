@@ -58,7 +58,7 @@ function BlogDetail({initialData}) {
                     {post.tag}
                 </Tag>
                 <Typography.Title level={2}>{post.summary}</Typography.Title>
-                <ReactionsBar articleTitle={post.title}/>
+                <ReactionsBar postId={post.id || post.link} slug={post.link} title={post.title}/>
                 {articleContent}
                 {post.thumbnail ? (
                     <Image src={`${post.thumbnail}`} alt={post.title} preview={false}></Image>

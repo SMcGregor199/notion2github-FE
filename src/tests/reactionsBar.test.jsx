@@ -1,0 +1,118 @@
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import ReactionsBar from "../components/ReactionsBar.tsx";
+
+const apiState = {
+  postId: "post_123",
+  counts: {
+    love: 2,
+    confusing: 1,
+    thoughtProvoking: 0,
+  },
+  selectedReaction: null,
+};
+
+describe("ReactionsBar", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    vi.stubGlobal("fetch", vi.fn());
+    vi.stubGlobal("crypto", {
+      getRandomValues(values) {
+        values.fill(7);
+        return values;
+      },
+    });
+  });
+
+  it("loads counts and submits a selected reaction with a generated visitor id", async () => {
+    const fetchMock = vi.mocked(fetch);
+    fetchMock
+      .mockResolvedValueOnce(jsonResponse(apiState))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          ...apiState,
+          counts: {
+            love: 3,
+            confusing: 1,
+            thoughtProvoking: 0,
+          },
+          selectedReaction: "love",
+        }),
+      );
+
+    render(<ReactionsBar postId="post_123" slug="post-slug" title="Post Title" />);
+
+    const lovedButton = await screen.findByRole("button", { name: /Loved\. 2 reactions/i });
+    expect(lovedButton).toHaveAttribute("aria-pressed", "false");
+
+    await userEvent.click(lovedButton);
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /Loved\. 3 reactions\. Selected\./i })).toHaveAttribute(
+        "aria-pressed",
+        "true",
+      );
+    });
+
+    const submittedBody = JSON.parse(String(fetchMock.mock.calls[1][1]?.body));
+    expect(submittedBody).toMatchObject({
+      postId: "post_123",
+      blogTitle: "Post Title",
+      reaction: "love",
+    });
+    expect(submittedBody.visitorId).toMatch(/^rxv_[A-Za-z0-9_-]{16,96}$/);
+    expect(localStorage.getItem("blogReactionSelected:post_123")).toBe("love");
+  });
+
+  it("deselects the active reaction by submitting null", async () => {
+    localStorage.setItem("blogReactionSelected:post_123", "love");
+    const fetchMock = vi.mocked(fetch);
+    fetchMock
+      .mockResolvedValueOnce(
+        jsonResponse({
+          ...apiState,
+          counts: {
+            love: 3,
+            confusing: 1,
+            thoughtProvoking: 0,
+          },
+          selectedReaction: "love",
+        }),
+      )
+      .mockResolvedValueOnce(jsonResponse(apiState));
+
+    render(<ReactionsBar postId="post_123" slug="post-slug" title="Post Title" />);
+
+    const lovedButton = await screen.findByRole("button", { name: /Loved\. 3 reactions\. Selected\./i });
+    await userEvent.click(lovedButton);
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /Loved\. 2 reactions/i })).toHaveAttribute("aria-pressed", "false");
+    });
+
+    expect(JSON.parse(String(fetchMock.mock.calls[1][1]?.body)).reaction).toBeNull();
+    expect(localStorage.getItem("blogReactionSelected:post_123")).toBeNull();
+  });
+
+  it("shows an accessible warning and keeps counts stable when an update fails", async () => {
+    const fetchMock = vi.mocked(fetch);
+    fetchMock
+      .mockResolvedValueOnce(jsonResponse(apiState))
+      .mockResolvedValueOnce(jsonResponse({ error: "nope" }, false));
+
+    render(<ReactionsBar postId="post_123" slug="post-slug" title="Post Title" />);
+
+    await userEvent.click(await screen.findByRole("button", { name: /Confusing\. 1 reaction/i }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Reaction update failed. Counts were not changed.");
+    expect(screen.getByRole("button", { name: /Confusing\. 1 reaction/i })).toHaveAttribute("aria-pressed", "false");
+  });
+});
+
+function jsonResponse(body, ok = true) {
+  return {
+    ok,
+    json: async () => body,
+  };
+}

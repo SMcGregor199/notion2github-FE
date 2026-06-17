@@ -103,6 +103,38 @@ html{
   margin-top: clamp(18px, 4vw, 32px);
 }
 
+.signal-journal-nav-link {
+  display: inline-flex;
+  align-items: flex-start;
+  color: inherit;
+}
+
+.signal-journal-nav-label {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.1rem;
+  line-height: 1;
+}
+
+.signal-journal-nav-text {
+  line-height: 1.08;
+}
+
+.ant-menu .signal-journal-nav-link .signal-journal-nav-icon.anticon {
+  flex: none;
+  font-size: 0.58em;
+  line-height: 1;
+  margin-top: 0.18em;
+}
+
+.ant-menu-horizontal > .ant-menu-item-selected .signal-journal-nav-link {
+  color: #d86f44 !important;
+}
+
+.ant-menu-horizontal > .ant-menu-item-selected::after {
+  border-bottom-color: #d86f44;
+}
+
 .discourse-hero-link {
   display: block;
   border-radius: 8px;

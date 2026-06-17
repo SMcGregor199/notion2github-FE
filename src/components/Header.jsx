@@ -1,21 +1,49 @@
+import { useState } from "react";
 import { Layout, Menu, Button, Avatar, Flex, Typography, Grid } from "antd";  
-import { GithubOutlined, LinkedinOutlined } from "@ant-design/icons";
+import { ExportOutlined, GithubOutlined, LinkedinOutlined } from "@ant-design/icons";
 const { useBreakpoint } = Grid;
 import { Link } from "react-router-dom";
 
 
 
 function SiteHeader(){
+    const signalJournalKey = "3";
+    const [selectedKey, setSelectedKey] = useState(null);
     const navItems = [
         { key: "1", label: <Link to="/">Home</Link> },
         { key: "2", label: <Link to="/blog">Blog</Link> },
-        { key: "3", label: <a href="https://shaynemcgregor.substack.com" target="_blank" rel="noopener noreferrer">The Signal Journal</a> },
         {key:"4", label: <Link to="/case-studies">Case Studies</Link> },
         { key: "5", label: <a href="/resume.pdf" target="_blank" rel="noopener noreferrer">Resume</a> },
         { key: "6", label: <Link to="/contact">Contact Me</Link> }
     ];
+    const signalJournalItem = {
+        key: signalJournalKey,
+        label: (
+            <a
+                className="signal-journal-nav-link"
+                href="https://shaynemcgregor.substack.com"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                <span className="signal-journal-nav-label">
+                    <span className="signal-journal-nav-text">The Signal Journal</span>
+                    <ExportOutlined aria-hidden="true" focusable="false" className="signal-journal-nav-icon" />
+                </span>
+            </a>
+        )
+    };
     const screens = useBreakpoint();
     const isMobile = screens.md;
+
+    const handleMenuClick = (info) => {
+        if (info.key === signalJournalKey) {
+            setSelectedKey(signalJournalKey);
+            return;
+        }
+
+        setSelectedKey(null);
+    };
+
     return (
     <>
     <a className="skip-link" href="#main">Skip to main content</a>
@@ -39,7 +67,9 @@ function SiteHeader(){
         <nav aria-label="Primary" style={{ flex: 1, minWidth: 0 }}>
             <Menu 
                 mode="horizontal"
-                items={navItems}
+                items={[...navItems, signalJournalItem]}
+                selectedKeys={selectedKey === signalJournalKey ? [signalJournalKey] : []}
+                onClick={handleMenuClick}
                 style={{ borderBottom: "none", justifyContent: "flex-end" }}
             />
         </nav>

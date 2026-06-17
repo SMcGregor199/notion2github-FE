@@ -1,4 +1,4 @@
-import type { ReactionApiState, ReactionKey } from "../types/index.ts";
+import type { ReactionApiErrorBody, ReactionErrorCode, ReactionApiState, ReactionKey } from "../types/index.ts";
 
 const REACTION_API_URL =
   import.meta.env.VITE_REACTION_API_URL ||
@@ -10,6 +10,16 @@ const SELECTED_PREFIX = "blogReactionSelected:";
 type StorageResult =
   | { available: true; visitorId: string }
   | { available: false; visitorId: null };
+
+class ReactionApiError extends Error {
+  constructor(
+    public readonly code: ReactionErrorCode | "unknown",
+    message: string,
+    public readonly status: number,
+  ) {
+    super(message);
+  }
+}
 
 function getReactionVisitor(): StorageResult {
   try {
@@ -83,11 +93,52 @@ async function submitReaction(params: {
 }
 
 async function parseReactionResponse(response: Response): Promise<ReactionApiState> {
-  const body = await response.json().catch(() => null);
+  const body = (await response.json().catch(() => null)) as ReactionApiState | ReactionApiErrorBody | null;
   if (!response.ok) {
-    throw new Error(body?.error || "Reaction request failed.");
+    const parsedError = parseReactionError(body);
+    throw new ReactionApiError(parsedError.code, parsedError.message, response.status);
   }
   return body as ReactionApiState;
+}
+
+function parseReactionError(body: ReactionApiState | ReactionApiErrorBody | null): {
+  code: ReactionErrorCode | "unknown";
+  message: string;
+} {
+  const error = (body as ReactionApiErrorBody | null)?.error;
+  if (typeof error === "string") {
+    return {
+      code: "unknown",
+      message: error,
+    };
+  }
+  if (error && typeof error === "object") {
+    return {
+      code: error.code ?? "unknown",
+      message: error.message ?? "Reaction request failed.",
+    };
+  }
+  return {
+    code: "unknown",
+    message: "Reaction request failed.",
+  };
+}
+
+function isReactionSetupUnavailable(error: unknown): boolean {
+  if (!(error instanceof ReactionApiError)) {
+    return false;
+  }
+  return [
+    "airtable_permission_denied",
+    "invalid_post_id",
+    "missing_aggregate_record",
+    "missing_aggregate_field",
+    "missing_aggregate_table",
+    "missing_env_var",
+    "missing_selection_field",
+    "missing_selection_table",
+    "reaction_setup_unavailable",
+  ].includes(error.code);
 }
 
 function createRandomToken(): string {
@@ -106,6 +157,8 @@ export {
   fetchReactionState,
   getReactionVisitor,
   getStoredSelectedReaction,
+  isReactionSetupUnavailable,
+  ReactionApiError,
   storeSelectedReaction,
   submitReaction,
 };

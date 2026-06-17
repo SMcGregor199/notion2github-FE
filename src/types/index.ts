@@ -21,4 +21,35 @@ type ReactionApiState = {
   selectedReaction: ReactionKey | null;
 };
 
-export type {ReactionsState,ReactionKey,Reaction, ShareData, ReactionCounts, ReactionApiState}
+type ReactionErrorCode =
+  | "airtable_permission_denied"
+  | "airtable_transient_failure"
+  | "invalid_post_id"
+  | "invalid_reaction"
+  | "invalid_request"
+  | "invalid_visitor_id"
+  | "missing_aggregate_record"
+  | "missing_aggregate_field"
+  | "missing_aggregate_table"
+  | "missing_env_var"
+  | "missing_selection_field"
+  | "missing_selection_table"
+  | "reaction_setup_unavailable";
+
+type ReactionApiErrorBody = {
+  error?: {
+    code?: ReactionErrorCode;
+    message?: string;
+  } | string;
+};
+
+export type {
+  ReactionsState,
+  ReactionKey,
+  Reaction,
+  ShareData,
+  ReactionCounts,
+  ReactionApiState,
+  ReactionErrorCode,
+  ReactionApiErrorBody,
+}

@@ -15,6 +15,7 @@ import {
   fetchReactionState,
   getReactionVisitor,
   getStoredSelectedReaction,
+  isReactionSetupUnavailable,
   storeSelectedReaction,
   submitReaction,
 } from "../utils/index.ts";
@@ -28,12 +29,6 @@ type ReactionsBarProps = {
 type VisitorState = {
   storageAvailable: boolean;
   visitorId: string | null;
-};
-
-const EMPTY_COUNTS: ReactionCounts = {
-  love: 0,
-  confusing: 0,
-  thoughtProvoking: 0,
 };
 
 const REACTION_OPTIONS: Array<{
@@ -64,7 +59,7 @@ const REACTION_OPTIONS: Array<{
 
 export default function ReactionsBar({ postId, slug, title }: ReactionsBarProps): JSX.Element {
   const stablePostId = postId || slug;
-  const [counts, setCounts] = useState<ReactionCounts>(EMPTY_COUNTS);
+  const [counts, setCounts] = useState<ReactionCounts | null>(null);
   const [selectedReaction, setSelectedReaction] = useState<ReactionKey | null>(() =>
     getStoredSelectedReaction(stablePostId),
   );
@@ -76,8 +71,9 @@ export default function ReactionsBar({ postId, slug, title }: ReactionsBarProps)
   const [isUpdating, setIsUpdating] = useState(false);
   const [statusMessage, setStatusMessage] = useState("Loading reactions.");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isApiUnavailable, setIsApiUnavailable] = useState(false);
 
-  const canReact = visitor.storageAvailable && Boolean(visitor.visitorId) && !isLoading;
+  const canReact = visitor.storageAvailable && Boolean(visitor.visitorId) && !isLoading && !isApiUnavailable && counts !== null;
 
   useEffect(() => {
     let cancelled = false;
@@ -90,6 +86,7 @@ export default function ReactionsBar({ postId, slug, title }: ReactionsBarProps)
     async function loadReactions(): Promise<void> {
       setIsLoading(true);
       setErrorMessage(null);
+      setIsApiUnavailable(false);
       try {
         const state = await fetchReactionState({
           postId: stablePostId,
@@ -103,12 +100,20 @@ export default function ReactionsBar({ postId, slug, title }: ReactionsBarProps)
         setSelectedReaction(state.selectedReaction);
         storeSelectedReaction(stablePostId, state.selectedReaction);
         setStatusMessage("Reactions loaded.");
-      } catch {
+      } catch (err) {
         if (cancelled) {
           return;
         }
-        setErrorMessage("Reaction counts could not be loaded.");
-        setStatusMessage("Reaction counts could not be loaded.");
+        setCounts(null);
+        setSelectedReaction(null);
+        if (isReactionSetupUnavailable(err)) {
+          setIsApiUnavailable(true);
+          setErrorMessage("Reactions are not available for this post yet.");
+          setStatusMessage("Reactions are not available for this post yet.");
+        } else {
+          setErrorMessage("Reaction counts could not be loaded.");
+          setStatusMessage("Reaction counts could not be loaded.");
+        }
       } finally {
         if (!cancelled) {
           setIsLoading(false);
@@ -151,9 +156,15 @@ export default function ReactionsBar({ postId, slug, title }: ReactionsBarProps)
       setSelectedReaction(state.selectedReaction);
       storeSelectedReaction(stablePostId, state.selectedReaction);
       setStatusMessage(state.selectedReaction ? `${labelFor(state.selectedReaction)} saved.` : "Reaction removed.");
-    } catch {
-      setErrorMessage("Reaction update failed. Counts were not changed.");
-      setStatusMessage("Reaction update failed. Counts were not changed.");
+    } catch (err) {
+      if (isReactionSetupUnavailable(err)) {
+        setIsApiUnavailable(true);
+        setErrorMessage("Reactions are not available for this post yet.");
+        setStatusMessage("Reactions are not available for this post yet.");
+      } else {
+        setErrorMessage("Reaction update failed. Counts were not changed.");
+        setStatusMessage("Reaction update failed. Counts were not changed.");
+      }
     } finally {
       setIsUpdating(false);
     }
@@ -184,7 +195,8 @@ export default function ReactionsBar({ postId, slug, title }: ReactionsBarProps)
       <Space className="reaction-bar__controls">
         {REACTION_OPTIONS.map((option) => {
           const isSelected = selectedReaction === option.key;
-          const count = counts[option.key] ?? 0;
+          const count = counts?.[option.key];
+          const countText = count === undefined ? "Not loaded" : String(count);
           return (
             <Button
               key={option.key}
@@ -192,14 +204,12 @@ export default function ReactionsBar({ postId, slug, title }: ReactionsBarProps)
               icon={isSelected ? option.activeIcon : option.inactiveIcon}
               onClick={() => void toggleReaction(option.key)}
               aria-pressed={isSelected}
-              aria-label={`${option.label}. ${count} ${count === 1 ? "reaction" : "reactions"}${
-                isSelected ? ". Selected." : "."
-              }`}
+              aria-label={buttonLabel(option.label, count, isSelected)}
               disabled={!canReact || isUpdating}
               loading={isUpdating && isSelected}
               className={isSelected ? "reaction-bar__button reaction-bar__button--selected" : "reaction-bar__button"}
             >
-              {option.label} <span aria-hidden="true">{count}</span>
+              {option.label} <span aria-hidden="true">{countText}</span>
             </Button>
           );
         })}
@@ -221,4 +231,11 @@ export default function ReactionsBar({ postId, slug, title }: ReactionsBarProps)
 
 function labelFor(reaction: ReactionKey): string {
   return REACTION_OPTIONS.find((option) => option.key === reaction)?.label ?? reaction;
+}
+
+function buttonLabel(label: string, count: number | undefined, isSelected: boolean): string {
+  if (count === undefined) {
+    return `${label}. Reaction count not loaded.`;
+  }
+  return `${label}. ${count} ${count === 1 ? "reaction" : "reactions"}${isSelected ? ". Selected." : "."}`;
 }

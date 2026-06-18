@@ -2,7 +2,8 @@ import { Card, Col, Flex, Row, Tag, Typography } from "antd";
 import { Link } from "react-router-dom";
 import BlogCardLong from "./BlogCardLong";
 
-const SECONDARY_POST_COUNT = 4;
+const SECONDARY_POST_COUNT = 3;
+const MORE_WRITING_POST_COUNT = 5;
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
     year: "numeric",
@@ -164,7 +165,10 @@ function FeaturedBlogPosts({ initialData }) {
     const posts = Array.isArray(initialData) ? initialData.filter(Boolean) : [];
     const featuredPost = posts[0];
     const secondaryPosts = posts.slice(1, SECONDARY_POST_COUNT + 1);
-    const remainingPosts = posts.slice(SECONDARY_POST_COUNT + 1);
+    const remainingPosts = posts.slice(
+        SECONDARY_POST_COUNT + 1,
+        SECONDARY_POST_COUNT + 1 + MORE_WRITING_POST_COUNT
+    );
 
     return (
         <section aria-labelledby="latest-writing-heading" className="homepage-blog-section">

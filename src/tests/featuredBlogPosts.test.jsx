@@ -39,7 +39,7 @@ function renderWithProviders(ui) {
 }
 
 describe("FeaturedBlogPosts", () => {
-    it("organizes sorted posts into featured, secondary, remaining, and archive links", () => {
+    it("organizes sorted posts into one featured, three secondary, and five more-writing links", () => {
         const posts = [
             makePost(1, { title: "Latest Post", link: "latest-post", thumbnail: "" }),
             makePost(2, { title: "Second Post", link: "second-post", thumbnail: "" }),
@@ -47,12 +47,20 @@ describe("FeaturedBlogPosts", () => {
             makePost(4, { title: "Fourth Post", link: "fourth-post", thumbnail: "" }),
             makePost(5, { title: "Fifth Post", link: "fifth-post", thumbnail: "" }),
             makePost(6, { title: "Sixth Post", link: "sixth-post", thumbnail: "" }),
+            makePost(7, { title: "Seventh Post", link: "seventh-post", thumbnail: "" }),
+            makePost(8, { title: "Eighth Post", link: "eighth-post", thumbnail: "" }),
+            makePost(9, { title: "Ninth Post", link: "ninth-post", thumbnail: "" }),
+            makePost(10, { title: "Tenth Post", link: "tenth-post", thumbnail: "" }),
         ];
 
         renderWithProviders(<FeaturedBlogPosts initialData={posts} />);
 
         expect(screen.getByRole("heading", { level: 2, name: /latest writing/i })).toBeInTheDocument();
         expect(screen.getByRole("heading", { level: 3, name: "Latest Post" })).toBeInTheDocument();
+        expect(screen.getByRole("heading", { level: 3, name: "Read Second Post" })).toBeInTheDocument();
+        expect(screen.getByRole("heading", { level: 3, name: "Read Third Post" })).toBeInTheDocument();
+        expect(screen.getByRole("heading", { level: 3, name: "Read Fourth Post" })).toBeInTheDocument();
+        expect(screen.queryByRole("heading", { level: 3, name: "Fifth Post" })).not.toBeInTheDocument();
         expect(screen.getByRole("heading", { level: 3, name: "More writing" })).toBeInTheDocument();
 
         const links = screen.getAllByRole("link");
@@ -63,6 +71,9 @@ describe("FeaturedBlogPosts", () => {
             "Read Fourth Post",
             "Read Fifth Post",
             "Read Sixth Post",
+            "Read Seventh Post",
+            "Read Eighth Post",
+            "Read Ninth Post",
             "View all blog posts",
         ]);
         expect(links.map((link) => link.getAttribute("href"))).toEqual([
@@ -72,8 +83,18 @@ describe("FeaturedBlogPosts", () => {
             "/blog/fourth-post",
             "/blog/fifth-post",
             "/blog/sixth-post",
+            "/blog/seventh-post",
+            "/blog/eighth-post",
+            "/blog/ninth-post",
             "/blog",
         ]);
+
+        const postHrefs = links
+            .map((link) => link.getAttribute("href"))
+            .filter((href) => href !== "/blog");
+
+        expect(new Set(postHrefs).size).toBe(postHrefs.length);
+        expect(screen.queryByRole("link", { name: "Read Tenth Post" })).not.toBeInTheDocument();
     });
 
     it("uses post titles as thumbnail alt text for featured and secondary posts", () => {

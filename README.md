@@ -31,12 +31,14 @@ React/Vite frontend for `shaynemcgregor.dev`.
 - `public/rss.xml` is tracked and should be changed intentionally.
 - `dist/` is ignored local build output.
 - Do not commit local caches or build output unless the change is explicitly about a tracked artifact.
-- `public/rss.xml` is the live RSS artifact for the public site.
-- The Go RSS tooling in `xml-feed-gen` is experimental/prototype tooling and is not the authoritative source for the live feed right now.
+- `public/rss.xml` is the tracked rollback fallback RSS artifact for the public site.
+- The header links to `/rss.xml` with a same-tab RSS icon link.
+- Production generated RSS is implemented in backend/RSS tooling and public `/rss.xml` is routed to the generated backend feed.
+- Keep the tracked static RSS file unless an approved rollback/fallback change says otherwise.
 
 ## Relation To The Other Repos
 
 - Depends on `notion2github-BE` for blog JSON.
 - Depends on `notion2github-BE` for image URLs.
 - Shares the blog data contract with `notion2github-BE` and `xml-feed-gen`.
-- Has the tracked live RSS artifact in `public/rss.xml`.
+- Has the tracked rollback fallback RSS artifact in `public/rss.xml`.

@@ -14,6 +14,7 @@ Frontend for `shaynemcgregor.dev`.
 - Consumes backend data from `notion2github-BE`.
 - Do not change frontend data expectations without checking the backend contract.
 - `public/rss.xml` is tracked.
+- `public/rss.xml` remains the tracked rollback fallback RSS artifact; public `/rss.xml` is routed to backend-generated RSS after approved activation.
 - `dist/` is ignored build output and should not be committed.
 - Do not inspect `.env` or secret files.
 - For frontend UI work, inspect existing components and styles before proposing changes. Preserve current Ant Design, global CSS, Emotion, inline style, layout, responsive, accessibility, and motion patterns where appropriate.
@@ -37,4 +38,5 @@ Frontend for `shaynemcgregor.dev`.
 - State which files changed.
 - State which commands ran and which were skipped.
 - Call out any backend contract or RSS artifact implications.
+- Header RSS links should preserve `/rss.xml` as the canonical same-tab feed URL.
 - Do not create commits, branches, PRs, releases, or tags unless Shayne asks.

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Layout, Menu, Button, Avatar, Flex, Typography, Grid } from "antd";  
-import { ExportOutlined, GithubOutlined, LinkedinOutlined } from "@ant-design/icons";
+import { ExportOutlined, GithubOutlined, LinkedinOutlined, WifiOutlined } from "@ant-design/icons";
 const { useBreakpoint } = Grid;
 import { Link } from "react-router-dom";
 
@@ -33,7 +33,8 @@ function SiteHeader(){
         )
     };
     const screens = useBreakpoint();
-    const isMobile = screens.md;
+    const showIdentity = screens.md;
+    const compactHeader = !screens.md;
 
     const handleMenuClick = (info) => {
         if (info.key === signalJournalKey) {
@@ -47,9 +48,9 @@ function SiteHeader(){
     return (
     <>
     <a className="skip-link" href="#main">Skip to main content</a>
-    <Layout.Header style={{ background: "#fff", paddingInline: 24, }}>
-        <Flex align="center"  gap={16}>
-        { isMobile &&
+    <Layout.Header style={{ background: "#fff", paddingInline: compactHeader ? 8 : 24 }}>
+        <Flex align="center" gap={compactHeader ? 8 : 16} style={{ width: "100%" }}>
+        { showIdentity &&
             <>
             <Avatar
             src="/profile-pic.png"
@@ -64,32 +65,47 @@ function SiteHeader(){
             </>
         }
         
-        <nav aria-label="Primary" style={{ flex: 1, minWidth: 0 }}>
+        <nav
+            aria-label="Primary"
+            style={{
+                flex: compactHeader ? "0 1 136px" : "1 1 0",
+                maxWidth: compactHeader ? 136 : undefined,
+                minWidth: 0,
+                overflow: compactHeader ? "hidden" : undefined,
+            }}
+        >
             <Menu 
                 mode="horizontal"
                 items={[...navItems, signalJournalItem]}
                 selectedKeys={selectedKey === signalJournalKey ? [signalJournalKey] : []}
                 onClick={handleMenuClick}
-                style={{ borderBottom: "none", justifyContent: "flex-end" }}
+                style={{ borderBottom: "none", justifyContent: compactHeader ? "flex-start" : "flex-end", minWidth: 0 }}
             />
         </nav>
-        <Button
-            type="default"
-            icon={<LinkedinOutlined />}
-            href="https://linkedin.com/in/shayne-mcgregor"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Open my LinkedIn profile in a new tab"
-        >
-        </Button>
-        <Button
-            type="default"
-            icon={<GithubOutlined />}
-            href="https://github.com/SMcGregor199"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Open my GitHub profile in a new tab"
-        />
+        <Flex align="center" gap={compactHeader ? 6 : 8} style={{ flex: "0 0 auto" }}>
+            <Button
+                type="default"
+                icon={<GithubOutlined />}
+                href="https://github.com/SMcGregor199"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Open my GitHub profile in a new tab"
+            />
+            <Button
+                type="default"
+                icon={<WifiOutlined />}
+                href="/rss.xml"
+                aria-label="Open RSS feed"
+            />
+            <Button
+                type="default"
+                icon={<LinkedinOutlined />}
+                href="https://linkedin.com/in/shayne-mcgregor"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Open my LinkedIn profile in a new tab"
+            />
+        </Flex>
         
         </Flex>
     </Layout.Header>

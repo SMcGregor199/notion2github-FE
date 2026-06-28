@@ -5,6 +5,7 @@ import BlogPage from "./pages/Blog";
 import BlogDetail from "./pages/BlogDetail";
 import Contact from "./pages/Contact";
 import CaseStudies from "./pages/CaseStudies";
+import NotFound from "./pages/NotFound";
 function App({initialData, isBlogDataLoading = false}) {
   
   return (
@@ -16,8 +17,7 @@ function App({initialData, isBlogDataLoading = false}) {
         <Route path="/blog/:slug" element={<BlogDetail initialData={initialData}/>} />
         <Route path="/contact" element={<Contact/>}/>
         <Route path="/case-studies" element={<CaseStudies />} />
-        {/* 404 */}
-        <Route path="*" element={<div style={{ padding: 24 }}>Not Found</div>} />
+        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );

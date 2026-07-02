@@ -19,6 +19,11 @@ const DEFAULT_POSTS_URL = "https://shaynemcgregordev-be.netlify.app/.netlify/fun
 const FETCH_TIMEOUT_MS = 5000;
 const CARD_WIDTH = 1200;
 const CARD_HEIGHT = 630;
+const RIGHT_IMAGE_WIDTH = 486;
+const RIGHT_IMAGE_HEIGHT = 330;
+const RIGHT_IMAGE_LEFT = 676;
+const RIGHT_IMAGE_TOP = 96;
+const RIGHT_IMAGE_RADIUS = 28;
 const PROFILE_IMAGE_PATH = path.resolve("public/profile-pic.png");
 const FALLBACK_PANEL_IMAGE_PATH = path.resolve("public/background-v2.png");
 
@@ -155,14 +160,12 @@ function createBaseCardSvg(metadata) {
             <rect width="${CARD_WIDTH}" height="${CARD_HEIGHT}" fill="#f7f4ef"/>
             <rect x="650" y="0" width="550" height="548" fill="#ece7df"/>
             <rect x="0" y="548" width="${CARD_WIDTH}" height="82" fill="#e7e3dc"/>
-            <rect x="676" y="38" width="486" height="472" rx="28" fill="#d8d1c7"/>
+            <rect x="${RIGHT_IMAGE_LEFT}" y="${RIGHT_IMAGE_TOP}" width="${RIGHT_IMAGE_WIDTH}" height="${RIGHT_IMAGE_HEIGHT}" rx="${RIGHT_IMAGE_RADIUS}" fill="#d8d1c7"/>
             <text x="72" y="78" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="2" fill="#7a4d36">${escapeSvg(metadata.siteName.toUpperCase())}</text>
             <text x="72" y="154" font-family="Georgia, 'Times New Roman', serif" font-size="52" font-weight="700" fill="#1f1b18">${renderTitleTspans(titleLines, 72, 154, 58)}</text>
             <text x="146" y="454" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700" fill="#2a2520">Shayne McGregor</text>
             <text x="146" y="484" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="500" fill="#756d64">Writing on software, learning, and the web</text>
-            <text x="72" y="598" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#6d6258">${escapeSvg(metadata.siteName)}</text>
-            <text x="292" y="598" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700" fill="#9a9288">/</text>
-            <text x="330" y="598" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="600" fill="#4e4740">${renderFooterTitle(metadata.title)}</text>
+            <text x="72" y="598" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700" fill="#4e4740">${renderFooterTitle(metadata.title)}</text>
         </svg>
     `);
 }
@@ -173,20 +176,23 @@ async function renderShareCard(metadata, outputPath) {
     }
 
     const baseSvg = createBaseCardSvg(metadata);
-    const panelImage = await createRoundedImage(await loadPanelImage(metadata), 486, 472, 28);
+    const panelImage = await createRoundedImage(
+        await loadPanelImage(metadata),
+        RIGHT_IMAGE_WIDTH,
+        RIGHT_IMAGE_HEIGHT,
+        RIGHT_IMAGE_RADIUS
+    );
     const profileImage = await createCircularImage(await readFile(PROFILE_IMAGE_PATH), 56);
 
     await mkdir(path.dirname(outputPath), { recursive: true });
     await sharp(baseSvg)
         .composite([
-            { input: panelImage, left: 676, top: 38 },
+            { input: panelImage, left: RIGHT_IMAGE_LEFT, top: RIGHT_IMAGE_TOP },
             { input: profileImage, left: 72, top: 426 },
             {
                 input: Buffer.from(`
                     <svg width="${CARD_WIDTH}" height="${CARD_HEIGHT}" viewBox="0 0 ${CARD_WIDTH} ${CARD_HEIGHT}" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="100" cy="454" r="30" fill="none" stroke="#f7f4ef" stroke-width="4"/>
-                        <rect x="716" y="462" width="184" height="54" rx="27" fill="#1f1b18"/>
-                        <text x="754" y="497" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" letter-spacing="1.5" fill="#fff">READ ARTICLE</text>
                     </svg>
                 `),
                 left: 0,

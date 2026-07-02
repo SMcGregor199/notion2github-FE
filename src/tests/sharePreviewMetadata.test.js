@@ -2,8 +2,11 @@ import { describe, expect, it } from "vitest";
 import {
     buildAllSharePreviewMetadata,
     buildSharePreviewMetadata,
+    getSharePreviewImageOutputPath,
+    getSharePreviewImageUrl,
     getSharePreviewOutputPath,
     injectSharePreviewHead,
+    prepareSharePreviewTitleLines,
     renderSharePreviewHead,
 } from "../utils/sharePreviewMetadata";
 
@@ -34,12 +37,15 @@ describe("share preview metadata", () => {
             description: "A specific summary for the post.",
             canonicalUrl: "https://shaynemcgregor.dev/blog/a-useful-post",
             siteName: "shaynemcgregor.dev",
-            imageUrl: "https://example.com/share.webp",
-            imageAlt: "A Useful Post preview image",
+            imageUrl: "https://shaynemcgregor.dev/share/blog/a-useful-post.png",
+            imageAlt: "A Useful Post social preview card",
+            sourceImageUrl: "https://example.com/share.webp",
             publishedTime: "2025-10-27T18:15:00.000Z",
             modifiedTime: "2025-10-28T16:20:00.000Z",
             tag: "EdTech",
             twitterCard: "summary_large_image",
+            imageWidth: 1200,
+            imageHeight: 630,
         });
     });
 
@@ -65,8 +71,10 @@ describe("share preview metadata", () => {
         });
 
         expect(metadata.description).toBe("The first paragraph should be available as a fallback.");
-        expect(metadata.imageUrl).toBe("https://shaynemcgregor.dev/profile-pic.png");
-        expect(metadata.imageAlt).toBe("Shayne McGregor");
+        expect(metadata.imageUrl).toBe("https://shaynemcgregor.dev/share/blog/a-useful-post.png");
+        expect(metadata.sourceImageUrl).toBe("");
+        expect(metadata.fallbackImageUrl).toBe("https://shaynemcgregor.dev/profile-pic.png");
+        expect(metadata.imageAlt).toBe("A Useful Post social preview card");
     });
 
     it("falls back to a site-level description when summary and body text are missing", () => {
@@ -96,6 +104,31 @@ describe("share preview metadata", () => {
 
     it("returns the expected static route output path", () => {
         expect(getSharePreviewOutputPath("a-useful-post")).toBe("blog/a-useful-post/index.html");
+    });
+
+    it("returns the expected generated share-card image path and absolute URL", () => {
+        expect(getSharePreviewImageOutputPath("a-useful-post")).toBe("share/blog/a-useful-post.png");
+        expect(getSharePreviewImageUrl("a-useful-post")).toBe("https://shaynemcgregor.dev/share/blog/a-useful-post.png");
+    });
+
+    it("renders generated share-card image metadata with dimensions", () => {
+        const metadata = buildSharePreviewMetadata(basePost);
+        const head = renderSharePreviewHead(metadata);
+
+        expect(head).toContain('property="og:image" content="https://shaynemcgregor.dev/share/blog/a-useful-post.png"');
+        expect(head).toContain('property="og:image:width" content="1200"');
+        expect(head).toContain('property="og:image:height" content="630"');
+        expect(head).toContain('name="twitter:image" content="https://shaynemcgregor.dev/share/blog/a-useful-post.png"');
+    });
+
+    it("prepares long title lines without exceeding the card title line limit", () => {
+        const lines = prepareSharePreviewTitleLines(
+            "A very long article title about educational technology, software culture, and readable preview cards",
+            { maxLines: 4, maxCharsPerLine: 20 }
+        );
+
+        expect(lines.length).toBeLessThanOrEqual(4);
+        expect(lines.at(-1)).toMatch(/\.\.\.$/);
     });
 
     it("injects metadata before the SPA script executes", () => {

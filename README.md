@@ -9,12 +9,12 @@ React/Vite frontend for `shaynemcgregor.dev`.
 - Caches blog data and version metadata in browser `localStorage`.
 - Renders blog list and blog detail pages from the shared backend contract.
 - Renders backend-hosted Notion image URLs.
-- Generates crawler-visible, per-post share preview HTML for `/blog/:slug` routes during production builds.
+- Generates crawler-visible, per-post share preview HTML and 1200x630 share-card images for `/blog/:slug` routes during production builds.
 
 ## Commands
 
 - `npm run dev`: start the Vite dev server.
-- `npm run build`: build the frontend and generate per-post share preview HTML in `dist/blog/<slug>/index.html`.
+- `npm run build`: build the frontend, generate per-post share preview HTML in `dist/blog/<slug>/index.html`, and generate social share-card images in `dist/share/blog/<slug>.png`.
 - `npm run lint`: run ESLint.
 - `npm run test`: run Vitest.
 - `npm run test:ui`: run Vitest UI.
@@ -27,6 +27,7 @@ React/Vite frontend for `shaynemcgregor.dev`.
 - The repo has local `.netlify/` state in the workspace, but no clear repo-level Netlify configuration was found in the audit.
 - The current source of truth for runtime blog data is the backend contract, not local static content.
 - The share preview build step reads the stored backend JSON endpoint at `/.netlify/functions/blog-posts-json`; it does not use the refresh/write-oriented `notion-blog-data` endpoint.
+- Share-card images are generated as PNG files at 1200x630 using existing build-time `sharp` tooling. The card layout uses `public/profile-pic.png` for the circular author image and the post thumbnail for the dominant right-side visual when available.
 - Optional non-secret build variables:
   - `SHARE_PREVIEW_POSTS_URL`: override the stored blog JSON URL.
   - `SHARE_PREVIEW_SITE_URL`: override the canonical site URL. Defaults to `https://shaynemcgregor.dev`.

@@ -1,17 +1,30 @@
 /* global process */
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { Buffer } from "node:buffer";
+import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import sharp from "sharp";
 import { blogPostsData } from "../src/data/notionBlogData.js";
 import {
     DEFAULT_FALLBACK_IMAGE_URL,
     DEFAULT_SITE_URL,
     buildAllSharePreviewMetadata,
+    escapeHtml,
+    getSharePreviewImageOutputPath,
     getSharePreviewOutputPath,
     injectSharePreviewHead,
+    prepareSharePreviewTitleLines,
 } from "../src/utils/sharePreviewMetadata.js";
 
 const DEFAULT_POSTS_URL = "https://shaynemcgregordev-be.netlify.app/.netlify/functions/blog-posts-json";
 const FETCH_TIMEOUT_MS = 5000;
+const CARD_WIDTH = 1200;
+const CARD_HEIGHT = 630;
+const PROFILE_IMAGE_PATH = path.resolve("public/profile-pic.png");
+const FALLBACK_PANEL_IMAGE_PATH = path.resolve("public/background-v2.png");
+
+function escapeSvg(value) {
+    return escapeHtml(value);
+}
 
 function getEnvBoolean(name, defaultValue) {
     const value = process.env[name];
@@ -47,6 +60,143 @@ async function fetchStoredBlogPosts(postsUrl) {
     }
 }
 
+async function fileExists(filePath) {
+    try {
+        await access(filePath);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+async function fetchImageBuffer(imageUrl) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
+    try {
+        const response = await fetch(imageUrl, {
+            headers: { accept: "image/avif,image/webp,image/png,image/jpeg,image/*" },
+            signal: controller.signal,
+        });
+
+        if (!response.ok) {
+            throw new Error(`image request returned HTTP ${response.status}`);
+        }
+
+        return Buffer.from(await response.arrayBuffer());
+    } finally {
+        clearTimeout(timeoutId);
+    }
+}
+
+async function loadPanelImage(metadata) {
+    if (metadata.sourceImageUrl) {
+        try {
+            return await fetchImageBuffer(metadata.sourceImageUrl);
+        } catch (error) {
+            console.warn(`[share-previews] Thumbnail unavailable for ${metadata.slug} (${error.message}); using local fallback panel image.`);
+        }
+    }
+
+    if (await fileExists(FALLBACK_PANEL_IMAGE_PATH)) {
+        return readFile(FALLBACK_PANEL_IMAGE_PATH);
+    }
+
+    return readFile(PROFILE_IMAGE_PATH);
+}
+
+function createRoundedMask(width, height, radius) {
+    return Buffer.from(`
+        <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+            <rect width="${width}" height="${height}" rx="${radius}" ry="${radius}" fill="#fff"/>
+        </svg>
+    `);
+}
+
+async function createRoundedImage(inputBuffer, width, height, radius) {
+    const imageBuffer = await sharp(inputBuffer)
+        .resize(width, height, { fit: "cover", position: "center" })
+        .png()
+        .toBuffer();
+    const maskBuffer = createRoundedMask(width, height, radius);
+
+    return sharp(imageBuffer)
+        .composite([{ input: maskBuffer, blend: "dest-in" }])
+        .png()
+        .toBuffer();
+}
+
+async function createCircularImage(inputBuffer, size) {
+    return createRoundedImage(inputBuffer, size, size, size / 2);
+}
+
+function renderTitleTspans(lines, x, y, lineHeight) {
+    return lines
+        .map((line, index) => {
+            const dy = index === 0 ? 0 : lineHeight;
+            return `<tspan x="${x}" dy="${dy}">${escapeSvg(line)}</tspan>`;
+        })
+        .join("");
+}
+
+function renderFooterTitle(title) {
+    const normalizedTitle = title.length > 76 ? `${title.slice(0, 73).trim()}...` : title;
+    return escapeSvg(normalizedTitle);
+}
+
+function createBaseCardSvg(metadata) {
+    const titleLines = prepareSharePreviewTitleLines(metadata.title, {
+        maxLines: 4,
+        maxCharsPerLine: 14,
+    });
+
+    return Buffer.from(`
+        <svg width="${CARD_WIDTH}" height="${CARD_HEIGHT}" viewBox="0 0 ${CARD_WIDTH} ${CARD_HEIGHT}" xmlns="http://www.w3.org/2000/svg">
+            <rect width="${CARD_WIDTH}" height="${CARD_HEIGHT}" fill="#f7f4ef"/>
+            <rect x="650" y="0" width="550" height="548" fill="#ece7df"/>
+            <rect x="0" y="548" width="${CARD_WIDTH}" height="82" fill="#e7e3dc"/>
+            <rect x="676" y="38" width="486" height="472" rx="28" fill="#d8d1c7"/>
+            <text x="72" y="78" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="2" fill="#7a4d36">${escapeSvg(metadata.siteName.toUpperCase())}</text>
+            <text x="72" y="154" font-family="Georgia, 'Times New Roman', serif" font-size="52" font-weight="700" fill="#1f1b18">${renderTitleTspans(titleLines, 72, 154, 58)}</text>
+            <text x="146" y="454" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700" fill="#2a2520">Shayne McGregor</text>
+            <text x="146" y="484" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="500" fill="#756d64">Writing on software, learning, and the web</text>
+            <text x="72" y="598" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#6d6258">${escapeSvg(metadata.siteName)}</text>
+            <text x="292" y="598" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700" fill="#9a9288">/</text>
+            <text x="330" y="598" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="600" fill="#4e4740">${renderFooterTitle(metadata.title)}</text>
+        </svg>
+    `);
+}
+
+async function renderShareCard(metadata, outputPath) {
+    if (!(await fileExists(PROFILE_IMAGE_PATH))) {
+        throw new Error(`Required profile image asset missing: ${PROFILE_IMAGE_PATH}`);
+    }
+
+    const baseSvg = createBaseCardSvg(metadata);
+    const panelImage = await createRoundedImage(await loadPanelImage(metadata), 486, 472, 28);
+    const profileImage = await createCircularImage(await readFile(PROFILE_IMAGE_PATH), 56);
+
+    await mkdir(path.dirname(outputPath), { recursive: true });
+    await sharp(baseSvg)
+        .composite([
+            { input: panelImage, left: 676, top: 38 },
+            { input: profileImage, left: 72, top: 426 },
+            {
+                input: Buffer.from(`
+                    <svg width="${CARD_WIDTH}" height="${CARD_HEIGHT}" viewBox="0 0 ${CARD_WIDTH} ${CARD_HEIGHT}" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="100" cy="454" r="30" fill="none" stroke="#f7f4ef" stroke-width="4"/>
+                        <rect x="716" y="462" width="184" height="54" rx="27" fill="#1f1b18"/>
+                        <text x="754" y="497" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" letter-spacing="1.5" fill="#fff">READ ARTICLE</text>
+                    </svg>
+                `),
+                left: 0,
+                top: 0,
+            },
+        ])
+        .png()
+        .toFile(outputPath);
+}
+
 async function loadPosts() {
     const postsUrl = process.env.SHARE_PREVIEW_POSTS_URL || DEFAULT_POSTS_URL;
     const strictSource = getEnvBoolean("SHARE_PREVIEW_STRICT_SOURCE", false);
@@ -79,13 +229,16 @@ async function main() {
 
     for (const metadata of metadataList) {
         const relativeOutputPath = getSharePreviewOutputPath(metadata.slug);
+        const relativeImageOutputPath = getSharePreviewImageOutputPath(metadata.slug);
         const outputPath = path.join(distDir, relativeOutputPath);
+        const imageOutputPath = path.join(distDir, relativeImageOutputPath);
+        await renderShareCard(metadata, imageOutputPath);
         const prerenderedHtml = injectSharePreviewHead(appShell, metadata);
         await mkdir(path.dirname(outputPath), { recursive: true });
         await writeFile(outputPath, prerenderedHtml, "utf8");
     }
 
-    console.log(`[share-previews] Generated ${metadataList.length} blog post preview HTML files from ${source}.`);
+    console.log(`[share-previews] Generated ${metadataList.length} blog post preview HTML files and share-card images from ${source}.`);
 }
 
 main().catch((error) => {

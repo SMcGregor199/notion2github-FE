@@ -33,7 +33,7 @@ function getFirstBodyParagraph(body) {
         }
 
         for (const paragraph of section.paras) {
-            const normalized = normalizeText(paragraph);
+            const normalized = normalizeParagraphText(paragraph);
             if (normalized) {
                 return normalized;
             }
@@ -41,6 +41,24 @@ function getFirstBodyParagraph(body) {
     }
 
     return "";
+}
+
+function normalizeParagraphText(paragraph) {
+    if (typeof paragraph === "string") {
+        return normalizeText(paragraph);
+    }
+
+    if (!Array.isArray(paragraph)) {
+        return "";
+    }
+
+    return normalizeText(paragraph.map((part) => {
+        if (typeof part === "string") {
+            return part;
+        }
+
+        return typeof part?.text === "string" ? part.text : "";
+    }).join(""));
 }
 
 function isAbsoluteHttpUrl(value) {

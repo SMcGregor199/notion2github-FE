@@ -28,10 +28,15 @@ function BlogDetail({initialData}) {
         day: "numeric",
         });
     }
-    const articleContent = body.map((section,i)=>{
+    const bodySections = Array.isArray(body) ? body : [];
+    const articleContent = bodySections.map((section,i)=>{
         const {heading, paras} = section;
-        const paragraphs = paras.map((paragraph, paragraphIndex)=>{
-            return <Typography.Paragraph key={`${i}-${paragraphIndex}`} style={{lineHeight: 2}}>{paragraph}</Typography.Paragraph>
+        const paragraphs = (Array.isArray(paras) ? paras : []).map((paragraph, paragraphIndex)=>{
+            return (
+                <Typography.Paragraph key={`${i}-${paragraphIndex}`} style={{lineHeight: 2}}>
+                    {renderParagraphContent(paragraph, `${i}-${paragraphIndex}`)}
+                </Typography.Paragraph>
+            )
         });
         return(
             <Fragment key={`${heading}-${i}`}>
@@ -65,6 +70,53 @@ function BlogDetail({initialData}) {
                 ) : null}
             </article>     
     );
+}
+
+function renderParagraphContent(paragraph, keyPrefix) {
+    if (typeof paragraph === "string") {
+        return paragraph;
+    }
+
+    if (!Array.isArray(paragraph)) {
+        return "";
+    }
+
+    return paragraph.map((part, index) => {
+        const text = typeof part?.text === "string" ? part.text : "";
+        const href = safeBodyLinkHref(part?.href);
+        if (!href) {
+            return <Fragment key={`${keyPrefix}-${index}`}>{text}</Fragment>;
+        }
+
+        const opensNewTab = isExternalHttpLink(href);
+        return (
+            <a
+                key={`${keyPrefix}-${index}`}
+                href={href}
+                target={opensNewTab ? "_blank" : undefined}
+                rel={opensNewTab ? "noopener noreferrer" : undefined}
+            >
+                {text}
+            </a>
+        );
+    });
+}
+
+function safeBodyLinkHref(href) {
+    if (typeof href !== "string") {
+        return "";
+    }
+
+    const trimmedHref = href.trim();
+    if (!trimmedHref) {
+        return "";
+    }
+
+    return /^(https?:\/\/|mailto:|tel:|\/(?!\/)|#)/i.test(trimmedHref) ? trimmedHref : "";
+}
+
+function isExternalHttpLink(href) {
+    return /^https?:\/\//i.test(href);
 }
 
 export default BlogDetail;

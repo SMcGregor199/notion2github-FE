@@ -112,4 +112,62 @@ describe("Notion image rendering", () => {
 
         expect(screen.queryByRole("img", { name: postWithoutImage.title })).not.toBeInTheDocument();
     });
+
+    it("renders linked Notion body text as an anchor", () => {
+        const postWithBodyLink = {
+            ...postWithoutImage,
+            id: "post-3",
+            link: "linked-body-post",
+            body: [
+                {
+                    heading: "Section",
+                    paras: [[
+                        { text: "Read " },
+                        { text: "the source", href: "https://example.com/source" },
+                        { text: " for more." },
+                    ]],
+                },
+            ],
+        };
+
+        renderWithProviders(
+            <Routes>
+                <Route path="/blog/:slug" element={<BlogDetail initialData={[postWithBodyLink]} />} />
+            </Routes>,
+            { route: "/blog/linked-body-post" }
+        );
+
+        const link = screen.getByRole("link", { name: "the source" });
+
+        expect(link.parentElement).toHaveTextContent("Read the source for more.");
+        expect(link).toHaveAttribute(
+            "href",
+            "https://example.com/source"
+        );
+        expect(link).toHaveAttribute("target", "_blank");
+    });
+
+    it("renders unsafe Notion body links as text", () => {
+        const postWithUnsafeBodyLink = {
+            ...postWithoutImage,
+            id: "post-4",
+            link: "unsafe-body-post",
+            body: [
+                {
+                    heading: "Section",
+                    paras: [[{ text: "Do not execute", href: "javascript:alert(1)" }]],
+                },
+            ],
+        };
+
+        renderWithProviders(
+            <Routes>
+                <Route path="/blog/:slug" element={<BlogDetail initialData={[postWithUnsafeBodyLink]} />} />
+            </Routes>,
+            { route: "/blog/unsafe-body-post" }
+        );
+
+        expect(screen.getByText("Do not execute")).toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: "Do not execute" })).not.toBeInTheDocument();
+    });
 });

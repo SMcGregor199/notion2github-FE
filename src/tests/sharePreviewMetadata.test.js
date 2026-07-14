@@ -77,6 +77,21 @@ describe("share preview metadata", () => {
         expect(metadata.imageAlt).toBe("A Useful Post social preview card");
     });
 
+    it("uses rich body paragraph text as fallback metadata", () => {
+        const metadata = buildSharePreviewMetadata({
+            ...basePost,
+            summary: "",
+            body: [
+                {
+                    heading: "Intro",
+                    paras: [[{ text: "Read " }, { text: "the source", href: "https://example.com/source" }, { text: "." }]],
+                },
+            ],
+        });
+
+        expect(metadata.description).toBe("Read the source.");
+    });
+
     it("falls back to a site-level description when summary and body text are missing", () => {
         const metadata = buildSharePreviewMetadata({
             ...basePost,

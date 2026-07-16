@@ -19,7 +19,9 @@
     "antd": "^5.27.4",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^7.9.4",
+    "remark-gfm": "^4.0.1",
     "sharp": "^0.34.5"
   },
   "devDependencies": {

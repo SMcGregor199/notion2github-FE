@@ -28,19 +28,42 @@ function getFirstBodyParagraph(body) {
     }
 
     for (const section of body) {
-        if (!Array.isArray(section?.paras)) {
-            continue;
+        if (Array.isArray(section?.paras)) {
+            for (const paragraph of section.paras) {
+                const normalized = normalizeParagraphText(paragraph);
+                if (normalized) {
+                    return normalized;
+                }
+            }
         }
 
-        for (const paragraph of section.paras) {
-            const normalized = normalizeParagraphText(paragraph);
-            if (normalized) {
-                return normalized;
+        if (Array.isArray(section?.blocks)) {
+            for (const block of section.blocks) {
+                const normalized = normalizeBlockText(block);
+                if (normalized) {
+                    return normalized;
+                }
             }
         }
     }
 
     return "";
+}
+
+function descriptionFromMarkdown(markdown) {
+    if (typeof markdown !== "string") {
+        return "";
+    }
+
+    const normalized = markdown
+        .replace(/```[\s\S]*?```/g, " ")
+        .replace(/!\[[^\]]*]\([^)]*\)/g, " ")
+        .replace(/\[([^\]]+)]\([^)]*\)/g, "$1")
+        .replace(/[#>*_`~\-]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+
+    return normalizeText(normalized);
 }
 
 function normalizeParagraphText(paragraph) {
@@ -59,6 +82,18 @@ function normalizeParagraphText(paragraph) {
 
         return typeof part?.text === "string" ? part.text : "";
     }).join(""));
+}
+
+function normalizeBlockText(block) {
+    if (!block || typeof block !== "object") {
+        return "";
+    }
+
+    if (["divider", "image"].includes(block.type)) {
+        return normalizeParagraphText(block.caption);
+    }
+
+    return normalizeParagraphText(block.text) || normalizeParagraphText(block.caption);
 }
 
 function isAbsoluteHttpUrl(value) {
@@ -194,7 +229,7 @@ export function buildSharePreviewMetadata(post, options = {}) {
     const siteUrl = (normalizeText(options.siteUrl) || DEFAULT_SITE_URL).replace(/\/+$/, "");
     const fallbackImageUrl = normalizeText(options.fallbackImageUrl) || DEFAULT_FALLBACK_IMAGE_URL;
     const summary = normalizeText(post?.summary);
-    const bodyDescription = getFirstBodyParagraph(post?.body);
+    const bodyDescription = descriptionFromMarkdown(post?.bodyMarkdown) || getFirstBodyParagraph(post?.body);
     const description = truncateDescription(summary || bodyDescription || DEFAULT_DESCRIPTION);
     const thumbnail = normalizeText(post?.thumbnail);
     const hasPostImage = isAbsoluteHttpUrl(thumbnail);

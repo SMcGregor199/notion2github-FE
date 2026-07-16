@@ -84,12 +84,46 @@ describe("share preview metadata", () => {
             body: [
                 {
                     heading: "Intro",
-                    paras: [[{ text: "Read " }, { text: "the source", href: "https://example.com/source" }, { text: "." }]],
+                    paras: [[
+                        { text: "Read " },
+                        { text: "the source", href: "https://example.com/source", bold: true },
+                        { text: "." },
+                    ]],
                 },
             ],
         });
 
         expect(metadata.description).toBe("Read the source.");
+    });
+
+    it("uses bodyMarkdown as fallback metadata before legacy body content", () => {
+        const metadata = buildSharePreviewMetadata({
+            ...basePost,
+            summary: "",
+            bodyMarkdown: "## Intro\n\nRead **this guide** with [context](https://example.com).",
+            body: [{ heading: "", paras: ["Legacy fallback."] }],
+        });
+
+        expect(metadata.description).toBe("Intro Read this guide with context.");
+    });
+
+    it("uses block body text as fallback metadata when legacy paragraphs are absent", () => {
+        const metadata = buildSharePreviewMetadata({
+            ...basePost,
+            summary: "",
+            body: [
+                {
+                    heading: "",
+                    paras: [],
+                    blocks: [
+                        { type: "divider" },
+                        { type: "quote", text: [{ text: "Block " }, { text: "fallback", bold: true }, { text: "." }] },
+                    ],
+                },
+            ],
+        });
+
+        expect(metadata.description).toBe("Block fallback.");
     });
 
     it("falls back to a site-level description when summary and body text are missing", () => {

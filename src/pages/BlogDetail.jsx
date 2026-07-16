@@ -1,6 +1,8 @@
 import { Fragment } from "react";
 import { useParams } from "react-router-dom";
 import {Typography,Tag,Image} from "antd";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import PublishUpdateDates from "../components/PublishUpdateDates";
 import ReactionsBar from "../components/ReactionsBar.tsx";
 
@@ -29,7 +31,18 @@ function BlogDetail({initialData}) {
         });
     }
     const bodySections = Array.isArray(body) ? body : [];
-    const articleContent = bodySections.map((section,i)=>{
+    const articleContent = post.bodyMarkdown
+        ? renderMarkdownBody(post.bodyMarkdown, post.title)
+        : bodySections.map((section,i)=>{
+        const blocks = Array.isArray(section?.blocks) ? section.blocks : [];
+        if (blocks.length > 0) {
+            return (
+                <Fragment key={`blocks-${i}`}>
+                    {blocks.map((block, blockIndex) => renderBodyBlock(block, `${i}-${blockIndex}`, post.title))}
+                </Fragment>
+            );
+        }
+
         const {heading, paras} = section;
         const paragraphs = (Array.isArray(paras) ? paras : []).map((paragraph, paragraphIndex)=>{
             return (
@@ -51,6 +64,7 @@ function BlogDetail({initialData}) {
             <article style={{display:"flex", flexDirection:"column", gap:"1rem", maxWidth:"64ch",justifySelf:"center"}}>
                 <Typography.Title level={1}>{post.title}</Typography.Title>
                 <PublishUpdateDates publishedDate={formattedDate} updatedDate={formattedUpdatedDate}/>
+                {post.tag ? (
                 <Tag color="geekblue" style={{ width: "fit-content", background: "#eef2ff",     
                                 color: "#1d4ed8",
                                 border: "1px solid #c7d2fe",
@@ -62,13 +76,177 @@ function BlogDetail({initialData}) {
                 >
                     {post.tag}
                 </Tag>
-                <Typography.Title level={2}>{post.summary}</Typography.Title>
+                ) : null}
+                {post.summary ? <Typography.Title level={2}>{post.summary}</Typography.Title> : null}
                 <ReactionsBar postId={post.id || post.link} slug={post.link} title={post.title}/>
                 {articleContent}
                 {post.thumbnail ? (
                     <Image src={`${post.thumbnail}`} alt={post.title} preview={false}></Image>
                 ) : null}
             </article>     
+    );
+}
+
+function renderMarkdownBody(bodyMarkdown, postTitle) {
+    return (
+        <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+                h1: ({ children }) => <Typography.Title level={2}>{children}</Typography.Title>,
+                h2: ({ children }) => <Typography.Title level={3}>{children}</Typography.Title>,
+                h3: ({ children }) => <Typography.Title level={4}>{children}</Typography.Title>,
+                p: ({ children }) => <Typography.Paragraph style={{lineHeight: 2}}>{children}</Typography.Paragraph>,
+                blockquote: ({ children }) => (
+                    <blockquote style={{borderLeft: "3px solid #c7d2fe", margin: "0 0 1rem", paddingLeft: "1rem"}}>
+                        {children}
+                    </blockquote>
+                ),
+                img: ({ src, alt }) => {
+                    const safeSrc = safeBodyMediaSrc(src);
+                    if (!safeSrc) {
+                        return null;
+                    }
+
+                    return <Image src={safeSrc} alt={alt || postTitle} preview={false} />;
+                },
+                a: ({ href, children }) => {
+                    const safeHref = safeBodyLinkHref(href);
+                    if (!safeHref) {
+                        return <>{children}</>;
+                    }
+
+                    const opensNewTab = isExternalHttpLink(safeHref);
+                    return (
+                        <a href={safeHref} target={opensNewTab ? "_blank" : undefined} rel={opensNewTab ? "noopener noreferrer" : undefined}>
+                            {children}
+                        </a>
+                    );
+                },
+            }}
+        >
+            {bodyMarkdown}
+        </ReactMarkdown>
+    );
+}
+
+function renderBodyBlock(block, keyPrefix, postTitle) {
+    if (!block || typeof block !== "object") {
+        return null;
+    }
+
+    switch (block.type) {
+        case "heading_1":
+            return <Typography.Title key={keyPrefix} level={2}>{renderParagraphContent(block.text, keyPrefix)}</Typography.Title>;
+        case "heading_2":
+            return <Typography.Title key={keyPrefix} level={3}>{renderParagraphContent(block.text, keyPrefix)}</Typography.Title>;
+        case "heading_3":
+            return <Typography.Title key={keyPrefix} level={4}>{renderParagraphContent(block.text, keyPrefix)}</Typography.Title>;
+        case "paragraph":
+            return renderTextBlock(block.text, keyPrefix);
+        case "quote":
+            return (
+                <blockquote key={keyPrefix} style={{borderLeft: "3px solid #c7d2fe", margin: "0 0 1rem", paddingLeft: "1rem"}}>
+                    <Typography.Paragraph style={{lineHeight: 2, marginBottom: 0}}>
+                        {renderParagraphContent(block.text, keyPrefix)}
+                    </Typography.Paragraph>
+                </blockquote>
+            );
+        case "callout":
+            return (
+                <Typography.Paragraph key={keyPrefix} style={{background: "#f8fafc", borderLeft: "3px solid #94a3b8", lineHeight: 2, padding: "0.75rem 1rem"}}>
+                    {renderParagraphContent(block.text, keyPrefix)}
+                </Typography.Paragraph>
+            );
+        case "bulleted_list_item":
+            return (
+                <ul key={keyPrefix} style={{marginTop: 0}}>
+                    <li>{renderParagraphContent(block.text, keyPrefix)}</li>
+                </ul>
+            );
+        case "numbered_list_item":
+            return (
+                <ol key={keyPrefix} style={{marginTop: 0}}>
+                    <li>{renderParagraphContent(block.text, keyPrefix)}</li>
+                </ol>
+            );
+        case "to_do":
+            return (
+                <Typography.Paragraph key={keyPrefix} style={{lineHeight: 2}}>
+                    <label>
+                        <input type="checkbox" checked={block.checked === true} readOnly />{" "}
+                        {renderParagraphContent(block.text, keyPrefix)}
+                    </label>
+                </Typography.Paragraph>
+            );
+        case "code":
+            return (
+                <pre key={keyPrefix} style={{background: "#0f172a", color: "#f8fafc", overflowX: "auto", padding: "1rem"}}>
+                    <code>{typeof block.text === "string" ? block.text : ""}</code>
+                </pre>
+            );
+        case "divider":
+            return <hr key={keyPrefix} style={{border: 0, borderTop: "1px solid #e5e7eb", width: "100%"}} />;
+        case "image":
+            return renderImageBlock(block, keyPrefix, postTitle);
+        case "bookmark":
+        case "embed":
+        case "link_preview":
+        case "video":
+        case "file":
+        case "pdf":
+            return renderLinkedBlock(block, keyPrefix);
+        case "unsupported":
+            return renderTextBlock(block.text || block.caption, keyPrefix);
+        default:
+            return renderTextBlock(block.text || block.caption, keyPrefix);
+    }
+}
+
+function renderTextBlock(text, keyPrefix) {
+    if (!hasTextContent(text)) {
+        return null;
+    }
+
+    return (
+        <Typography.Paragraph key={keyPrefix} style={{lineHeight: 2}}>
+            {renderParagraphContent(text, keyPrefix)}
+        </Typography.Paragraph>
+    );
+}
+
+function renderImageBlock(block, keyPrefix, postTitle) {
+    const src = safeBodyMediaSrc(block.url);
+    const caption = hasTextContent(block.caption) ? block.caption : "";
+    if (!src) {
+        return renderTextBlock(caption, keyPrefix);
+    }
+
+    return (
+        <figure key={keyPrefix} style={{margin: "0 0 1rem"}}>
+            <Image src={src} alt={plainTextFromSerializedText(caption) || postTitle} preview={false} />
+            {caption ? (
+                <figcaption style={{color: "#64748b", fontSize: "0.9rem", lineHeight: 1.6, marginTop: "0.5rem"}}>
+                    {renderParagraphContent(caption, `${keyPrefix}-caption`)}
+                </figcaption>
+            ) : null}
+        </figure>
+    );
+}
+
+function renderLinkedBlock(block, keyPrefix) {
+    const href = safeBodyLinkHref(block.href);
+    const label = hasTextContent(block.caption) ? block.caption : block.href;
+    if (!href) {
+        return renderTextBlock(label, keyPrefix);
+    }
+
+    const opensNewTab = isExternalHttpLink(href);
+    return (
+        <Typography.Paragraph key={keyPrefix} style={{lineHeight: 2}}>
+            <a href={href} target={opensNewTab ? "_blank" : undefined} rel={opensNewTab ? "noopener noreferrer" : undefined}>
+                {renderParagraphContent(label, keyPrefix)}
+            </a>
+        </Typography.Paragraph>
     );
 }
 
@@ -83,9 +261,10 @@ function renderParagraphContent(paragraph, keyPrefix) {
 
     return paragraph.map((part, index) => {
         const text = typeof part?.text === "string" ? part.text : "";
+        const content = part?.bold === true ? <strong>{text}</strong> : text;
         const href = safeBodyLinkHref(part?.href);
         if (!href) {
-            return <Fragment key={`${keyPrefix}-${index}`}>{text}</Fragment>;
+            return <Fragment key={`${keyPrefix}-${index}`}>{content}</Fragment>;
         }
 
         const opensNewTab = isExternalHttpLink(href);
@@ -96,7 +275,7 @@ function renderParagraphContent(paragraph, keyPrefix) {
                 target={opensNewTab ? "_blank" : undefined}
                 rel={opensNewTab ? "noopener noreferrer" : undefined}
             >
-                {text}
+                {content}
             </a>
         );
     });
@@ -115,8 +294,39 @@ function safeBodyLinkHref(href) {
     return /^(https?:\/\/|mailto:|tel:|\/(?!\/)|#)/i.test(trimmedHref) ? trimmedHref : "";
 }
 
+function safeBodyMediaSrc(src) {
+    if (typeof src !== "string") {
+        return "";
+    }
+
+    const trimmedSrc = src.trim();
+    return /^(https?:\/\/|\/(?!\/))/i.test(trimmedSrc) ? trimmedSrc : "";
+}
+
 function isExternalHttpLink(href) {
     return /^https?:\/\//i.test(href);
+}
+
+function hasTextContent(value) {
+    return Boolean(plainTextFromSerializedText(value).trim());
+}
+
+function plainTextFromSerializedText(value) {
+    if (typeof value === "string") {
+        return value;
+    }
+
+    if (!Array.isArray(value)) {
+        return "";
+    }
+
+    return value.map((part) => {
+        if (typeof part === "string") {
+            return part;
+        }
+
+        return typeof part?.text === "string" ? part.text : "";
+    }).join("");
 }
 
 export default BlogDetail;

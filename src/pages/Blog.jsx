@@ -15,7 +15,9 @@ function BlogPage({initialData, isBlogDataLoading = false}) {
     let filteredPosts = initialData;
 
     initialData.forEach((post) => {
-        tags.add(post.tag);
+        if (post.tag) {
+            tags.add(post.tag);
+        }
     });
     if(selectedTags.size>0){
         if(selectedTags.has("All")){
@@ -53,6 +55,7 @@ function BlogPage({initialData, isBlogDataLoading = false}) {
                     }
                     />
                     
+                    {post.tag ? (
                     <div style={{ marginTop: 12, display: "flex", gap: 8, flexWrap: "wrap" }}>
                         <Tag color="geekblue" style={{ width: "fit-content", background: "#eef2ff",     
                             color: "#1d4ed8",
@@ -66,6 +69,7 @@ function BlogPage({initialData, isBlogDataLoading = false}) {
                             {post.tag}
                         </Tag>
                     </div>
+                    ) : null}
                 </Card>
             </Link>
         </Col>

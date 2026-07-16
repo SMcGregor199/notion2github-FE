@@ -92,9 +92,9 @@ function renderMarkdownBody(bodyMarkdown, postTitle) {
         <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
-                h1: ({ children }) => <Typography.Title level={2}>{children}</Typography.Title>,
-                h2: ({ children }) => <Typography.Title level={3}>{children}</Typography.Title>,
-                h3: ({ children }) => <Typography.Title level={4}>{children}</Typography.Title>,
+                h1: ({ children }) => <Typography.Title level={1}>{children}</Typography.Title>,
+                h2: ({ children }) => <Typography.Title level={2}>{children}</Typography.Title>,
+                h3: ({ children }) => <Typography.Title level={3}>{children}</Typography.Title>,
                 p: ({ children }) => <Typography.Paragraph style={{lineHeight: 2}}>{children}</Typography.Paragraph>,
                 blockquote: ({ children }) => (
                     <blockquote style={{borderLeft: "3px solid #c7d2fe", margin: "0 0 1rem", paddingLeft: "1rem"}}>
@@ -136,11 +136,11 @@ function renderBodyBlock(block, keyPrefix, postTitle) {
 
     switch (block.type) {
         case "heading_1":
-            return <Typography.Title key={keyPrefix} level={2}>{renderParagraphContent(block.text, keyPrefix)}</Typography.Title>;
+            return <Typography.Title key={keyPrefix} level={1}>{renderParagraphContent(block.text, keyPrefix)}</Typography.Title>;
         case "heading_2":
-            return <Typography.Title key={keyPrefix} level={3}>{renderParagraphContent(block.text, keyPrefix)}</Typography.Title>;
+            return <Typography.Title key={keyPrefix} level={2}>{renderParagraphContent(block.text, keyPrefix)}</Typography.Title>;
         case "heading_3":
-            return <Typography.Title key={keyPrefix} level={4}>{renderParagraphContent(block.text, keyPrefix)}</Typography.Title>;
+            return <Typography.Title key={keyPrefix} level={3}>{renderParagraphContent(block.text, keyPrefix)}</Typography.Title>;
         case "paragraph":
             return renderTextBlock(block.text, keyPrefix);
         case "quote":

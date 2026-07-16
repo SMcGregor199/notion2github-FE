@@ -241,7 +241,7 @@ describe("Notion image rendering", () => {
             { route: "/blog/rich-block-post" }
         );
 
-        expect(screen.getByRole("heading", { name: "Block Heading", level: 2 })).toBeInTheDocument();
+        expect(screen.getByRole("heading", { name: "Block Heading", level: 1 })).toBeInTheDocument();
         expect(screen.getByText("bold").tagName).toBe("STRONG");
         expect(screen.getByText("Quoted text.")).toBeInTheDocument();
         expect(screen.getByText("Bullet item")).toBeInTheDocument();
@@ -276,7 +276,7 @@ describe("Notion image rendering", () => {
             { route: "/blog/markdown-body-post" }
         );
 
-        expect(screen.getByRole("heading", { name: "Markdown Heading", level: 3 })).toBeInTheDocument();
+        expect(screen.getByRole("heading", { name: "Markdown Heading", level: 2 })).toBeInTheDocument();
         expect(screen.getByText("the guide").tagName).toBe("STRONG");
         expect(screen.getByRole("link", { name: "the source" })).toHaveAttribute("href", "https://example.com/source");
         expect(screen.getByText("Quoted markdown.")).toBeInTheDocument();

@@ -12,7 +12,7 @@ function Footer(){
                 <Typography.Text style={{ display: "block" }}>
                     © {new Date().getFullYear()} Shayne McGregor
                 </Typography.Text>
-                <Link to="/privacy">Privacy</Link>
+                <Link className="site-footer__privacy-link" to="/privacy">Privacy</Link>
         </Layout.Footer> 
         
     )

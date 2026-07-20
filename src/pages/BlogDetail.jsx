@@ -6,6 +6,10 @@ import remarkGfm from "remark-gfm";
 import PublishUpdateDates from "../components/PublishUpdateDates";
 import ReactionsBar from "../components/ReactionsBar.tsx";
 
+const bodyImageStyle = {
+    borderRadius: "8px",
+    boxShadow: "0 8px 24px rgba(15, 23, 42, 0.18)",
+};
 
 
 
@@ -110,7 +114,7 @@ function renderMarkdownBody(bodyMarkdown, postTitle) {
                     const caption = typeof alt === "string" && alt.trim() !== "image" ? alt.trim() : "";
                     return (
                         <figure style={{margin: "0 0 1rem"}}>
-                            <Image src={safeSrc} alt={caption || postTitle} preview={false} />
+                            <Image src={safeSrc} alt={caption || postTitle} preview={false} style={bodyImageStyle} />
                             {caption ? (
                                 <figcaption style={{color: "#64748b", fontSize: "0.9rem", lineHeight: 1.6, marginTop: "0.5rem"}}>
                                     {caption}
@@ -233,7 +237,7 @@ function renderImageBlock(block, keyPrefix, postTitle) {
 
     return (
         <figure key={keyPrefix} style={{margin: "0 0 1rem"}}>
-            <Image src={src} alt={plainTextFromSerializedText(caption) || postTitle} preview={false} />
+            <Image src={src} alt={plainTextFromSerializedText(caption) || postTitle} preview={false} style={bodyImageStyle} />
             {caption ? (
                 <figcaption style={{color: "#64748b", fontSize: "0.9rem", lineHeight: 1.6, marginTop: "0.5rem"}}>
                     {renderParagraphContent(caption, `${keyPrefix}-caption`)}

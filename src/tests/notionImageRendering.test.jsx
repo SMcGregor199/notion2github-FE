@@ -280,7 +280,9 @@ describe("Notion image rendering", () => {
         expect(screen.getByText("the guide").tagName).toBe("STRONG");
         expect(screen.getByRole("link", { name: "the source" })).toHaveAttribute("href", "https://example.com/source");
         expect(screen.getByText("Quoted markdown.")).toBeInTheDocument();
-        expect(screen.getByRole("img", { name: "Markdown image" })).toHaveAttribute("src", "https://example.com/markdown.webp");
+        const bodyImage = screen.getByRole("img", { name: "Markdown image" });
+        expect(bodyImage).toHaveAttribute("src", "https://example.com/markdown.webp");
+        expect(bodyImage).toHaveStyle("box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18)");
         expect(screen.getByText("Markdown image")).toHaveProperty("tagName", "FIGCAPTION");
     });
 

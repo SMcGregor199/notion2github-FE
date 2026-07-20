@@ -281,6 +281,7 @@ describe("Notion image rendering", () => {
         expect(screen.getByRole("link", { name: "the source" })).toHaveAttribute("href", "https://example.com/source");
         expect(screen.getByText("Quoted markdown.")).toBeInTheDocument();
         expect(screen.getByRole("img", { name: "Markdown image" })).toHaveAttribute("src", "https://example.com/markdown.webp");
+        expect(screen.getByText("Markdown image")).toHaveProperty("tagName", "FIGCAPTION");
     });
 
     it("renders unsafe Notion body links as text", () => {

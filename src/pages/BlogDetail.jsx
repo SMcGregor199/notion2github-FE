@@ -107,7 +107,17 @@ function renderMarkdownBody(bodyMarkdown, postTitle) {
                         return null;
                     }
 
-                    return <Image src={safeSrc} alt={alt || postTitle} preview={false} />;
+                    const caption = typeof alt === "string" && alt.trim() !== "image" ? alt.trim() : "";
+                    return (
+                        <figure style={{margin: "0 0 1rem"}}>
+                            <Image src={safeSrc} alt={caption || postTitle} preview={false} />
+                            {caption ? (
+                                <figcaption style={{color: "#64748b", fontSize: "0.9rem", lineHeight: 1.6, marginTop: "0.5rem"}}>
+                                    {caption}
+                                </figcaption>
+                            ) : null}
+                        </figure>
+                    );
                 },
                 a: ({ href, children }) => {
                     const safeHref = safeBodyLinkHref(href);

@@ -15,6 +15,12 @@ function renderHeader() {
 }
 
 describe("SiteHeader RSS link", () => {
+    it("does not show the empty Case Studies destination in primary navigation", () => {
+        renderHeader();
+
+        expect(screen.queryByRole("link", { name: "Case Studies" })).not.toBeInTheDocument();
+    });
+
     it("renders GitHub, RSS, and LinkedIn icon links in that order", () => {
         renderHeader();
 

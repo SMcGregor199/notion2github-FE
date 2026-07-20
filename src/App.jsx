@@ -6,6 +6,8 @@ import BlogDetail from "./pages/BlogDetail";
 import Contact from "./pages/Contact";
 import CaseStudies from "./pages/CaseStudies";
 import NotFound from "./pages/NotFound";
+import Privacy from "./pages/Privacy";
+import SubscriptionConfirmed from "./pages/SubscriptionConfirmed";
 function App({initialData, isBlogDataLoading = false}) {
   
   return (
@@ -17,6 +19,8 @@ function App({initialData, isBlogDataLoading = false}) {
         <Route path="/blog/:slug" element={<BlogDetail initialData={initialData}/>} />
         <Route path="/contact" element={<Contact/>}/>
         <Route path="/case-studies" element={<CaseStudies />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/subscribe/confirmed" element={<SubscriptionConfirmed />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

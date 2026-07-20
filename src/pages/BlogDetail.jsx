@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import PublishUpdateDates from "../components/PublishUpdateDates";
 import ReactionsBar from "../components/ReactionsBar.tsx";
+import NewsletterSignup from "../components/NewsletterSignup";
 
 const bodyImageStyle = {
     borderRadius: "8px",
@@ -87,6 +88,7 @@ function BlogDetail({initialData}) {
                 {post.thumbnail ? (
                     <Image src={`${post.thumbnail}`} alt={post.title} preview={false}></Image>
                 ) : null}
+                <NewsletterSignup compact />
             </article>     
     );
 }

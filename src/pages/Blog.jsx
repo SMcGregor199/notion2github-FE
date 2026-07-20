@@ -3,6 +3,7 @@ import {Link} from "react-router-dom";
 import { Grid } from "antd";
 import {useState} from "react";
 import {StyledTag} from "../components/styledTag";
+import NewsletterSignup from "../components/NewsletterSignup";
 
 
 function BlogPage({initialData, isBlogDataLoading = false}) {
@@ -131,6 +132,7 @@ function BlogPage({initialData, isBlogDataLoading = false}) {
                 <Row gutter={[24, 24]}>
                     {blogCards}
                 </Row>
+                <NewsletterSignup />
             </section>
 
 

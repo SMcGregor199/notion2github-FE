@@ -1,5 +1,6 @@
 import { Layout, Button, Space, Typography } from "antd";  
 import { GithubOutlined, LinkedinOutlined } from "@ant-design/icons";
+import { Link } from "react-router-dom";
 
 function Footer(){
     return(
@@ -11,6 +12,7 @@ function Footer(){
                 <Typography.Text style={{ display: "block" }}>
                     © {new Date().getFullYear()} Shayne McGregor
                 </Typography.Text>
+                <Link to="/privacy">Privacy</Link>
         </Layout.Footer> 
         
     )

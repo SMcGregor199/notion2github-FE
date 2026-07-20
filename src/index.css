@@ -68,6 +68,28 @@ html{
   margin-top: 0.75rem;
 }
 
+.newsletter-signup {
+  margin-top: clamp(2.5rem, 6vw, 4rem);
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border: 1px solid rgba(216, 111, 68, 0.28);
+  border-radius: 16px;
+  background: #fffaf7;
+}
+
+.newsletter-signup h2 { margin-top: 0 !important; }
+.newsletter-signup__intro { max-width: 56ch; }
+.newsletter-signup__form { display: grid; gap: 14px; max-width: 42rem; }
+.newsletter-signup__form label { display: grid; gap: 6px; color: #1f2937; font-weight: 700; }
+.newsletter-signup__form label em { color: #64748b; font-weight: 400; font-style: normal; }
+.newsletter-signup__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.newsletter-signup__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.newsletter-signup__trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+.privacy-page, .subscription-confirmed { max-width: 64ch; margin-inline: auto; }
+
+@media (max-width: 520px) {
+  .newsletter-signup__grid { grid-template-columns: 1fr; }
+}
+
 .homepage-motif {
   position: relative;
   isolation: isolate;

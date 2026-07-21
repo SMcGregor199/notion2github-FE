@@ -169,6 +169,7 @@ function FeaturedBlogPosts({ initialData }) {
         SECONDARY_POST_COUNT + 1,
         SECONDARY_POST_COUNT + 1 + MORE_WRITING_POST_COUNT
     );
+    const hasFlairSpace = secondaryPosts.length === SECONDARY_POST_COUNT;
 
     return (
         <section aria-labelledby="latest-writing-heading" className="homepage-blog-section">
@@ -189,12 +190,26 @@ function FeaturedBlogPosts({ initialData }) {
             {featuredPost ? (
                 <>
                     <Row gutter={[24, 24]} align="stretch">
-                        <Col xs={24} lg={14}>
-                            <BlogCardLong {...featuredPost} />
+                        <Col xs={24} lg={14} className="homepage-feature-column">
+                            <div className="homepage-feature-stack">
+                                <BlogCardLong {...featuredPost} />
+                                {hasFlairSpace ? (
+                                    <a
+                                        className="homepage-feature-flair"
+                                        href="https://www.pinterest.com/niyajean00/"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label="View artwork by Niyajean00 on Pinterest, opens in a new tab"
+                                    >
+                                        <img src="/homepage-flair.gif" alt="" />
+                                        <span className="homepage-feature-flair__credit" aria-hidden="true">Artwork: Niyajean00 ↗</span>
+                                    </a>
+                                ) : null}
+                            </div>
                         </Col>
                         {secondaryPosts.length > 0 ? (
                             <Col xs={24} lg={10}>
-                                <Flex vertical gap={12}>
+                                <Flex className="homepage-blog-secondary-stack" vertical gap={12}>
                                     {secondaryPosts.map((post) => (
                                         <SecondaryPostCard key={post.id ?? post.link} post={post} />
                                     ))}

@@ -66,6 +66,7 @@ describe("FeaturedBlogPosts", () => {
         const links = screen.getAllByRole("link");
         expect(links.map((link) => link.getAttribute("aria-label") || link.textContent)).toEqual([
             "Read Latest Post",
+            "View artwork by Niyajean00 on Pinterest, opens in a new tab",
             "Read Second Post",
             "Read Third Post",
             "Read Fourth Post",
@@ -78,6 +79,7 @@ describe("FeaturedBlogPosts", () => {
         ]);
         expect(links.map((link) => link.getAttribute("href"))).toEqual([
             "/blog/latest-post",
+            "https://www.pinterest.com/niyajean00/",
             "/blog/second-post",
             "/blog/third-post",
             "/blog/fourth-post",
@@ -114,6 +116,20 @@ describe("FeaturedBlogPosts", () => {
             "src",
             posts[1].thumbnail
         );
+        expect(screen.queryByRole("link", { name: /view artwork by niyajean00/i })).not.toBeInTheDocument();
+    });
+
+    it("renders a credited Pinterest flair link when three secondary posts are available", () => {
+        const posts = [makePost(1), makePost(2), makePost(3), makePost(4)];
+
+        renderWithProviders(<FeaturedBlogPosts initialData={posts} />);
+
+        const flair = screen.getByRole("link", { name: /view artwork by niyajean00/i });
+        expect(flair).toHaveAttribute("href", "https://www.pinterest.com/niyajean00/");
+        expect(flair).toHaveAttribute("target", "_blank");
+        expect(flair).toHaveAttribute("rel", "noopener noreferrer");
+        expect(flair.querySelector('img[src="/homepage-flair.gif"]')).toHaveAttribute("alt", "");
+        expect(flair.querySelector(".homepage-feature-flair__credit")).toHaveAttribute("aria-hidden", "true");
     });
 
     it("handles missing data safely and keeps the archive link visible", () => {

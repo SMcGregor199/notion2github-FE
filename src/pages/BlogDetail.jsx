@@ -74,7 +74,7 @@ function BlogDetail({initialData = [], blogDataStatus = "ready", onRetryBlogData
     });
     return (
        
-            <article style={{display:"flex", flexDirection:"column", gap:"1rem", maxWidth:"64ch",justifySelf:"center"}}>
+            <article style={{display:"flex", flexDirection:"column", gap:"1rem", maxWidth:"64ch", marginInline:0}}>
                 <Typography.Title level={1}>{post.title}</Typography.Title>
                 <PublishUpdateDates publishedDate={formattedDate} updatedDate={formattedUpdatedDate}/>
                 {post.tag ? (
@@ -106,7 +106,7 @@ function BlogPostLoading() {
         <article
             aria-busy="true"
             aria-labelledby="blog-post-loading-title"
-            style={{display:"flex", flexDirection:"column", gap:"1rem", maxWidth:"64ch", justifySelf:"center", width:"100%"}}
+            style={{display:"flex", flexDirection:"column", gap:"1rem", maxWidth:"64ch", marginInline:0, width:"100%"}}
         >
             <div role="status" aria-live="polite" style={{display:"inline-flex", alignItems:"center", gap:8}}>
                 <Spin size="small" />
@@ -119,7 +119,7 @@ function BlogPostLoading() {
 
 function BlogPostUnavailable({onRetry}) {
     return (
-        <section style={{maxWidth:"64ch", justifySelf:"center"}} aria-labelledby="blog-post-unavailable-title">
+        <section style={{maxWidth:"64ch", marginInline:0}} aria-labelledby="blog-post-unavailable-title">
             <Typography.Title id="blog-post-unavailable-title" level={1}>This post could not load.</Typography.Title>
             <Typography.Paragraph style={{lineHeight:2}}>
                 The blog data service is temporarily unavailable. Please try again.

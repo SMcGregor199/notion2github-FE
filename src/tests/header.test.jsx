@@ -43,18 +43,19 @@ describe("SiteHeader RSS link", () => {
         renderHeader();
 
         const github = screen.getByRole("link", { name: "Open my GitHub profile in a new tab" });
-        const rss = screen.getByRole("link", { name: "Open RSS feed" });
+        const rss = screen.getByRole("link", { name: "Open RSS feed in a new tab" });
         const linkedin = screen.getByRole("link", { name: "Open my LinkedIn profile in a new tab" });
 
         expect(github).toHaveAttribute("href", "https://github.com/SMcGregor199");
         expect(rss).toHaveAttribute("href", "/rss.xml");
-        expect(rss).not.toHaveAttribute("target");
+        expect(rss).toHaveAttribute("target", "_blank");
+        expect(rss).toHaveAttribute("rel", "noopener noreferrer");
         expect(linkedin).toHaveAttribute("href", "https://linkedin.com/in/shayne-mcgregor");
 
         const iconLinks = [github, rss, linkedin];
         expect(iconLinks.map((link) => link.getAttribute("aria-label"))).toEqual([
             "Open my GitHub profile in a new tab",
-            "Open RSS feed",
+            "Open RSS feed in a new tab",
             "Open my LinkedIn profile in a new tab",
         ]);
         expect(github.compareDocumentPosition(rss) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();

@@ -91,7 +91,9 @@ function SiteHeader(){
                 type="default"
                 icon={<WifiOutlined />}
                 href="/rss.xml"
-                aria-label="Open RSS feed"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Open RSS feed in a new tab"
             />
             <Button
                 type="default"

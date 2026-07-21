@@ -1,14 +1,30 @@
 import { useEffect, useState } from "react";
-import { Button, Space, Spin, Typography } from "antd";
+import { Space, Spin, Typography } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import BlogButton from "../components/BlogButton";
 
 const EMPTY_RESUME = {
     status: "draft",
     title: "Shayne McGregor — Resume",
     markdown: "",
 };
+
+function ResumeLink({ href = "", children, ...props }) {
+    const isExternal = /^https?:\/\//i.test(href)
+        && new URL(href).hostname !== window.location.hostname;
+
+    return (
+        <a
+            href={href}
+            {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            {...props}
+        >
+            {children}
+        </a>
+    );
+}
 
 function Resume() {
     const [resume, setResume] = useState(EMPTY_RESUME);
@@ -55,9 +71,9 @@ function Resume() {
                     )}
                 </div>
                 <Space wrap>
-                    <Button type="primary" icon={<DownloadOutlined />} href="/resume.pdf" target="_blank" rel="noopener noreferrer">
+                    <BlogButton icon={<DownloadOutlined />} href="/resume.pdf" target="_blank" rel="noopener noreferrer">
                         Download PDF
-                    </Button>
+                    </BlogButton>
                 </Space>
             </div>
 
@@ -68,7 +84,7 @@ function Resume() {
                 </div>
             ) : hasPublishedResume ? (
                 <article className="resume-page__content">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{resume.markdown}</ReactMarkdown>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]} components={{ a: ResumeLink }}>{resume.markdown}</ReactMarkdown>
                 </article>
             ) : (
                 <object className="resume-page__pdf" data="/resume.pdf" type="application/pdf" aria-label="Shayne McGregor resume PDF">

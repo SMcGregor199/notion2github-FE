@@ -139,6 +139,51 @@ html{
   margin-top: 0.75rem;
 }
 
+.resume-page {
+  max-width: 64ch;
+}
+
+.resume-page__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.resume-page__header h1 {
+  margin-top: 0;
+}
+
+.resume-page__loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.resume-page__content {
+  line-height: 1.8;
+}
+
+.resume-page__content h1,
+.resume-page__content h2,
+.resume-page__content h3 {
+  margin-top: 1.5rem;
+}
+
+.resume-page__pdf {
+  width: 100%;
+  min-height: min(78vh, 64rem);
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+@media (max-width: 480px) {
+  .resume-page__header {
+    flex-direction: column;
+  }
+}
+
 main a:not(.ant-btn):not(.homepage-blog-link):not(.discourse-hero-link):not(.not-found-page__action),
 .site-footer__privacy-link {
   color: #d86f44;

@@ -12,7 +12,7 @@ function SiteHeader(){
     const navItems = [
         { key: "1", label: <Link to="/">Home</Link> },
         { key: "2", label: <Link to="/blog">Blog</Link> },
-        { key: "5", label: <a href="/resume.pdf" target="_blank" rel="noopener noreferrer">Resume</a> },
+        { key: "5", label: <Link to="/resume">Resume</Link> },
         { key: "6", label: <Link to="/contact">Contact Me</Link> }
     ];
     const supportLinkItem = {

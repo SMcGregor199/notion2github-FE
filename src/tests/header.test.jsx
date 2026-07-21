@@ -31,6 +31,14 @@ describe("SiteHeader RSS link", () => {
         expect(screen.queryByText("The Signal Journal")).not.toBeInTheDocument();
     });
 
+    it("links Resume to the site resume page", () => {
+        renderHeader();
+
+        const resume = screen.getByRole("link", { name: "Resume" });
+        expect(resume).toHaveAttribute("href", "/resume");
+        expect(resume).not.toHaveAttribute("target");
+    });
+
     it("renders GitHub, RSS, and LinkedIn icon links in that order", () => {
         renderHeader();
 

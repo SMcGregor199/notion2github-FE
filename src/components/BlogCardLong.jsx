@@ -8,7 +8,11 @@ function BlogCardLong(props){
             style={{
                 borderRadius: 12,
                 boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-                padding: "clamp(16px, 3vw, 28px)"
+            }}
+            styles={{
+                body: {
+                    padding: "clamp(14px, 2vw, 18px)",
+                },
             }}
             >
                 <Flex align="stretch" justify="space-between" gap={24} wrap="wrap">

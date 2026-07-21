@@ -109,6 +109,7 @@ describe("FeaturedBlogPosts", () => {
             "src",
             posts[0].thumbnail
         );
+        expect(screen.getByRole("img", { name: "Featured With Image" }).closest(".blog-card__media")).not.toBeNull();
         expect(screen.getByRole("img", { name: "Secondary With Image" })).toHaveAttribute(
             "src",
             posts[1].thumbnail

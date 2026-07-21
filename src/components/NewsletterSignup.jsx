@@ -38,12 +38,14 @@ function NewsletterSignup({ compact = false }) {
     return (
         <section className={`newsletter-signup${compact ? " newsletter-signup--compact" : ""}`} aria-labelledby="newsletter-signup-title">
             <Typography.Title id="newsletter-signup-title" level={2}>Get new posts in your inbox</Typography.Title>
-            <Typography.Paragraph className="newsletter-signup__intro">
-                Occasional notes on engineering, systems, and the ideas behind the work. Prefer a feed reader? The <a href="/rss.xml">RSS feed</a> is always available.
-            </Typography.Paragraph>
-            <Typography.Text type="secondary" className="newsletter-signup__delivery-note">
-                After subscribing, check your spam or Promotions folder if the confirmation email does not arrive within a few minutes.
-            </Typography.Text>
+            <div className="newsletter-signup__copy">
+                <Typography.Paragraph className="newsletter-signup__intro">
+                    Occasional notes on engineering, systems, and the ideas behind the work. Prefer a feed reader? The <a href="/rss.xml">RSS feed</a> is always available.
+                </Typography.Paragraph>
+                <Typography.Text type="secondary" className="newsletter-signup__delivery-note">
+                    After subscribing, check your spam or Promotions folder if the confirmation email does not arrive within a few minutes.
+                </Typography.Text>
+            </div>
             <form className="newsletter-signup__form" onSubmit={submit}>
                 <div className="newsletter-signup__grid">
                     <label>

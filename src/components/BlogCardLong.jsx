@@ -4,7 +4,6 @@ import BlogButton from "./BlogButton";
 function BlogCardLong(props){
     return(
             <Card className="blog-card"
-            
             style={{
                 borderRadius: 12,
                 boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
@@ -15,8 +14,8 @@ function BlogCardLong(props){
                 },
             }}
             >
-                <Flex align="stretch" justify="space-between" gap={24} wrap="wrap">
-                    <Flex vertical gap={12} style={{flex:1, minWidth:240, paddingRight: "clamp(0px, 4vw, 28px)"}}>
+                <div className="blog-card__layout">
+                    <Flex className="blog-card__copy" vertical gap={12}>
                         <Tag color="geekblue" style={{ width: "fit-content", background: "#eef2ff",     
                             color: "#1d4ed8",
                             border: "1px solid #c7d2fe",
@@ -55,21 +54,18 @@ function BlogCardLong(props){
                             <BlogButton rootClassName="blog-btn" variant="solid" href={`/blog/${props.link}`} rel="noopener noreferrer" type="default" aria-label={`Read ${props.title}`}>Read More</BlogButton>
                         </div>
                     </Flex>
-                
                     {props.thumbnail ? (
-                        <Image
-                            src={props.thumbnail}
-                            alt={props.title}
-                            width={320}
-                            height="auto"
-                            style={{ borderRadius: 12, objectFit: "cover",flexShrink: 0,
-                                    aspectRatio: "8 / 5",
-                                    boxShadow: "0 1px 2px rgba(0,0,0,0.06)"
-                            }}
-                            preview={false}
-                        />
+                        <div className="blog-card__media">
+                            <Image
+                                className="blog-card__image"
+                                src={props.thumbnail}
+                                alt={props.title}
+                                style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.06)" }}
+                                preview={false}
+                            />
+                        </div>
                     ) : null}
-                </Flex>
+                </div>
             </Card>
         
     )

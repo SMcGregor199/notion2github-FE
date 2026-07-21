@@ -104,6 +104,7 @@ main a:not(.ant-btn):not(.homepage-blog-link):not(.discourse-hero-link):not(.not
 
 .newsletter-signup h2 { margin-top: 0 !important; }
 .newsletter-signup__intro { max-width: 56ch; line-height: 2 !important; }
+.newsletter-signup__delivery-note { display: block; max-width: 56ch; line-height: 1.65; margin: -0.5rem 0 0.25rem; }
 .newsletter-signup__form { display: grid; gap: 14px; max-width: 42rem; }
 .newsletter-signup__form label { display: grid; gap: 6px; color: #1f2937; font-weight: 700; }
 .newsletter-signup__form label em { color: #64748b; font-weight: 400; font-style: normal; }

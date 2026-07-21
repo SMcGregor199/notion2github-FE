@@ -1,6 +1,7 @@
-import { Alert, Button, Input, Typography } from "antd";
+import { Alert, Input, Typography } from "antd";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import BlogButton from "./BlogButton";
 
 const NEWSLETTER_ENDPOINT = "https://shaynemcgregordev-be.netlify.app/.netlify/functions/newsletter-subscribe";
 
@@ -40,6 +41,9 @@ function NewsletterSignup({ compact = false }) {
             <Typography.Paragraph className="newsletter-signup__intro">
                 Occasional notes on engineering, systems, and the ideas behind the work. Prefer a feed reader? The <a href="/rss.xml">RSS feed</a> is always available.
             </Typography.Paragraph>
+            <Typography.Text type="secondary" className="newsletter-signup__delivery-note">
+                After subscribing, check your spam or Promotions folder if the confirmation email does not arrive within a few minutes.
+            </Typography.Text>
             <form className="newsletter-signup__form" onSubmit={submit}>
                 <div className="newsletter-signup__grid">
                     <label>
@@ -64,7 +68,7 @@ function NewsletterSignup({ compact = false }) {
                     <input name="website" value={form.website} onChange={updateField} tabIndex="-1" autoComplete="off" />
                 </label>
                 <div className="newsletter-signup__actions">
-                    <Button type="primary" htmlType="submit" loading={submitting}>Subscribe</Button>
+                    <BlogButton htmlType="submit" loading={submitting}>Subscribe</BlogButton>
                     <Typography.Text type="secondary">By subscribing, you agree to the <Link to="/privacy">privacy notice</Link>.</Typography.Text>
                 </div>
                 {status.message ? <Alert type={status.type || "info"} showIcon message={status.message} role={status.type === "error" ? "alert" : "status"} /> : null}

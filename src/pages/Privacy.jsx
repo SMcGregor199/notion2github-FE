@@ -5,7 +5,7 @@ function Privacy() {
         <article className="privacy-page">
             <Typography.Title level={1}>Privacy</Typography.Title>
             <Typography.Paragraph>
-                If you subscribe to Blog Updates, I store your first name, last name, email address, and any optional reading interests you share. I also keep consent, confirmation, delivery, and opt-out status needed to run the list responsibly.
+                If you subscribe to Notes from Shayne, I store your first name, last name, email address, and any optional reading interests you share. I also keep consent, confirmation, delivery, and opt-out status needed to run the list responsibly.
             </Typography.Paragraph>
             <Typography.Paragraph>
                 Notion is the subscriber record of truth. Resend processes delivery, hosted unsubscribe links, and bounce handling. Subscriber information is not sold.

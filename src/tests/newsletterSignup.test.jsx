@@ -1,11 +1,13 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { ConfigProvider } from "antd";
+import { ThemeProvider } from "@emotion/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import NewsletterSignup from "../components/NewsletterSignup.jsx";
 
 function renderSignup() {
-    return render(<ConfigProvider><MemoryRouter><NewsletterSignup /></MemoryRouter></ConfigProvider>);
+    const theme = { token: { colorPrimary: "#D86F44", colorTextLightSolid: "#fff", colorPrimaryShadow: "rgba(216, 111, 68, 0.24)" } };
+    return render(<ConfigProvider theme={theme}><ThemeProvider theme={theme}><MemoryRouter><NewsletterSignup /></MemoryRouter></ThemeProvider></ConfigProvider>);
 }
 
 describe("NewsletterSignup", () => {
@@ -27,5 +29,6 @@ describe("NewsletterSignup", () => {
         );
         expect(await screen.findByText("Check your email to confirm your subscription.")).toBeInTheDocument();
         expect(screen.getByRole("link", { name: "privacy notice" })).toHaveAttribute("href", "/privacy");
+        expect(screen.getByText(/check your spam or Promotions folder/i)).toBeInTheDocument();
     });
 });

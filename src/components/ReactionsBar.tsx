@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Alert, Button, Divider, Space } from "antd";
 import {
   BulbFilled,
@@ -14,9 +14,11 @@ import type { ReactionCounts, ReactionKey, ShareData } from "../types/index.ts";
 import {
   fetchReactionState,
   getReactionVisitor,
+  getStoredReactionCounts,
   getStoredSelectedReaction,
   isReactionSetupUnavailable,
   storeSelectedReaction,
+  storeReactionCounts,
   submitReaction,
 } from "../utils/index.ts";
 
@@ -59,60 +61,80 @@ const REACTION_OPTIONS: Array<{
 
 export default function ReactionsBar({ postId, slug, title }: ReactionsBarProps): JSX.Element {
   const stablePostId = postId || slug;
-  const [counts, setCounts] = useState<ReactionCounts | null>(null);
+  const [initialReactionState] = useState(() => {
+    const reactionVisitor = getReactionVisitor();
+    return {
+      counts: getStoredReactionCounts(stablePostId),
+      visitor: {
+        storageAvailable: reactionVisitor.available,
+        visitorId: reactionVisitor.visitorId,
+      },
+    };
+  });
+  const [counts, setCounts] = useState<ReactionCounts | null>(initialReactionState.counts);
   const [selectedReaction, setSelectedReaction] = useState<ReactionKey | null>(() =>
     getStoredSelectedReaction(stablePostId),
   );
-  const [visitor, setVisitor] = useState<VisitorState>({
-    storageAvailable: true,
-    visitorId: null,
-  });
-  const [isLoading, setIsLoading] = useState(true);
+  const [visitor] = useState<VisitorState>(initialReactionState.visitor);
+  const [isLoading, setIsLoading] = useState(initialReactionState.counts === null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [statusMessage, setStatusMessage] = useState("Loading reactions.");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isApiUnavailable, setIsApiUnavailable] = useState(false);
+  const reactionMutationVersion = useRef(0);
 
   const canReact = visitor.storageAvailable && Boolean(visitor.visitorId) && !isLoading && !isApiUnavailable && counts !== null;
 
   useEffect(() => {
     let cancelled = false;
-    const reactionVisitor = getReactionVisitor();
-    setVisitor({
-      storageAvailable: reactionVisitor.available,
-      visitorId: reactionVisitor.visitorId,
-    });
+    const cachedCounts = getStoredReactionCounts(stablePostId);
+    const loadMutationVersion = reactionMutationVersion.current;
 
     async function loadReactions(): Promise<void> {
-      setIsLoading(true);
+      setIsLoading(cachedCounts === null);
       setErrorMessage(null);
       setIsApiUnavailable(false);
+      setStatusMessage(cachedCounts ? "Refreshing reactions." : "Loading reactions.");
       try {
         const state = await fetchReactionState({
           postId: stablePostId,
           blogTitle: title,
-          visitorId: reactionVisitor.visitorId,
+          visitorId: visitor.visitorId,
         });
-        if (cancelled) {
+        if (cancelled || loadMutationVersion !== reactionMutationVersion.current) {
           return;
         }
         setCounts(state.counts);
+        storeReactionCounts(stablePostId, state.counts);
         setSelectedReaction(state.selectedReaction);
         storeSelectedReaction(stablePostId, state.selectedReaction);
         setStatusMessage("Reactions loaded.");
       } catch (err) {
-        if (cancelled) {
+        if (cancelled || loadMutationVersion !== reactionMutationVersion.current) {
           return;
         }
-        setCounts(null);
-        setSelectedReaction(null);
+        if (cachedCounts) {
+          setCounts(cachedCounts);
+        } else {
+          setCounts(null);
+          setSelectedReaction(null);
+        }
         if (isReactionSetupUnavailable(err)) {
           setIsApiUnavailable(true);
           setErrorMessage("Reactions are not available for this post yet.");
           setStatusMessage("Reactions are not available for this post yet.");
         } else {
-          setErrorMessage("Reaction counts could not be loaded.");
-          setStatusMessage("Reaction counts could not be loaded.");
+          setIsApiUnavailable(cachedCounts !== null);
+          setErrorMessage(
+            cachedCounts
+              ? "Reaction counts could not be refreshed. Reactions are temporarily unavailable."
+              : "Reaction counts could not be loaded.",
+          );
+          setStatusMessage(
+            cachedCounts
+              ? "Reaction counts could not be refreshed. Reactions are temporarily unavailable."
+              : "Reaction counts could not be loaded.",
+          );
         }
       } finally {
         if (!cancelled) {
@@ -141,6 +163,7 @@ export default function ReactionsBar({ postId, slug, title }: ReactionsBarProps)
     }
 
     const nextReaction = selectedReaction === reaction ? null : reaction;
+    reactionMutationVersion.current += 1;
     setIsUpdating(true);
     setErrorMessage(null);
     setStatusMessage(nextReaction ? `Saving ${labelFor(reaction)} reaction.` : "Removing reaction.");
@@ -153,6 +176,7 @@ export default function ReactionsBar({ postId, slug, title }: ReactionsBarProps)
         reaction: nextReaction,
       });
       setCounts(state.counts);
+      storeReactionCounts(stablePostId, state.counts);
       setSelectedReaction(state.selectedReaction);
       storeSelectedReaction(stablePostId, state.selectedReaction);
       setStatusMessage(state.selectedReaction ? `${labelFor(state.selectedReaction)} saved.` : "Reaction removed.");
@@ -193,26 +217,34 @@ export default function ReactionsBar({ postId, slug, title }: ReactionsBarProps)
     <section className="reaction-bar" aria-label="Blog post reactions">
       <Divider />
       <Space className="reaction-bar__controls">
-        {REACTION_OPTIONS.map((option) => {
-          const isSelected = selectedReaction === option.key;
-          const count = counts?.[option.key];
-          const countText = count === undefined ? "Not loaded" : String(count);
-          return (
-            <Button
-              key={option.key}
-              type="default"
-              icon={isSelected ? option.activeIcon : option.inactiveIcon}
-              onClick={() => void toggleReaction(option.key)}
-              aria-pressed={isSelected}
-              aria-label={buttonLabel(option.label, count, isSelected)}
-              disabled={!canReact || isUpdating}
-              loading={isUpdating && isSelected}
-              className={isSelected ? "reaction-bar__button reaction-bar__button--selected" : "reaction-bar__button"}
-            >
-              {option.label} <span aria-hidden="true">{countText}</span>
-            </Button>
-          );
-        })}
+        {counts === null && isLoading ? (
+          <div className="reaction-bar__loading" aria-hidden="true">
+            {REACTION_OPTIONS.map((option) => (
+              <span key={option.key} className="reaction-bar__loading-chip" />
+            ))}
+          </div>
+        ) : (
+          REACTION_OPTIONS.map((option) => {
+            const isSelected = selectedReaction === option.key;
+            const count = counts?.[option.key];
+            const countText = count === undefined ? "Not loaded" : String(count);
+            return (
+              <Button
+                key={option.key}
+                type="default"
+                icon={isSelected ? option.activeIcon : option.inactiveIcon}
+                onClick={() => void toggleReaction(option.key)}
+                aria-pressed={isSelected}
+                aria-label={buttonLabel(option.label, count, isSelected)}
+                disabled={!canReact || isUpdating}
+                loading={isUpdating && isSelected}
+                className={isSelected ? "reaction-bar__button reaction-bar__button--selected" : "reaction-bar__button"}
+              >
+                {option.label} <span aria-hidden="true">{countText}</span>
+              </Button>
+            );
+          })
+        )}
         <Button type="default" icon={<MailOutlined />} onClick={handleShare}>
           Share
         </Button>

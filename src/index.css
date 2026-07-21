@@ -73,6 +73,39 @@ html{
   flex-wrap: wrap;
 }
 
+.reaction-bar__loading {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.reaction-bar__loading-chip {
+  display: block;
+  width: 8.75rem;
+  height: 40px;
+  border: 1px solid #e2e2e2;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f4f4f4 25%, #fafafa 50%, #f4f4f4 75%);
+  background-size: 200% 100%;
+  animation: reaction-bar-loading 1.4s ease-in-out infinite;
+}
+
+@keyframes reaction-bar-loading {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reaction-bar__loading-chip {
+    animation: none;
+  }
+}
+
 .reaction-bar__button {
   min-height: 40px;
 }

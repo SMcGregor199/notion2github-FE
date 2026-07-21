@@ -75,6 +75,126 @@ describe("ReactionsBar", () => {
     expect(localStorage.getItem("blogReactionSelected:post_123")).toBe("love");
   });
 
+  it("renders cached counts immediately and refreshes them in the background", async () => {
+    cacheReactionCounts({
+      love: 4,
+      confusing: 2,
+      thoughtProvoking: 1,
+    });
+    const fetchMock = vi.mocked(fetch);
+    let resolveRequest;
+    fetchMock.mockImplementationOnce(
+      () => new Promise((resolve) => {
+        resolveRequest = resolve;
+      }),
+    );
+
+    render(<ReactionsBar postId="post_123" slug="post-slug" title="Post Title" />);
+
+    const lovedButton = screen.getByRole("button", { name: /Loved\. 4 reactions/i });
+    expect(lovedButton).not.toBeDisabled();
+
+    resolveRequest(
+      jsonResponse({
+        ...apiState,
+        counts: {
+          love: 5,
+          confusing: 2,
+          thoughtProvoking: 1,
+        },
+      }),
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /Loved\. 5 reactions/i })).not.toBeDisabled();
+    });
+    expect(JSON.parse(localStorage.getItem("blogReactionCounts:post_123"))).toMatchObject({
+      counts: {
+        love: 5,
+        confusing: 2,
+        thoughtProvoking: 1,
+      },
+    });
+  });
+
+  it("does not let an older background refresh overwrite a newer reaction", async () => {
+    cacheReactionCounts({
+      love: 4,
+      confusing: 2,
+      thoughtProvoking: 1,
+    });
+    const fetchMock = vi.mocked(fetch);
+    let resolveRefresh;
+    fetchMock
+      .mockImplementationOnce(
+        () => new Promise((resolve) => {
+          resolveRefresh = resolve;
+        }),
+      )
+      .mockResolvedValueOnce(
+        jsonResponse({
+          ...apiState,
+          counts: {
+            love: 5,
+            confusing: 2,
+            thoughtProvoking: 1,
+          },
+          selectedReaction: "love",
+        }),
+      );
+
+    render(<ReactionsBar postId="post_123" slug="post-slug" title="Post Title" />);
+
+    await userEvent.click(screen.getByRole("button", { name: /Loved\. 4 reactions/i }));
+
+    expect(await screen.findByRole("button", { name: /Loved\. 5 reactions\. Selected\./i })).toBeEnabled();
+
+    resolveRefresh(jsonResponse(apiState));
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /Loved\. 5 reactions\. Selected\./i })).toBeEnabled();
+    });
+  });
+
+  it("uses loading placeholders on a first visit while reaction data is requested", async () => {
+    const fetchMock = vi.mocked(fetch);
+    let resolveRequest;
+    fetchMock.mockImplementationOnce(
+      () => new Promise((resolve) => {
+        resolveRequest = resolve;
+      }),
+    );
+
+    const { container } = render(<ReactionsBar postId="post_123" slug="post-slug" title="Post Title" />);
+
+    expect(container.querySelectorAll(".reaction-bar__loading-chip")).toHaveLength(3);
+    expect(screen.queryByRole("button", { name: /Loved\./i })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Share/i })).not.toBeDisabled();
+
+    resolveRequest(jsonResponse(apiState));
+
+    expect(await screen.findByRole("button", { name: /Loved\. 2 reactions/i })).not.toBeDisabled();
+  });
+
+  it("keeps cached counts visible but disables reactions when their refresh fails", async () => {
+    cacheReactionCounts({
+      love: 4,
+      confusing: 2,
+      thoughtProvoking: 1,
+    });
+    const fetchMock = vi.mocked(fetch);
+    fetchMock.mockResolvedValueOnce(
+      jsonResponse({ error: { code: "airtable_transient_failure", message: "temporary" } }, false, 502),
+    );
+
+    render(<ReactionsBar postId="post_123" slug="post-slug" title="Post Title" />);
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Reaction counts could not be refreshed. Reactions are temporarily unavailable.",
+    );
+    expect(screen.getByRole("button", { name: /Loved\. 4 reactions/i })).toBeDisabled();
+  });
+
   it("deselects the active reaction by submitting null", async () => {
     localStorage.setItem("blogReactionSelected:post_123", "love");
     const fetchMock = vi.mocked(fetch);
@@ -226,4 +346,14 @@ function jsonResponse(body, ok = true, status = ok ? 200 : 500) {
     status,
     json: async () => body,
   };
+}
+
+function cacheReactionCounts(counts) {
+  localStorage.setItem(
+    "blogReactionCounts:post_123",
+    JSON.stringify({
+      counts,
+      cachedAt: Date.now(),
+    }),
+  );
 }

@@ -6,6 +6,13 @@ const REACTION_API_URL =
 
 const VISITOR_ID_KEY = "blogReactionVisitorId";
 const SELECTED_PREFIX = "blogReactionSelected:";
+const COUNTS_PREFIX = "blogReactionCounts:";
+const REACTION_COUNTS_CACHE_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+
+type ReactionCountsSnapshot = {
+  counts: ReactionApiState["counts"];
+  cachedAt: number;
+};
 
 type StorageResult =
   | { available: true; visitorId: string }
@@ -58,6 +65,55 @@ function storeSelectedReaction(postId: string, reaction: ReactionKey | null): vo
   } catch {
     // Browser storage is an enhancement; backend state remains authoritative.
   }
+}
+
+function getStoredReactionCounts(postId: string): ReactionApiState["counts"] | null {
+  try {
+    const key = `${COUNTS_PREFIX}${postId}`;
+    const rawSnapshot = window.localStorage.getItem(key);
+    if (!rawSnapshot) {
+      return null;
+    }
+
+    const snapshot = JSON.parse(rawSnapshot) as Partial<ReactionCountsSnapshot>;
+    if (
+      !snapshot ||
+      typeof snapshot.cachedAt !== "number" ||
+      !Number.isFinite(snapshot.cachedAt) ||
+      Date.now() - snapshot.cachedAt > REACTION_COUNTS_CACHE_MAX_AGE_MS ||
+      !isReactionCounts(snapshot.counts)
+    ) {
+      window.localStorage.removeItem(key);
+      return null;
+    }
+
+    return snapshot.counts;
+  } catch {
+    return null;
+  }
+}
+
+function storeReactionCounts(postId: string, counts: ReactionApiState["counts"]): void {
+  try {
+    const snapshot: ReactionCountsSnapshot = {
+      counts,
+      cachedAt: Date.now(),
+    };
+    window.localStorage.setItem(`${COUNTS_PREFIX}${postId}`, JSON.stringify(snapshot));
+  } catch {
+    // Browser storage is an enhancement; backend state remains authoritative.
+  }
+}
+
+function isReactionCounts(value: unknown): value is ReactionApiState["counts"] {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  return ["love", "confusing", "thoughtProvoking"].every((key) => {
+    const count = (value as Record<string, unknown>)[key];
+    return typeof count === "number" && Number.isFinite(count) && count >= 0;
+  });
 }
 
 async function fetchReactionState(params: {
@@ -156,9 +212,11 @@ function createRandomToken(): string {
 export {
   fetchReactionState,
   getReactionVisitor,
+  getStoredReactionCounts,
   getStoredSelectedReaction,
   isReactionSetupUnavailable,
   ReactionApiError,
   storeSelectedReaction,
+  storeReactionCounts,
   submitReaction,
 };

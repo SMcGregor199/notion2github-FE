@@ -38,22 +38,6 @@ function fetchCachedData(){
   }
 }
 
-async function revalidateBlogDataInBg(){
- try{
-    const res = await fetch(LATEST_API, { cache: "no-store"});
-    if(!res.ok){
-      return;
-    }
-    const fresh = sortBlogPostsByNewest(await res.json());
-    const newVersion = res.headers.get("etag") || "";
-    localStorage.setItem(CACHE_DATA, JSON.stringify(fresh));
-    localStorage.setItem(CACHE_VER, newVersion);
- }
- catch(err){
-    console.warn("Blog data revalidation skipped", err);
- }
-}
-
 async function loadInitialBlogData(){
   const cachedData = fetchCachedData();
 
@@ -66,35 +50,31 @@ async function loadInitialBlogData(){
     const newVersion = res.headers.get("etag") || "";
     localStorage.setItem(CACHE_DATA, JSON.stringify(fresh));
     localStorage.setItem(CACHE_VER, newVersion);
-    return fresh;
+    return { data: fresh, status: "ready" };
   }
   catch(err){
     console.warn("Falling back to cached or bundled blog data", err);
-    return sortBlogPostsByNewest(cachedData ?? fallbackBlogPostsData);
+    return {
+      data: sortBlogPostsByNewest(cachedData ?? fallbackBlogPostsData),
+      status: "unavailable",
+    };
   }
 }
 
 export function BlogAppShell(){
   const [initialPostData, setInitialPostData] = useState(() => getBootstrapBlogData());
-  const [isBlogDataLoading, setIsBlogDataLoading] = useState(true);
+  const [blogDataStatus, setBlogDataStatus] = useState("loading");
+  const [loadAttempt, setLoadAttempt] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
 
     async function bootstrapBlogData(){
-      try{
-        const fresh = await loadInitialBlogData();
-        if (!cancelled) {
-          setInitialPostData(fresh);
-        }
+      const result = await loadInitialBlogData();
+      if (!cancelled) {
+        setInitialPostData(result.data);
+        setBlogDataStatus(result.status);
       }
-      finally{
-        if (!cancelled) {
-          setIsBlogDataLoading(false);
-        }
-      }
-
-      void revalidateBlogDataInBg();
     }
 
     void bootstrapBlogData();
@@ -102,9 +82,16 @@ export function BlogAppShell(){
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [loadAttempt]);
 
-  return <App initialData={initialPostData} isBlogDataLoading={isBlogDataLoading}/>;
+  return (
+    <App
+      initialData={initialPostData}
+      isBlogDataLoading={blogDataStatus === "loading"}
+      blogDataStatus={blogDataStatus}
+      onRetryBlogData={() => setLoadAttempt((attempt) => attempt + 1)}
+    />
+  );
 }
 
 createRoot(document.getElementById('root')).render(

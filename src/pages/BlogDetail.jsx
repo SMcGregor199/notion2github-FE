@@ -1,11 +1,12 @@
 import { Fragment } from "react";
-import { useParams } from "react-router-dom";
-import {Typography,Tag,Image} from "antd";
+import { Link, useParams } from "react-router-dom";
+import {Button, Image, Skeleton, Spin, Tag, Typography} from "antd";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import PublishUpdateDates from "../components/PublishUpdateDates";
 import ReactionsBar from "../components/ReactionsBar.tsx";
 import NewsletterSignup from "../components/NewsletterSignup";
+import NotFound from "./NotFound";
 
 const bodyImageStyle = {
     borderRadius: "8px",
@@ -14,11 +15,18 @@ const bodyImageStyle = {
 
 
 
-function BlogDetail({initialData}) {
+function BlogDetail({initialData = [], blogDataStatus = "ready", onRetryBlogData}) {
     const { slug } = useParams();
-    const post = initialData.find((post)=>post.link===slug);
+    const posts = Array.isArray(initialData) ? initialData : [];
+    const post = posts.find((post)=>post.link===slug);
     if (!post){
-        return <h1>404 — Post not found</h1>;
+        if (blogDataStatus === "loading") {
+            return <BlogPostLoading />;
+        }
+        if (blogDataStatus === "unavailable") {
+            return <BlogPostUnavailable onRetry={onRetryBlogData} />;
+        }
+        return <NotFound />;
     } 
     const {body, publishedDate, updatedDate} = post;
     let formattedUpdatedDate = "";
@@ -90,6 +98,37 @@ function BlogDetail({initialData}) {
                 ) : null}
                 <NewsletterSignup compact />
             </article>     
+    );
+}
+
+function BlogPostLoading() {
+    return (
+        <article
+            aria-busy="true"
+            aria-labelledby="blog-post-loading-title"
+            style={{display:"flex", flexDirection:"column", gap:"1rem", maxWidth:"64ch", justifySelf:"center", width:"100%"}}
+        >
+            <div role="status" aria-live="polite" style={{display:"inline-flex", alignItems:"center", gap:8}}>
+                <Spin size="small" />
+                <Typography.Text id="blog-post-loading-title" type="secondary">Loading this post...</Typography.Text>
+            </div>
+            <Skeleton active title={{width:"68%"}} paragraph={{rows:8, width:["38%", "18%", "22%", "100%", "94%", "97%", "88%", "61%"]}} />
+        </article>
+    );
+}
+
+function BlogPostUnavailable({onRetry}) {
+    return (
+        <section style={{maxWidth:"64ch", justifySelf:"center"}} aria-labelledby="blog-post-unavailable-title">
+            <Typography.Title id="blog-post-unavailable-title" level={1}>This post could not load.</Typography.Title>
+            <Typography.Paragraph style={{lineHeight:2}}>
+                The blog data service is temporarily unavailable. Please try again.
+            </Typography.Paragraph>
+            <div style={{display:"flex", gap:"0.75rem", flexWrap:"wrap"}}>
+                <Button type="primary" onClick={onRetry}>Retry</Button>
+                <Link to="/blog">Back to the blog</Link>
+            </div>
+        </section>
     );
 }
 

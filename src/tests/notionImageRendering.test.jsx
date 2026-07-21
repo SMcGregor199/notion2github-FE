@@ -1,8 +1,9 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { ConfigProvider } from "antd";
 import { ThemeProvider } from "@emotion/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import BlogPage from "../pages/Blog";
 import BlogCardLong from "../components/BlogCardLong";
 import BlogDetail from "../pages/BlogDetail";
@@ -100,6 +101,54 @@ describe("Notion image rendering", () => {
             "src",
             postWithImage.thumbnail
         );
+    });
+
+    it("shows a post-loading skeleton instead of a transient 404 while blog data is loading", () => {
+        renderWithProviders(
+            <Routes>
+                <Route path="/blog/:slug" element={<BlogDetail initialData={[]} blogDataStatus="loading" />} />
+            </Routes>,
+            { route: "/blog/image-ready-post" }
+        );
+
+        expect(screen.getByRole("status")).toHaveTextContent(/loading this post/i);
+        expect(screen.queryByRole("heading", { name: "404" })).not.toBeInTheDocument();
+    });
+
+    it("shows the not-found page only after a successful response confirms a post is absent", () => {
+        renderWithProviders(
+            <Routes>
+                <Route path="/blog/:slug" element={<BlogDetail initialData={[]} blogDataStatus="ready" />} />
+            </Routes>,
+            { route: "/blog/missing-post" }
+        );
+
+        expect(screen.getByRole("heading", { level: 1, name: "404" })).toBeInTheDocument();
+    });
+
+    it("shows a retry state rather than a 404 when blog data is unavailable", async () => {
+        const onRetryBlogData = vi.fn();
+        renderWithProviders(
+            <Routes>
+                <Route
+                    path="/blog/:slug"
+                    element={
+                        <BlogDetail
+                            initialData={[]}
+                            blogDataStatus="unavailable"
+                            onRetryBlogData={onRetryBlogData}
+                        />
+                    }
+                />
+            </Routes>,
+            { route: "/blog/image-ready-post" }
+        );
+
+        expect(screen.getByRole("heading", { name: /this post could not load/i })).toBeInTheDocument();
+        expect(screen.queryByRole("heading", { name: "404" })).not.toBeInTheDocument();
+
+        await userEvent.click(screen.getByRole("button", { name: "Retry" }));
+        expect(onRetryBlogData).toHaveBeenCalledOnce();
     });
 
     it("skips the blog detail image when the thumbnail is missing", () => {

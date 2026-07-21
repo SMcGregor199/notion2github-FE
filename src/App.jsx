@@ -8,7 +8,12 @@ import CaseStudies from "./pages/CaseStudies";
 import NotFound from "./pages/NotFound";
 import Privacy from "./pages/Privacy";
 import SubscriptionConfirmed from "./pages/SubscriptionConfirmed";
-function App({initialData, isBlogDataLoading = false}) {
+function App({
+  initialData,
+  isBlogDataLoading = false,
+  blogDataStatus = isBlogDataLoading ? "loading" : "ready",
+  onRetryBlogData,
+}) {
   
   return (
       <Routes>
@@ -16,7 +21,16 @@ function App({initialData, isBlogDataLoading = false}) {
       <Route element={<AppLayout />}>
         <Route path="/" element={<Home initialData={initialData}/>} />
         <Route path="/blog" element={<BlogPage initialData={initialData} isBlogDataLoading={isBlogDataLoading}/>} />
-        <Route path="/blog/:slug" element={<BlogDetail initialData={initialData}/>} />
+        <Route
+          path="/blog/:slug"
+          element={
+            <BlogDetail
+              initialData={initialData}
+              blogDataStatus={blogDataStatus}
+              onRetryBlogData={onRetryBlogData}
+            />
+          }
+        />
         <Route path="/contact" element={<Contact/>}/>
         <Route path="/case-studies" element={<CaseStudies />} />
         <Route path="/privacy" element={<Privacy />} />

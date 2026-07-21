@@ -377,31 +377,11 @@ main a:not(.ant-btn):not(.homepage-blog-link):not(.discourse-hero-link):not(.not
   }
 }
 
-.signal-journal-nav-link {
-  display: inline-flex;
-  align-items: flex-start;
+.support-nav-link {
   color: inherit;
 }
 
-.signal-journal-nav-label {
-  display: inline-flex;
-  align-items: flex-start;
-  gap: 0.1rem;
-  line-height: 1;
-}
-
-.signal-journal-nav-text {
-  line-height: 1.08;
-}
-
-.ant-menu .signal-journal-nav-link .signal-journal-nav-icon.anticon {
-  flex: none;
-  font-size: 0.58em;
-  line-height: 1;
-  margin-top: 0.18em;
-}
-
-.ant-menu-horizontal > .ant-menu-item-selected .signal-journal-nav-link {
+.ant-menu-horizontal > .ant-menu-item-selected .support-nav-link {
   color: #d86f44 !important;
 }
 

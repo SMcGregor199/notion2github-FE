@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Layout, Menu, Button, Avatar, Flex, Typography, Grid } from "antd";  
-import { ExportOutlined, GithubOutlined, LinkedinOutlined, WifiOutlined } from "@ant-design/icons";
+import { GithubOutlined, LinkedinOutlined, WifiOutlined } from "@ant-design/icons";
 const { useBreakpoint } = Grid;
 import { Link } from "react-router-dom";
 
 
 
 function SiteHeader(){
-    const signalJournalKey = "3";
+    const supportLinkKey = "3";
     const [selectedKey, setSelectedKey] = useState(null);
     const navItems = [
         { key: "1", label: <Link to="/">Home</Link> },
@@ -15,19 +15,16 @@ function SiteHeader(){
         { key: "5", label: <a href="/resume.pdf" target="_blank" rel="noopener noreferrer">Resume</a> },
         { key: "6", label: <Link to="/contact">Contact Me</Link> }
     ];
-    const signalJournalItem = {
-        key: signalJournalKey,
+    const supportLinkItem = {
+        key: supportLinkKey,
         label: (
             <a
-                className="signal-journal-nav-link"
-                href="https://shaynemcgregor.substack.com"
+                className="support-nav-link"
+                href="https://buymeacoffee.com/smcgregor199"
                 target="_blank"
                 rel="noopener noreferrer"
             >
-                <span className="signal-journal-nav-label">
-                    <span className="signal-journal-nav-text">The Signal Journal</span>
-                    <ExportOutlined aria-hidden="true" focusable="false" className="signal-journal-nav-icon" />
-                </span>
+                Buy Me a Coffee
             </a>
         )
     };
@@ -36,8 +33,8 @@ function SiteHeader(){
     const compactHeader = !screens.md;
 
     const handleMenuClick = (info) => {
-        if (info.key === signalJournalKey) {
-            setSelectedKey(signalJournalKey);
+        if (info.key === supportLinkKey) {
+            setSelectedKey(supportLinkKey);
             return;
         }
 
@@ -75,8 +72,8 @@ function SiteHeader(){
         >
             <Menu 
                 mode="horizontal"
-                items={[...navItems, signalJournalItem]}
-                selectedKeys={selectedKey === signalJournalKey ? [signalJournalKey] : []}
+                items={[...navItems, supportLinkItem]}
+                selectedKeys={selectedKey === supportLinkKey ? [supportLinkKey] : []}
                 onClick={handleMenuClick}
                 style={{ borderBottom: "none", justifyContent: compactHeader ? "flex-start" : "flex-end", minWidth: 0 }}
             />

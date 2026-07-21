@@ -21,6 +21,16 @@ describe("SiteHeader RSS link", () => {
         expect(screen.queryByRole("link", { name: "Case Studies" })).not.toBeInTheDocument();
     });
 
+    it("replaces the former Substack item with an icon-free Buy Me a Coffee link", () => {
+        renderHeader();
+
+        const support = screen.getByRole("link", { name: "Buy Me a Coffee" });
+        expect(support).toHaveAttribute("href", "https://buymeacoffee.com/smcgregor199");
+        expect(support).toHaveAttribute("target", "_blank");
+        expect(support.querySelector(".anticon")).toBeNull();
+        expect(screen.queryByText("The Signal Journal")).not.toBeInTheDocument();
+    });
+
     it("renders GitHub, RSS, and LinkedIn icon links in that order", () => {
         renderHeader();
 

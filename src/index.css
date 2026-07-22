@@ -233,8 +233,8 @@ main a:not(.ant-btn):not(.homepage-blog-link):not(.discourse-hero-link):not(.not
 
 .blog-detail--with-discussion {
   display: grid;
-  grid-template-columns: minmax(0, 64ch) minmax(13rem, 17rem);
-  gap: clamp(2rem, 5vw, 5rem);
+  grid-template-columns: minmax(0, 64ch) minmax(17rem, 19rem);
+  gap: clamp(1.5rem, 3vw, 3rem);
   align-items: start;
 }
 
@@ -253,7 +253,7 @@ main a:not(.ant-btn):not(.homepage-blog-link):not(.discourse-hero-link):not(.not
 }
 
 .linkedin-discussion-cta {
-  padding: 1.25rem;
+  padding: 1.5rem;
   border: 1px solid rgba(216, 111, 68, 0.28);
   border-radius: 16px;
   background: #fffaf7;
@@ -266,14 +266,13 @@ main a:not(.ant-btn):not(.homepage-blog-link):not(.discourse-hero-link):not(.not
 
 .linkedin-discussion-cta p {
   margin-bottom: 1rem !important;
-  line-height: 1.65 !important;
+  line-height: 2 !important;
 }
 
-.linkedin-discussion-cta .ant-btn {
-  height: auto;
-  min-height: 2.75rem;
-  white-space: normal;
-  text-align: left;
+.linkedin-discussion-cta__new-tab-note {
+  display: block;
+  margin-top: 0.75rem;
+  line-height: 2;
 }
 
 .linkedin-discussion-cta--rail {
@@ -292,7 +291,7 @@ main a:not(.ant-btn):not(.homepage-blog-link):not(.discourse-hero-link):not(.not
   }
 }
 
-@media (max-width: 959px) {
+@media (max-width: 1099px) {
   .blog-detail--with-discussion {
     display: block;
   }

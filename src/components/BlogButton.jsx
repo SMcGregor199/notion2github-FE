@@ -1,7 +1,7 @@
 import { Button } from "antd";
 import styled from "@emotion/styled";
 
-const BlogButton = styled(Button, { shouldForwardProp: (prop) => prop !== "accent" })`
+const BlogButton = styled(Button)`
   border-radius: 8px;
   background-color: #f5f5f5;
   color: #000;
@@ -27,21 +27,6 @@ const BlogButton = styled(Button, { shouldForwardProp: (prop) => prop !== "accen
     &&&:focus-visible {
       outline: 2px solid ${theme.token.colorPrimary};
       outline-offset: 3px;
-    }
-  `}
-
-  ${({ accent, theme }) => accent && `
-    &&& {
-      background-color: ${theme.token.colorPrimary};
-      border-color: ${theme.token.colorPrimary};
-      color: ${theme.token.colorTextLightSolid};
-    }
-
-    &&&:hover,
-    &&&:focus-visible {
-      background-color: #c75f34;
-      border-color: #c75f34;
-      color: ${theme.token.colorTextLightSolid};
     }
   `}
 `;

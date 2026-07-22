@@ -15,7 +15,7 @@ const bodyImageStyle = {
     boxShadow: "0 8px 24px rgba(15, 23, 42, 0.18)",
 };
 
-const DESKTOP_DISCUSSION_QUERY = "(min-width: 960px)";
+const DESKTOP_DISCUSSION_QUERY = "(min-width: 1100px)";
 
 
 function BlogDetail({initialData = [], blogDataStatus = "ready", onRetryBlogData}) {

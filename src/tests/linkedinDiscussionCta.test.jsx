@@ -30,7 +30,7 @@ const originalIntersectionObserver = window.IntersectionObserver;
 
 function setViewport(desktop) {
     window.matchMedia = vi.fn().mockImplementation((query) => ({
-        matches: query === "(min-width: 960px)" && desktop,
+        matches: query === "(min-width: 1100px)" && desktop,
         media: query,
         addEventListener: () => {},
         removeEventListener: () => {},
@@ -73,11 +73,12 @@ describe("LinkedIn discussion CTA", () => {
         setViewport(false);
         renderDetail();
 
-        const link = screen.getByRole("link", { name: /join the discussion on linkedin/i });
+        const link = screen.getByRole("link", { name: "Join discussion" });
         expect(link.closest("aside")).toHaveClass("linkedin-discussion-cta--inline");
         expect(link).toHaveAttribute("href", post.linkedinDiscussionUrl);
         expect(link).toHaveAttribute("target", "_blank");
         expect(link).toHaveAttribute("rel", "noopener noreferrer");
+        expect(screen.getByText("Opens in a new tab.")).toBeVisible();
     });
 
     it("reveals the desktop rail only after the article-end sentinel is reached", async () => {
@@ -106,6 +107,6 @@ describe("LinkedIn discussion CTA", () => {
         await waitFor(() => {
             expect(screen.getByRole("heading", { name: /continue the conversation/i })).toBeInTheDocument();
         });
-        expect(screen.getByRole("link", { name: /opens in a new tab/i }).closest("aside")).toHaveClass("linkedin-discussion-cta--rail");
+        expect(screen.getByRole("link", { name: "Join discussion" }).closest("aside")).toHaveClass("linkedin-discussion-cta--rail");
     });
 });

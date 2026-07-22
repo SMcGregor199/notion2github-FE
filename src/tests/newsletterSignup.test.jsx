@@ -21,6 +21,7 @@ describe("NewsletterSignup", () => {
         fireEvent.change(screen.getByLabelText("First name"), { target: { value: "Shayne" } });
         fireEvent.change(screen.getByLabelText("Last name"), { target: { value: "McGregor" } });
         fireEvent.change(screen.getByLabelText("Email address"), { target: { value: "shayne@example.com" } });
+        fireEvent.change(screen.getByLabelText(/what would you like to read more about/i), { target: { value: "More web writing" } });
         fireEvent.click(screen.getByRole("button", { name: "Subscribe" }));
 
         expect(fetchMock).toHaveBeenCalledWith(
@@ -28,6 +29,10 @@ describe("NewsletterSignup", () => {
             expect.objectContaining({ method: "POST" }),
         );
         expect(await screen.findByText("Check your email to confirm your subscription.")).toBeInTheDocument();
+        expect(screen.getByLabelText("First name")).toHaveValue("");
+        expect(screen.getByLabelText("Last name")).toHaveValue("");
+        expect(screen.getByLabelText("Email address")).toHaveValue("");
+        expect(screen.getByLabelText(/what would you like to read more about/i)).toHaveValue("");
         expect(screen.getByRole("link", { name: "privacy notice" })).toHaveAttribute("href", "/privacy");
         expect(screen.getByText(/check your spam or Promotions folder/i)).toBeInTheDocument();
     });

@@ -4,9 +4,10 @@ import { Link } from "react-router-dom";
 import BlogButton from "./BlogButton";
 
 const NEWSLETTER_ENDPOINT = "https://shaynemcgregordev-be.netlify.app/.netlify/functions/newsletter-subscribe";
+const EMPTY_FORM = { firstName: "", lastName: "", email: "", whySubscribe: "", website: "" };
 
 function NewsletterSignup({ compact = false }) {
-    const [form, setForm] = useState({ firstName: "", lastName: "", email: "", whySubscribe: "", website: "" });
+    const [form, setForm] = useState(EMPTY_FORM);
     const [status, setStatus] = useState({ type: "", message: "" });
     const [submitting, setSubmitting] = useState(false);
 
@@ -27,6 +28,7 @@ function NewsletterSignup({ compact = false }) {
             });
             const body = await response.json().catch(() => ({}));
             if (!response.ok) throw new Error(body.message || "We could not process that subscription. Please try again.");
+            setForm(EMPTY_FORM);
             setStatus({ type: "success", message: body.message || "Check your email to confirm your subscription." });
         } catch (error) {
             setStatus({ type: "error", message: error instanceof Error ? error.message : "We could not process that subscription. Please try again." });

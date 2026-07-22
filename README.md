@@ -14,7 +14,7 @@ React/Vite frontend for `shaynemcgregor.dev`.
 ## Commands
 
 - `npm run dev`: start the Vite dev server.
-- `npm run build`: build the frontend, generate per-post share preview HTML in `dist/blog/<slug>/index.html`, and generate social share-card images in `dist/share/blog/<slug>.png`.
+- `npm run build`: build the frontend, generate per-post share preview HTML in `dist/blog/<slug>/index.html`, generate social share-card images in `dist/share/blog/<slug>.png`, and write `dist/sitemap.xml` plus `dist/sitemap-pages.xml`.
 - `npm run lint`: run ESLint.
 - `npm run test`: run Vitest.
 - `npm run test:ui`: run Vitest UI.
@@ -28,6 +28,8 @@ React/Vite frontend for `shaynemcgregor.dev`.
 - The current source of truth for runtime blog data is the backend contract, not local static content.
 - The share preview build step reads the stored backend JSON endpoint at `/.netlify/functions/blog-posts-json`; it does not use the refresh/write-oriented `notion-blog-data` endpoint.
 - Share-card images are generated as PNG files at 1200x630 using existing build-time `sharp` tooling. The card layout uses `public/profile-pic.png` for the circular author image and the post thumbnail for the dominant right-side visual when available.
+- `/sitemap.xml` is a build-generated sitemap index. Its static child, `/sitemap-pages.xml`, lists `/`, `/blog`, `/contact`, `/resume`, and `/privacy`; its dynamic child, `/sitemap-posts.xml`, proxies to the backend's current published-post sitemap.
+- Every new indexable static route must be added to `scripts/generate-sitemap.js` in the same change. Published Notion blog posts need no frontend sitemap maintenance because the backend sitemap reads the refreshed content manifest.
 - Optional non-secret build variables:
   - `SHARE_PREVIEW_POSTS_URL`: override the stored blog JSON URL.
   - `SHARE_PREVIEW_SITE_URL`: override the canonical site URL. Defaults to `https://shaynemcgregor.dev`.

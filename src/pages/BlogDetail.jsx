@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {Button, Image, Skeleton, Spin, Tag, Typography} from "antd";
 import ReactMarkdown from "react-markdown";
@@ -6,6 +6,8 @@ import remarkGfm from "remark-gfm";
 import PublishUpdateDates from "../components/PublishUpdateDates";
 import ReactionsBar from "../components/ReactionsBar.tsx";
 import NewsletterSignup from "../components/NewsletterSignup";
+import LinkedInDiscussionCta from "../components/LinkedInDiscussionCta";
+import { getValidLinkedInDiscussionUrl } from "../utils/linkedinDiscussionUrl";
 import NotFound from "./NotFound";
 
 const bodyImageStyle = {
@@ -13,12 +15,44 @@ const bodyImageStyle = {
     boxShadow: "0 8px 24px rgba(15, 23, 42, 0.18)",
 };
 
+const DESKTOP_DISCUSSION_QUERY = "(min-width: 960px)";
 
 
 function BlogDetail({initialData = [], blogDataStatus = "ready", onRetryBlogData}) {
     const { slug } = useParams();
     const posts = Array.isArray(initialData) ? initialData : [];
     const post = posts.find((post)=>post.link===slug);
+    const discussionUrl = getValidLinkedInDiscussionUrl(post?.linkedinDiscussionUrl);
+    const isDesktopDiscussionLayout = useMediaQuery(DESKTOP_DISCUSSION_QUERY);
+    const articleEndRef = useRef(null);
+    const [hasReachedArticleEnd, setHasReachedArticleEnd] = useState(false);
+
+    useEffect(() => {
+        setHasReachedArticleEnd(false);
+        if (!discussionUrl || !isDesktopDiscussionLayout) {
+            return undefined;
+        }
+
+        const sentinel = articleEndRef.current;
+        if (!sentinel) {
+            return undefined;
+        }
+
+        if (!("IntersectionObserver" in window)) {
+            setHasReachedArticleEnd(true);
+            return undefined;
+        }
+
+        const observer = new window.IntersectionObserver((entries) => {
+            if (entries.some((entry) => entry.isIntersecting)) {
+                setHasReachedArticleEnd(true);
+                observer.disconnect();
+            }
+        });
+        observer.observe(sentinel);
+        return () => observer.disconnect();
+    }, [discussionUrl, isDesktopDiscussionLayout]);
+
     if (!post){
         if (blogDataStatus === "loading") {
             return <BlogPostLoading />;
@@ -73,8 +107,8 @@ function BlogDetail({initialData = [], blogDataStatus = "ready", onRetryBlogData
     
     });
     return (
-       
-            <article style={{display:"flex", flexDirection:"column", gap:"1rem", maxWidth:"64ch", marginInline:0}}>
+            <div className={discussionUrl ? "blog-detail blog-detail--with-discussion" : "blog-detail"}>
+            <article className="blog-detail__article" style={{display:"flex", flexDirection:"column", gap:"1rem", maxWidth:"64ch", marginInline:0}}>
                 <Typography.Title level={1}>{post.title}</Typography.Title>
                 <PublishUpdateDates publishedDate={formattedDate} updatedDate={formattedUpdatedDate}/>
                 {post.tag ? (
@@ -96,9 +130,32 @@ function BlogDetail({initialData = [], blogDataStatus = "ready", onRetryBlogData
                 {post.thumbnail ? (
                     <Image src={`${post.thumbnail}`} alt={post.title} preview={false}></Image>
                 ) : null}
+                {discussionUrl ? <div ref={articleEndRef} className="blog-detail__end-sentinel" data-testid="article-end-sentinel" aria-hidden="true" /> : null}
+                {discussionUrl && !isDesktopDiscussionLayout ? <LinkedInDiscussionCta url={discussionUrl} placement="inline" /> : null}
                 <NewsletterSignup compact />
-            </article>     
+            </article>
+            {discussionUrl && isDesktopDiscussionLayout ? (
+                <div className="blog-detail__discussion-rail">
+                    {hasReachedArticleEnd ? <LinkedInDiscussionCta url={discussionUrl} placement="rail" /> : null}
+                </div>
+            ) : null}
+            </div>
     );
+}
+
+function useMediaQuery(query) {
+    const getMatches = () => typeof window !== "undefined" && window.matchMedia(query).matches;
+    const [matches, setMatches] = useState(getMatches);
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia(query);
+        const updateMatches = () => setMatches(mediaQuery.matches);
+        updateMatches();
+        mediaQuery.addEventListener("change", updateMatches);
+        return () => mediaQuery.removeEventListener("change", updateMatches);
+    }, [query]);
+
+    return matches;
 }
 
 function BlogPostLoading() {

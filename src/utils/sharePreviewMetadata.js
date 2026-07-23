@@ -2,6 +2,10 @@ export const DEFAULT_SITE_NAME = "shaynemcgregor.dev";
 export const DEFAULT_SITE_URL = "https://shaynemcgregor.dev";
 export const DEFAULT_FALLBACK_IMAGE_URL = "https://shaynemcgregor.dev/profile-pic.png";
 export const DEFAULT_DESCRIPTION = "Read Shayne McGregor's latest writing.";
+export const STATIC_SITE_TITLE = "Notes from Shayne";
+export const STATIC_SITE_DESCRIPTION = "Occasional notes on engineering, systems, and the ideas behind the work.";
+export const STATIC_SHARE_PREVIEW_IMAGE_PATH = "share/notes-from-shayne.png";
+export const STATIC_SHARE_PREVIEW_ROUTES = ["/", "/blog", "/contact", "/resume", "/privacy", "/case-studies"];
 export const SHARE_PREVIEW_IMAGE_WIDTH = 1200;
 export const SHARE_PREVIEW_IMAGE_HEIGHT = 630;
 
@@ -59,7 +63,7 @@ function descriptionFromMarkdown(markdown) {
         .replace(/```[\s\S]*?```/g, " ")
         .replace(/!\[[^\]]*]\([^)]*\)/g, " ")
         .replace(/\[([^\]]+)]\([^)]*\)/g, "$1")
-        .replace(/[#>*_`~\-]+/g, " ")
+        .replace(/[#>*_`~-]+/g, " ")
         .replace(/\s+/g, " ")
         .trim();
 
@@ -133,6 +137,20 @@ function combineUrl(baseUrl, path) {
     const normalizedBaseUrl = normalizeText(baseUrl).replace(/\/+$/, "");
     const normalizedPath = normalizeText(path).replace(/^\/+/, "");
     return `${normalizedBaseUrl}/${normalizedPath}`;
+}
+
+function normalizeStaticRoutePath(value) {
+    const routePath = normalizeText(value);
+
+    if (!routePath || routePath === "/") {
+        return "/";
+    }
+
+    if (!routePath.startsWith("/") || routePath.includes("..") || routePath.includes("\\")) {
+        throw new Error(`Static share preview route "${routePath}" is not safe.`);
+    }
+
+    return routePath.replace(/\/+$/, "");
 }
 
 export function escapeHtml(value) {
@@ -212,6 +230,41 @@ export function getSharePreviewImageOutputPath(slug) {
 export function getSharePreviewImageUrl(slug, options = {}) {
     const siteUrl = (normalizeText(options.siteUrl) || DEFAULT_SITE_URL).replace(/\/+$/, "");
     return combineUrl(siteUrl, getSharePreviewImageOutputPath(slug));
+}
+
+export function getStaticSharePreviewOutputPath(routePath) {
+    const normalizedRoutePath = normalizeStaticRoutePath(routePath);
+    return normalizedRoutePath === "/" ? "index.html" : `${normalizedRoutePath.slice(1)}/index.html`;
+}
+
+export function getStaticSharePreviewImageUrl(options = {}) {
+    const siteUrl = (normalizeText(options.siteUrl) || DEFAULT_SITE_URL).replace(/\/+$/, "");
+    return combineUrl(siteUrl, STATIC_SHARE_PREVIEW_IMAGE_PATH);
+}
+
+export function buildStaticSharePreviewMetadata(routePath, options = {}) {
+    const normalizedRoutePath = normalizeStaticRoutePath(routePath);
+    const siteUrl = (normalizeText(options.siteUrl) || DEFAULT_SITE_URL).replace(/\/+$/, "");
+    const imageUrl = normalizeText(options.shareImageUrl) || getStaticSharePreviewImageUrl({ siteUrl });
+
+    if (!isAbsoluteHttpUrl(imageUrl)) {
+        throw new Error("Static share preview requires an absolute HTTP(S) image URL.");
+    }
+
+    return {
+        routePath: normalizedRoutePath,
+        title: STATIC_SITE_TITLE,
+        documentTitle: STATIC_SITE_TITLE,
+        description: STATIC_SITE_DESCRIPTION,
+        canonicalUrl: `${siteUrl}${normalizedRoutePath}`,
+        siteName: STATIC_SITE_TITLE,
+        imageUrl,
+        imageAlt: "Notes from Shayne social preview card",
+        twitterCard: "summary_large_image",
+        imageWidth: SHARE_PREVIEW_IMAGE_WIDTH,
+        imageHeight: SHARE_PREVIEW_IMAGE_HEIGHT,
+        ogType: "website",
+    };
 }
 
 export function buildSharePreviewMetadata(post, options = {}) {
@@ -299,7 +352,7 @@ export function renderSharePreviewHead(metadata) {
         `<title>${escapeHtml(metadata.documentTitle)}</title>`,
         renderTag("meta", { name: "description", content: metadata.description }),
         renderTag("link", { rel: "canonical", href: metadata.canonicalUrl }),
-        renderTag("meta", { property: "og:type", content: "article" }),
+        renderTag("meta", { property: "og:type", content: metadata.ogType || "article" }),
         renderTag("meta", { property: "og:site_name", content: metadata.siteName }),
         renderTag("meta", { property: "og:title", content: metadata.title }),
         renderTag("meta", { property: "og:description", content: metadata.description }),
@@ -310,15 +363,15 @@ export function renderSharePreviewHead(metadata) {
         renderTag("meta", { property: "og:image:height", content: metadata.imageHeight }),
     ];
 
-    if (metadata.publishedTime) {
+    if (metadata.ogType !== "website" && metadata.publishedTime) {
         lines.push(renderTag("meta", { property: "article:published_time", content: metadata.publishedTime }));
     }
 
-    if (metadata.modifiedTime) {
+    if (metadata.ogType !== "website" && metadata.modifiedTime) {
         lines.push(renderTag("meta", { property: "article:modified_time", content: metadata.modifiedTime }));
     }
 
-    if (metadata.tag) {
+    if (metadata.ogType !== "website" && metadata.tag) {
         lines.push(renderTag("meta", { property: "article:tag", content: metadata.tag }));
     }
 

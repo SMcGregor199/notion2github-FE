@@ -2,9 +2,12 @@ import { describe, expect, it } from "vitest";
 import {
     buildAllSharePreviewMetadata,
     buildSharePreviewMetadata,
+    buildStaticSharePreviewMetadata,
     getSharePreviewImageOutputPath,
     getSharePreviewImageUrl,
     getSharePreviewOutputPath,
+    getStaticSharePreviewImageUrl,
+    getStaticSharePreviewOutputPath,
     injectSharePreviewHead,
     prepareSharePreviewTitleLines,
     renderSharePreviewHead,
@@ -158,6 +161,39 @@ describe("share preview metadata", () => {
     it("returns the expected generated share-card image path and absolute URL", () => {
         expect(getSharePreviewImageOutputPath("a-useful-post")).toBe("share/blog/a-useful-post.png");
         expect(getSharePreviewImageUrl("a-useful-post")).toBe("https://shaynemcgregor.dev/share/blog/a-useful-post.png");
+    });
+
+    it("builds website metadata for public static routes", () => {
+        const metadata = buildStaticSharePreviewMetadata("/blog");
+
+        expect(metadata).toMatchObject({
+            routePath: "/blog",
+            title: "Notes from Shayne",
+            documentTitle: "Notes from Shayne",
+            description: "Occasional notes on engineering, systems, and the ideas behind the work.",
+            canonicalUrl: "https://shaynemcgregor.dev/blog",
+            siteName: "Notes from Shayne",
+            imageUrl: "https://shaynemcgregor.dev/share/notes-from-shayne.png",
+            twitterCard: "summary_large_image",
+            ogType: "website",
+        });
+    });
+
+    it("renders static metadata without article-only tags", () => {
+        const head = renderSharePreviewHead(buildStaticSharePreviewMetadata("/contact"));
+
+        expect(head).toContain("<title>Notes from Shayne</title>");
+        expect(head).toContain('property="og:type" content="website"');
+        expect(head).toContain('property="og:site_name" content="Notes from Shayne"');
+        expect(head).toContain('name="twitter:card" content="summary_large_image"');
+        expect(head).not.toContain("article:published_time");
+        expect(head).not.toContain("article:tag");
+    });
+
+    it("returns static route output paths and the shared image URL", () => {
+        expect(getStaticSharePreviewOutputPath("/")).toBe("index.html");
+        expect(getStaticSharePreviewOutputPath("/case-studies")).toBe("case-studies/index.html");
+        expect(getStaticSharePreviewImageUrl()).toBe("https://shaynemcgregor.dev/share/notes-from-shayne.png");
     });
 
     it("renders generated share-card image metadata with dimensions", () => {

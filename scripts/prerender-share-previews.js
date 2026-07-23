@@ -7,10 +7,14 @@ import { blogPostsData } from "../src/data/notionBlogData.js";
 import {
     DEFAULT_FALLBACK_IMAGE_URL,
     DEFAULT_SITE_URL,
+    STATIC_SHARE_PREVIEW_IMAGE_PATH,
+    STATIC_SHARE_PREVIEW_ROUTES,
     buildAllSharePreviewMetadata,
+    buildStaticSharePreviewMetadata,
     escapeHtml,
     getSharePreviewImageOutputPath,
     getSharePreviewOutputPath,
+    getStaticSharePreviewOutputPath,
     injectSharePreviewHead,
     prepareSharePreviewTitleLines,
 } from "../src/utils/sharePreviewMetadata.js";
@@ -170,6 +174,25 @@ function createBaseCardSvg(metadata) {
     `);
 }
 
+function createStaticSiteCardSvg() {
+    return Buffer.from(`
+        <svg width="${CARD_WIDTH}" height="${CARD_HEIGHT}" viewBox="0 0 ${CARD_WIDTH} ${CARD_HEIGHT}" xmlns="http://www.w3.org/2000/svg">
+            <rect width="${CARD_WIDTH}" height="${CARD_HEIGHT}" fill="#f7f4ef"/>
+            <rect x="650" y="0" width="550" height="548" fill="#ece7df"/>
+            <rect x="0" y="548" width="${CARD_WIDTH}" height="82" fill="#e7e3dc"/>
+            <rect x="${RIGHT_IMAGE_LEFT}" y="${RIGHT_IMAGE_TOP}" width="${RIGHT_IMAGE_WIDTH}" height="${RIGHT_IMAGE_HEIGHT}" rx="${RIGHT_IMAGE_RADIUS}" fill="#d8d1c7"/>
+            <text x="72" y="78" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="2" fill="#7a4d36">NOTES FROM SHAYNE</text>
+            <text x="72" y="170" font-family="Georgia, 'Times New Roman', serif" font-size="54" font-weight="700" fill="#1f1b18">Notes on</text>
+            <text x="72" y="232" font-family="Georgia, 'Times New Roman', serif" font-size="54" font-weight="700" fill="#1f1b18">engineering, systems,</text>
+            <text x="72" y="294" font-family="Georgia, 'Times New Roman', serif" font-size="54" font-weight="700" fill="#1f1b18">and the ideas behind</text>
+            <text x="72" y="356" font-family="Georgia, 'Times New Roman', serif" font-size="54" font-weight="700" fill="#1f1b18">the work.</text>
+            <text x="146" y="454" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700" fill="#2a2520">Shayne McGregor</text>
+            <text x="146" y="484" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="500" fill="#756d64">Writing on software, learning, and the web</text>
+            <text x="72" y="598" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700" fill="#4e4740">shaynemcgregor.dev</text>
+        </svg>
+    `);
+}
+
 async function renderShareCard(metadata, outputPath) {
     if (!(await fileExists(PROFILE_IMAGE_PATH))) {
         throw new Error(`Required profile image asset missing: ${PROFILE_IMAGE_PATH}`);
@@ -186,6 +209,38 @@ async function renderShareCard(metadata, outputPath) {
 
     await mkdir(path.dirname(outputPath), { recursive: true });
     await sharp(baseSvg)
+        .composite([
+            { input: panelImage, left: RIGHT_IMAGE_LEFT, top: RIGHT_IMAGE_TOP },
+            { input: profileImage, left: 72, top: 426 },
+            {
+                input: Buffer.from(`
+                    <svg width="${CARD_WIDTH}" height="${CARD_HEIGHT}" viewBox="0 0 ${CARD_WIDTH} ${CARD_HEIGHT}" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="100" cy="454" r="30" fill="none" stroke="#f7f4ef" stroke-width="4"/>
+                    </svg>
+                `),
+                left: 0,
+                top: 0,
+            },
+        ])
+        .png()
+        .toFile(outputPath);
+}
+
+async function renderStaticSiteCard(outputPath) {
+    if (!(await fileExists(PROFILE_IMAGE_PATH))) {
+        throw new Error(`Required profile image asset missing: ${PROFILE_IMAGE_PATH}`);
+    }
+
+    const panelImage = await createRoundedImage(
+        await readFile(FALLBACK_PANEL_IMAGE_PATH),
+        RIGHT_IMAGE_WIDTH,
+        RIGHT_IMAGE_HEIGHT,
+        RIGHT_IMAGE_RADIUS
+    );
+    const profileImage = await createCircularImage(await readFile(PROFILE_IMAGE_PATH), 56);
+
+    await mkdir(path.dirname(outputPath), { recursive: true });
+    await sharp(createStaticSiteCardSvg())
         .composite([
             { input: panelImage, left: RIGHT_IMAGE_LEFT, top: RIGHT_IMAGE_TOP },
             { input: profileImage, left: 72, top: 426 },
@@ -232,6 +287,19 @@ async function main() {
         siteUrl: process.env.SHARE_PREVIEW_SITE_URL || DEFAULT_SITE_URL,
         fallbackImageUrl: process.env.SHARE_PREVIEW_FALLBACK_IMAGE_URL || DEFAULT_FALLBACK_IMAGE_URL,
     });
+    const staticMetadataList = STATIC_SHARE_PREVIEW_ROUTES.map((routePath) => buildStaticSharePreviewMetadata(routePath, {
+        siteUrl: process.env.SHARE_PREVIEW_SITE_URL || DEFAULT_SITE_URL,
+    }));
+    const staticImageOutputPath = path.join(distDir, STATIC_SHARE_PREVIEW_IMAGE_PATH);
+
+    await renderStaticSiteCard(staticImageOutputPath);
+
+    for (const metadata of staticMetadataList) {
+        const outputPath = path.join(distDir, getStaticSharePreviewOutputPath(metadata.routePath));
+        const prerenderedHtml = injectSharePreviewHead(appShell, metadata);
+        await mkdir(path.dirname(outputPath), { recursive: true });
+        await writeFile(outputPath, prerenderedHtml, "utf8");
+    }
 
     for (const metadata of metadataList) {
         const relativeOutputPath = getSharePreviewOutputPath(metadata.slug);
@@ -244,7 +312,7 @@ async function main() {
         await writeFile(outputPath, prerenderedHtml, "utf8");
     }
 
-    console.log(`[share-previews] Generated ${metadataList.length} blog post preview HTML files and share-card images from ${source}.`);
+    console.log(`[share-previews] Generated ${staticMetadataList.length} static page previews and ${metadataList.length} blog post preview HTML files and share-card images from ${source}.`);
 }
 
 main().catch((error) => {

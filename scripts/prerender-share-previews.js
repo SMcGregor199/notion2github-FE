@@ -30,6 +30,7 @@ const RIGHT_IMAGE_TOP = 96;
 const RIGHT_IMAGE_RADIUS = 28;
 const PROFILE_IMAGE_PATH = path.resolve("public/profile-pic.png");
 const FALLBACK_PANEL_IMAGE_PATH = path.resolve("public/background-v2.png");
+const STATIC_PANEL_IMAGE_PATH = path.resolve("public/notes-from-shayne-writing.webp");
 
 function escapeSvg(value) {
     return escapeHtml(value);
@@ -182,10 +183,10 @@ function createStaticSiteCardSvg() {
             <rect x="0" y="548" width="${CARD_WIDTH}" height="82" fill="#e7e3dc"/>
             <rect x="${RIGHT_IMAGE_LEFT}" y="${RIGHT_IMAGE_TOP}" width="${RIGHT_IMAGE_WIDTH}" height="${RIGHT_IMAGE_HEIGHT}" rx="${RIGHT_IMAGE_RADIUS}" fill="#d8d1c7"/>
             <text x="72" y="78" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="2" fill="#7a4d36">NOTES FROM SHAYNE</text>
-            <text x="72" y="170" font-family="Georgia, 'Times New Roman', serif" font-size="54" font-weight="700" fill="#1f1b18">Notes on</text>
-            <text x="72" y="232" font-family="Georgia, 'Times New Roman', serif" font-size="54" font-weight="700" fill="#1f1b18">engineering, systems,</text>
-            <text x="72" y="294" font-family="Georgia, 'Times New Roman', serif" font-size="54" font-weight="700" fill="#1f1b18">and the ideas behind</text>
-            <text x="72" y="356" font-family="Georgia, 'Times New Roman', serif" font-size="54" font-weight="700" fill="#1f1b18">the work.</text>
+            <text x="72" y="170" font-family="Georgia, 'Times New Roman', serif" font-size="54" font-weight="700" fill="#1f1b18">Writing about</text>
+            <text x="72" y="232" font-family="Georgia, 'Times New Roman', serif" font-size="54" font-weight="700" fill="#1f1b18">engineering,</text>
+            <text x="72" y="294" font-family="Georgia, 'Times New Roman', serif" font-size="54" font-weight="700" fill="#1f1b18">systems, and</text>
+            <text x="72" y="356" font-family="Georgia, 'Times New Roman', serif" font-size="54" font-weight="700" fill="#1f1b18">ideas.</text>
             <text x="146" y="454" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700" fill="#2a2520">Shayne McGregor</text>
             <text x="146" y="484" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="500" fill="#756d64">Writing on software, learning, and the web</text>
             <text x="72" y="598" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700" fill="#4e4740">shaynemcgregor.dev</text>
@@ -231,8 +232,12 @@ async function renderStaticSiteCard(outputPath) {
         throw new Error(`Required profile image asset missing: ${PROFILE_IMAGE_PATH}`);
     }
 
+    if (!(await fileExists(STATIC_PANEL_IMAGE_PATH))) {
+        throw new Error(`Required static preview image asset missing: ${STATIC_PANEL_IMAGE_PATH}`);
+    }
+
     const panelImage = await createRoundedImage(
-        await readFile(FALLBACK_PANEL_IMAGE_PATH),
+        await readFile(STATIC_PANEL_IMAGE_PATH),
         RIGHT_IMAGE_WIDTH,
         RIGHT_IMAGE_HEIGHT,
         RIGHT_IMAGE_RADIUS

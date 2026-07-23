@@ -188,7 +188,6 @@ function createStaticSiteCardSvg() {
             <text x="72" y="294" font-family="Georgia, 'Times New Roman', serif" font-size="54" font-weight="700" fill="#1f1b18">systems, and</text>
             <text x="72" y="356" font-family="Georgia, 'Times New Roman', serif" font-size="54" font-weight="700" fill="#1f1b18">ideas.</text>
             <text x="146" y="454" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700" fill="#2a2520">Shayne McGregor</text>
-            <text x="146" y="484" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="500" fill="#756d64">Writing on software, learning, and the web</text>
             <text x="72" y="598" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700" fill="#4e4740">shaynemcgregor.dev</text>
         </svg>
     `);

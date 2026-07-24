@@ -1,3 +1,4 @@
 /rss.xml https://shaynemcgregordev-be.netlify.app/.netlify/functions/rss-feed 200!
 /sitemap-posts.xml https://shaynemcgregordev-be.netlify.app/.netlify/functions/sitemap-posts 200!
+/blog/:slug/download.pdf https://shaynemcgregordev-be.netlify.app/.netlify/functions/blog-post-pdf?slug=:slug 200!
 /* /index.html 200

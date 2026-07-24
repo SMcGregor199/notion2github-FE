@@ -1,8 +1,26 @@
+import {useEffect} from "react";
 import{CalendarOutlined,ClockCircleOutlined, DownloadOutlined} from "@ant-design/icons";
 import {Typography,Space,Divider} from "antd";
 import BlogButton from "./BlogButton";
 
+const prefetchedPdfUrls = new Set();
+
+function prefetchPdf(downloadHref) {
+    if (!downloadHref || prefetchedPdfUrls.has(downloadHref) || typeof window === "undefined" || typeof window.fetch !== "function") {
+        return;
+    }
+
+    prefetchedPdfUrls.add(downloadHref);
+    window.fetch(downloadHref, {credentials: "same-origin", cache: "force-cache"})
+        .then((response) => response.arrayBuffer())
+        .catch(() => prefetchedPdfUrls.delete(downloadHref));
+}
+
 export default function PublishUpdateDates({publishedDate, updatedDate, downloadHref, postTitle}){
+    useEffect(() => {
+        prefetchPdf(downloadHref);
+    }, [downloadHref]);
+
     return(
     <Space data-testid="post-metadata" style={{alignSelf:"start"}} wrap>
         <Typography.Text type="secondary" style={{fontSize:"1rem"}}>
@@ -28,6 +46,8 @@ export default function PublishUpdateDates({publishedDate, updatedDate, download
             href={downloadHref}
             aria-label={`Download ${postTitle || "this post"} as PDF`}
             style={{padding:"4px 10px", minHeight:30, lineHeight:1.2}}
+            onPointerEnter={() => prefetchPdf(downloadHref)}
+            onFocus={() => prefetchPdf(downloadHref)}
         >
             Download PDF
         </BlogButton>

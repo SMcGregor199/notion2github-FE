@@ -1,8 +1,8 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { ConfigProvider } from "antd";
 import { ThemeProvider } from "@emotion/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import BlogDetail from "../pages/BlogDetail";
 
 const post = {
@@ -42,5 +42,32 @@ describe("BlogDetail PDF download", () => {
     expect(button).toHaveAttribute("href", "/blog/a-downloadable-post/download.pdf");
     expect(screen.getByTestId("post-metadata")).toContainElement(button);
     expect(button.compareDocumentPosition(screen.getByText("Engineering")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("warms the PDF response after the post page loads", async () => {
+    const originalFetch = window.fetch;
+    const fetchMock = vi.fn().mockResolvedValue(new Response("pdf"));
+    window.fetch = fetchMock;
+
+    try {
+      render(
+        <ConfigProvider theme={{ token: theme.token }}>
+          <ThemeProvider theme={theme}>
+            <MemoryRouter initialEntries={["/blog/a-downloadable-post"]}>
+              <Routes>
+                <Route path="/blog/:slug" element={<BlogDetail initialData={[post]} />} />
+              </Routes>
+            </MemoryRouter>
+          </ThemeProvider>
+        </ConfigProvider>
+      );
+
+      await waitFor(() => expect(fetchMock).toHaveBeenCalledWith(
+        "/blog/a-downloadable-post/download.pdf",
+        { credentials: "same-origin", cache: "force-cache" }
+      ));
+    } finally {
+      window.fetch = originalFetch;
+    }
   });
 });

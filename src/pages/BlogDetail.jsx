@@ -1,6 +1,5 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { DownloadOutlined } from "@ant-design/icons";
 import {Button, Image, Skeleton, Spin, Tag, Typography} from "antd";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -8,7 +7,6 @@ import PublishUpdateDates from "../components/PublishUpdateDates";
 import ReactionsBar from "../components/ReactionsBar.tsx";
 import NewsletterSignup from "../components/NewsletterSignup";
 import LinkedInDiscussionCta from "../components/LinkedInDiscussionCta";
-import BlogButton from "../components/BlogButton";
 import { getValidLinkedInDiscussionUrl } from "../utils/linkedinDiscussionUrl";
 import NotFound from "./NotFound";
 
@@ -112,7 +110,12 @@ function BlogDetail({initialData = [], blogDataStatus = "ready", onRetryBlogData
             <div className={discussionUrl ? "blog-detail blog-detail--with-discussion" : "blog-detail"}>
             <article className="blog-detail__article" style={{display:"flex", flexDirection:"column", gap:"1rem", maxWidth:"64ch", marginInline:0}}>
                 <Typography.Title level={1}>{post.title}</Typography.Title>
-                <PublishUpdateDates publishedDate={formattedDate} updatedDate={formattedUpdatedDate}/>
+                <PublishUpdateDates
+                    publishedDate={formattedDate}
+                    updatedDate={formattedUpdatedDate}
+                    downloadHref={`/blog/${post.link}/download.pdf`}
+                    postTitle={post.title}
+                />
                 {post.tag ? (
                 <Tag color="geekblue" style={{ width: "fit-content", background: "#eef2ff",     
                                 color: "#1d4ed8",
@@ -126,9 +129,6 @@ function BlogDetail({initialData = [], blogDataStatus = "ready", onRetryBlogData
                     {post.tag}
                 </Tag>
                 ) : null}
-                <BlogButton icon={<DownloadOutlined />} href={`/blog/${post.link}/download.pdf`} aria-label={`Download ${post.title} as PDF`}>
-                    Download PDF
-                </BlogButton>
                 {post.summary ? <Typography.Title level={2}>{post.summary}</Typography.Title> : null}
                 <ReactionsBar postId={post.id || post.link} slug={post.link} title={post.title}/>
                 {articleContent}

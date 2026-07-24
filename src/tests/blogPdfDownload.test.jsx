@@ -40,7 +40,7 @@ describe("BlogDetail PDF download", () => {
 
     const button = screen.getByRole("link", { name: "Download A Downloadable Post as PDF" });
     expect(button).toHaveAttribute("href", "/blog/a-downloadable-post/download.pdf");
-    expect(screen.getByText("Engineering").compareDocumentPosition(button) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(button.compareDocumentPosition(screen.getByText("A post with a PDF download.")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(screen.getByTestId("post-metadata")).toContainElement(button);
+    expect(button.compareDocumentPosition(screen.getByText("Engineering")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 });

@@ -26,6 +26,7 @@ const firstPost = {
   title: "The First Point of Friction in Academic Research",
   link: "first-point-of-friction",
   summary: "The first article.",
+  thumbnail: "/first.webp",
   publishedDate: "2026-01-10T12:00:00.000Z",
   body: [],
   series: researchSeries,
@@ -36,6 +37,7 @@ const secondPost = {
   title: "The Passage Is Not the Thought",
   link: "passage-is-not-the-thought",
   summary: "The second article.",
+  thumbnail: "/second.webp",
   publishedDate: "2026-02-10T12:00:00.000Z",
   body: [],
   series: researchSeries,
@@ -96,8 +98,11 @@ describe("Blog series", () => {
     );
 
     expect(screen.getByText("Part 1 of 2")).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: new RegExp(`Previous: ${firstPost.title}`) })).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: `Next: ${secondPost.title}` })).toHaveAttribute("href", `/blog/${secondPost.link}`);
+    expect(screen.queryByRole("link", { name: `Previous in the series: ${firstPost.title}` })).not.toBeInTheDocument();
+    const nextCard = screen.getByRole("link", { name: `Next in the series: ${secondPost.title}` });
+    expect(nextCard).toHaveAttribute("href", `/blog/${secondPost.link}`);
+    expect(nextCard).toHaveClass("series-preview-card--next");
+    expect(nextCard.querySelector("img")).toHaveAttribute("src", secondPost.thumbnail);
     expect(screen.getByRole("link", { name: researchSeries.name })).toHaveAttribute("href", `/blog/series/${researchSeries.slug}`);
   });
 
@@ -110,8 +115,10 @@ describe("Blog series", () => {
     );
 
     expect(screen.getByText("Part 2 of 2")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: `Previous: ${firstPost.title}` })).toHaveAttribute("href", `/blog/${firstPost.link}`);
-    expect(screen.queryByRole("link", { name: `Next: ${secondPost.title}` })).not.toBeInTheDocument();
+    const previousCard = screen.getByRole("link", { name: `Previous in the series: ${firstPost.title}` });
+    expect(previousCard).toHaveAttribute("href", `/blog/${firstPost.link}`);
+    expect(previousCard).toHaveClass("series-preview-card--previous");
+    expect(screen.queryByRole("link", { name: `Next in the series: ${secondPost.title}` })).not.toBeInTheDocument();
   });
 
   it("renders no series navigation for a post outside a series", () => {

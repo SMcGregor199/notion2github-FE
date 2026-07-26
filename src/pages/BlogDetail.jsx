@@ -248,12 +248,14 @@ function renderMarkdownBody(bodyMarkdown, postTitle) {
 }
 
 function renderMarkdownUnorderedList(children) {
+    const listItems = Children.toArray(children).filter(isValidElement);
+
     return (
         <ul>
-            {Children.map(children, (child, index) => (
-                <li key={isValidElement(child) && child.key !== null ? child.key : index}>
+            {listItems.map((child, index) => (
+                <li key={child.key ?? index}>
                     <Typography.Paragraph>
-                        {isValidElement(child) ? child.props.children : child}
+                        {child.props.children}
                     </Typography.Paragraph>
                 </li>
             ))}

@@ -315,6 +315,7 @@ describe("Notion image rendering", () => {
                 "Read **the guide** at [the source](https://example.com/source).",
                 "",
                 "- Markdown bullet",
+                "- Another Markdown bullet",
                 "",
                 "> Quoted markdown.",
                 "",
@@ -337,7 +338,10 @@ describe("Notion image rendering", () => {
         expect(bodyImage).toHaveAttribute("src", "https://example.com/markdown.webp");
         expect(bodyImage).toHaveStyle("box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18)");
         expect(screen.getByText("Markdown image")).toHaveProperty("tagName", "FIGCAPTION");
-        expect(screen.getByText("Markdown bullet").closest("li")?.querySelector(".ant-typography")).not.toBeNull();
+        const markdownBullet = screen.getByText("Markdown bullet");
+        const markdownList = markdownBullet.closest("ul");
+        expect(markdownBullet.closest("li")?.querySelector(".ant-typography")).not.toBeNull();
+        expect(markdownList?.querySelectorAll(":scope > li")).toHaveLength(2);
     });
 
     it("renders unsafe Notion body links as text", () => {

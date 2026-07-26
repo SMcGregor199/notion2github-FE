@@ -1,10 +1,11 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { ConfigProvider } from "antd";
 import { ThemeProvider } from "@emotion/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 import BlogDetail from "../pages/BlogDetail";
 import BlogSeries from "../pages/BlogSeries";
+import BlogPage from "../pages/Blog";
 import { getSeriesMembers } from "../utils/blogSeries";
 
 const researchSeries = {
@@ -103,7 +104,7 @@ describe("Blog series", () => {
     expect(nextCard).toHaveAttribute("href", `/blog/${secondPost.link}`);
     expect(nextCard).toHaveClass("series-preview-card--next");
     expect(nextCard.querySelector("img")).toHaveAttribute("src", secondPost.thumbnail);
-    expect(screen.getByRole("link", { name: researchSeries.name })).toHaveAttribute("href", `/blog/series/${researchSeries.slug}`);
+    expect(screen.getByRole("link", { name: `Part of the series: ${researchSeries.name}` })).toHaveAttribute("href", `/blog/series/${researchSeries.slug}`);
   });
 
   it("omits the next link at the final series boundary", () => {
@@ -131,5 +132,32 @@ describe("Blog series", () => {
 
     expect(screen.queryByText(/Part \d of \d/)).not.toBeInTheDocument();
     expect(screen.queryByRole("navigation", { name: /series navigation/i })).not.toBeInTheDocument();
+  });
+
+  it("offers mutually exclusive tag and series filters, with a series-page link", () => {
+    const unrelatedPost = {
+      id: "unrelated",
+      title: "A Post Outside the Series",
+      link: "outside-the-series",
+      summary: "A separate article.",
+      tag: "Engineering",
+      publishedDate: "2026-03-10T12:00:00.000Z",
+      body: [],
+    };
+    renderWithRouter(<BlogPage initialData={[firstPost, secondPost, unrelatedPost]} />, "/blog");
+
+    fireEvent.click(screen.getByRole("button", { name: "Series" }));
+    fireEvent.click(screen.getByText(researchSeries.name).closest(".ant-tag"));
+
+    expect(screen.getByRole("link", { name: `View the ${researchSeries.name} series →` })).toHaveAttribute(
+      "href",
+      `/blog/series/${researchSeries.slug}`,
+    );
+    expect(screen.getByRole("link", { name: `Read ${firstPost.title}` })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: `Read ${unrelatedPost.title}` })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Tags" }));
+    expect(screen.queryByRole("link", { name: `View the ${researchSeries.name} series →` })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: `Read ${unrelatedPost.title}` })).toBeInTheDocument();
   });
 });

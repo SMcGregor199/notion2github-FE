@@ -11,7 +11,7 @@ function SeriesNavigation({ post, posts }) {
     <nav className="series-navigation" aria-label={`${series.name} series navigation`}>
       <Typography.Text className="series-navigation__eyebrow">Series</Typography.Text>
       <Typography.Title level={3} className="series-navigation__title">
-        <Link to={`/blog/series/${series.slug}`}>{series.name}</Link>
+        {series.name}
       </Typography.Title>
       <Typography.Paragraph className="series-navigation__position">
         Part {position} of {members.length}

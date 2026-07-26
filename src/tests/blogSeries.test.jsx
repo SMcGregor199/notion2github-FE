@@ -144,10 +144,15 @@ describe("Blog series", () => {
       publishedDate: "2026-03-10T12:00:00.000Z",
       body: [],
     };
-    renderWithRouter(<BlogPage initialData={[firstPost, secondPost, unrelatedPost]} />, "/blog");
+    renderWithRouter(<BlogPage initialData={[secondPost, firstPost, unrelatedPost]} />, "/blog");
 
     fireEvent.click(screen.getByRole("button", { name: "Series" }));
-    expect(screen.getByRole("link", { name: researchSeries.name })).toHaveAttribute("href", `/blog/series/${researchSeries.slug}`);
+    expect(screen.getByRole("heading", { name: researchSeries.name })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "View series →" })).toHaveAttribute("href", `/blog/series/${researchSeries.slug}`);
+    expect(screen.getAllByRole("link", { name: /Read / }).map((link) => link.getAttribute("aria-label"))).toEqual([
+      `Read ${firstPost.title}`,
+      `Read ${secondPost.title}`,
+    ]);
     expect(screen.getByRole("link", { name: `Read ${firstPost.title}` })).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: `Read ${unrelatedPost.title}` })).not.toBeInTheDocument();
     fireEvent.click(screen.getAllByText(researchSeries.name).find((element) => element.closest(".ant-tag"))?.closest(".ant-tag"));

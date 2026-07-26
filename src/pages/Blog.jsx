@@ -4,6 +4,7 @@ import { Grid } from "antd";
 import { useMemo, useState } from "react";
 import { StyledTag } from "../components/styledTag";
 import NewsletterSignup from "../components/NewsletterSignup";
+import { getSeriesMembers } from "../utils/blogSeries";
 
 function BlogPage({ initialData, isBlogDataLoading = false }) {
     const posts = useMemo(() => Array.isArray(initialData) ? initialData : [], [initialData]);
@@ -93,13 +94,14 @@ function SeriesGroups({ series, posts }) {
     return (
         <div className="blog-series-groups">
             {series.map((item) => {
-                const members = posts.filter((post) => post.series?.slug === item.slug);
+                const members = getSeriesMembers(posts, item.slug);
                 return (
                     <section className="blog-series-group" key={item.slug} aria-labelledby={`series-${item.slug}`}>
                         <div className="blog-series-group__header">
                             <div>
-                                <Typography.Title id={`series-${item.slug}`} level={2} className="blog-series-group__title">
-                                    <Link to={`/blog/series/${item.slug}`}>{item.name}</Link>
+                                <Typography.Text className="blog-series-group__eyebrow">Series</Typography.Text>
+                                <Typography.Title id={`series-${item.slug}`} level={3} className="blog-series-group__title">
+                                    {item.name}
                                 </Typography.Title>
                                 {item.description ? <Typography.Paragraph className="blog-series-group__description">{item.description}</Typography.Paragraph> : null}
                             </div>

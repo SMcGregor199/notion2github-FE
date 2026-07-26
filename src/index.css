@@ -461,12 +461,37 @@ main a:not(.ant-btn):not(.homepage-blog-link):not(.discourse-hero-link):not(.not
   margin-bottom: 16px;
 }
 
-.blog-series-filter-summary {
+.blog-series-groups {
+  display: grid;
+  gap: clamp(2.5rem, 6vw, 4rem);
+}
+
+.blog-series-group {
+  min-width: 0;
+}
+
+.blog-series-group__header {
   display: flex;
-  align-items: baseline;
+  align-items: flex-end;
+  justify-content: space-between;
   gap: 0.5rem 0.9rem;
   flex-wrap: wrap;
   margin-bottom: 1.25rem;
+}
+
+.blog-series-group__title {
+  margin: 0 0 0.25rem !important;
+}
+
+.blog-series-group__description {
+  max-width: 56ch;
+  margin-bottom: 0 !important;
+  color: rgba(0, 0, 0, 0.62);
+}
+
+.blog-series-group__link {
+  flex: 0 0 auto;
+  font-weight: 700;
 }
 
 .linkedin-discussion-cta {

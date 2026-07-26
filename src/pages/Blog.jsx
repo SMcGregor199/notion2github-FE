@@ -21,10 +21,10 @@ function BlogPage({ initialData, isBlogDataLoading = false }) {
         });
         return [...bySlug.values()].sort((left, right) => left.name.localeCompare(right.name));
     }, [posts]);
-    const selectedSeries = series.find((item) => item.slug === selectedSeriesSlug);
-    const filteredPosts = filterMode === "tags"
-        ? selectedTag === "All" ? posts : posts.filter((post) => post.tag === selectedTag)
-        : selectedSeriesSlug === "All" ? posts : posts.filter((post) => post.series?.slug === selectedSeriesSlug);
+    const filteredPosts = selectedTag === "All" ? posts : posts.filter((post) => post.tag === selectedTag);
+    const visibleSeries = selectedSeriesSlug === "All"
+        ? series
+        : series.filter((item) => item.slug === selectedSeriesSlug);
 
     function chooseFilterMode(mode) {
         setFilterMode(mode);
@@ -72,14 +72,7 @@ function BlogPage({ initialData, isBlogDataLoading = false }) {
                     </div>
                 ) : null}
 
-                {filterMode === "series" && selectedSeries ? (
-                    <div className="blog-series-filter-summary">
-                        <Typography.Text>Showing posts in {selectedSeries.name}.</Typography.Text>
-                        <Link to={`/blog/series/${selectedSeries.slug}`}>View the {selectedSeries.name} series →</Link>
-                    </div>
-                ) : null}
-
-                <Row gutter={[24, 24]}>{blogCards}</Row>
+                {filterMode === "tags" ? <Row gutter={[24, 24]}>{blogCards}</Row> : <SeriesGroups series={visibleSeries} posts={posts} />}
                 <NewsletterSignup />
             </section>
 
@@ -89,6 +82,34 @@ function BlogPage({ initialData, isBlogDataLoading = false }) {
                 </Layout.Sider>
             ) : null}
         </Layout>
+    );
+}
+
+function SeriesGroups({ series, posts }) {
+    if (series.length === 0) {
+        return <Typography.Paragraph type="secondary">No published series are available yet.</Typography.Paragraph>;
+    }
+
+    return (
+        <div className="blog-series-groups">
+            {series.map((item) => {
+                const members = posts.filter((post) => post.series?.slug === item.slug);
+                return (
+                    <section className="blog-series-group" key={item.slug} aria-labelledby={`series-${item.slug}`}>
+                        <div className="blog-series-group__header">
+                            <div>
+                                <Typography.Title id={`series-${item.slug}`} level={2} className="blog-series-group__title">
+                                    <Link to={`/blog/series/${item.slug}`}>{item.name}</Link>
+                                </Typography.Title>
+                                {item.description ? <Typography.Paragraph className="blog-series-group__description">{item.description}</Typography.Paragraph> : null}
+                            </div>
+                            <Link className="blog-series-group__link" to={`/blog/series/${item.slug}`}>View series →</Link>
+                        </div>
+                        <Row gutter={[24, 24]}>{members.map((post) => <BlogCard key={post.id || post.link} post={post} />)}</Row>
+                    </section>
+                );
+            })}
+        </div>
     );
 }
 

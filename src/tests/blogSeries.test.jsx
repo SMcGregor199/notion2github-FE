@@ -147,9 +147,12 @@ describe("Blog series", () => {
     renderWithRouter(<BlogPage initialData={[firstPost, secondPost, unrelatedPost]} />, "/blog");
 
     fireEvent.click(screen.getByRole("button", { name: "Series" }));
-    fireEvent.click(screen.getByText(researchSeries.name).closest(".ant-tag"));
+    expect(screen.getByRole("link", { name: researchSeries.name })).toHaveAttribute("href", `/blog/series/${researchSeries.slug}`);
+    expect(screen.getByRole("link", { name: `Read ${firstPost.title}` })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: `Read ${unrelatedPost.title}` })).not.toBeInTheDocument();
+    fireEvent.click(screen.getAllByText(researchSeries.name).find((element) => element.closest(".ant-tag"))?.closest(".ant-tag"));
 
-    expect(screen.getByRole("link", { name: `View the ${researchSeries.name} series →` })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "View series →" })).toHaveAttribute(
       "href",
       `/blog/series/${researchSeries.slug}`,
     );
@@ -157,7 +160,7 @@ describe("Blog series", () => {
     expect(screen.queryByRole("link", { name: `Read ${unrelatedPost.title}` })).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Tags" }));
-    expect(screen.queryByRole("link", { name: `View the ${researchSeries.name} series →` })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "View series →" })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: `Read ${unrelatedPost.title}` })).toBeInTheDocument();
   });
 });

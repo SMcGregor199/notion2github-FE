@@ -293,7 +293,9 @@ describe("Notion image rendering", () => {
         expect(screen.getByRole("heading", { name: "Block Heading", level: 1 })).toBeInTheDocument();
         expect(screen.getByText("bold").tagName).toBe("STRONG");
         expect(screen.getByText("Quoted text.")).toBeInTheDocument();
-        expect(screen.getByText("Bullet item")).toBeInTheDocument();
+        const bulletItem = screen.getByText("Bullet item");
+        expect(bulletItem).toBeInTheDocument();
+        expect(bulletItem.closest("li")?.querySelector(".ant-typography")).not.toBeNull();
         expect(screen.getByText("Step item")).toBeInTheDocument();
         expect(screen.getByRole("checkbox", { name: "Done item" })).toBeChecked();
         expect(screen.getByText("const value = 1;")).toBeInTheDocument();
@@ -311,6 +313,8 @@ describe("Notion image rendering", () => {
                 "## Markdown Heading",
                 "",
                 "Read **the guide** at [the source](https://example.com/source).",
+                "",
+                "- Markdown bullet",
                 "",
                 "> Quoted markdown.",
                 "",
@@ -333,6 +337,7 @@ describe("Notion image rendering", () => {
         expect(bodyImage).toHaveAttribute("src", "https://example.com/markdown.webp");
         expect(bodyImage).toHaveStyle("box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18)");
         expect(screen.getByText("Markdown image")).toHaveProperty("tagName", "FIGCAPTION");
+        expect(screen.getByText("Markdown bullet").closest("li")?.querySelector(".ant-typography")).not.toBeNull();
     });
 
     it("renders unsafe Notion body links as text", () => {

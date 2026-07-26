@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Children, Fragment, isValidElement, useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {Button, Image, Skeleton, Spin, Tag, Typography} from "antd";
 import ReactMarkdown from "react-markdown";
@@ -203,6 +203,7 @@ function renderMarkdownBody(bodyMarkdown, postTitle) {
                 h2: ({ children }) => <Typography.Title level={2}>{children}</Typography.Title>,
                 h3: ({ children }) => <Typography.Title level={3}>{children}</Typography.Title>,
                 p: ({ children }) => <Typography.Paragraph style={{lineHeight: 2}}>{children}</Typography.Paragraph>,
+                ul: ({ children }) => renderMarkdownUnorderedList(children),
                 blockquote: ({ children }) => (
                     <blockquote style={{borderLeft: "3px solid #c7d2fe", margin: "0 0 1rem", paddingLeft: "1rem"}}>
                         {children}
@@ -246,6 +247,20 @@ function renderMarkdownBody(bodyMarkdown, postTitle) {
     );
 }
 
+function renderMarkdownUnorderedList(children) {
+    return (
+        <ul>
+            {Children.map(children, (child, index) => (
+                <li key={isValidElement(child) && child.key !== null ? child.key : index}>
+                    <Typography.Paragraph>
+                        {isValidElement(child) ? child.props.children : child}
+                    </Typography.Paragraph>
+                </li>
+            ))}
+        </ul>
+    );
+}
+
 function renderBodyBlock(block, keyPrefix, postTitle) {
     if (!block || typeof block !== "object") {
         return null;
@@ -277,7 +292,9 @@ function renderBodyBlock(block, keyPrefix, postTitle) {
         case "bulleted_list_item":
             return (
                 <ul key={keyPrefix} style={{marginTop: 0}}>
-                    <li>{renderParagraphContent(block.text, keyPrefix)}</li>
+                    <li>
+                        <Typography.Paragraph>{renderParagraphContent(block.text, keyPrefix)}</Typography.Paragraph>
+                    </li>
                 </ul>
             );
         case "numbered_list_item":

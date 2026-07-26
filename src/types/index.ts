@@ -15,6 +15,21 @@ type ShareData = {
 
 type ReactionCounts = Record<ReactionKey, number>;
 
+type BlogSeries = {
+  name: string;
+  slug: string;
+  description?: string;
+};
+
+type BlogPost = {
+  id: string;
+  link: string;
+  title: string;
+  summary: string;
+  publishedDate: string;
+  series?: BlogSeries;
+};
+
 type ReactionApiState = {
   postId: string;
   counts: ReactionCounts;
@@ -52,4 +67,6 @@ export type {
   ReactionApiState,
   ReactionErrorCode,
   ReactionApiErrorBody,
+  BlogPost,
+  BlogSeries,
 }

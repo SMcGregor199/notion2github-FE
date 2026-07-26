@@ -3,6 +3,7 @@ import AppLayout from "./AppLayout";
 import Home from "./pages/Home";
 import BlogPage from "./pages/Blog";
 import BlogDetail from "./pages/BlogDetail";
+import BlogSeries from "./pages/BlogSeries";
 import Contact from "./pages/Contact";
 import CaseStudies from "./pages/CaseStudies";
 import NotFound from "./pages/NotFound";
@@ -22,6 +23,7 @@ function App({
       <Route element={<AppLayout />}>
         <Route path="/" element={<Home initialData={initialData}/>} />
         <Route path="/blog" element={<BlogPage initialData={initialData} isBlogDataLoading={isBlogDataLoading}/>} />
+        <Route path="/blog/series/:seriesSlug" element={<BlogSeries initialData={initialData} />} />
         <Route
           path="/blog/:slug"
           element={

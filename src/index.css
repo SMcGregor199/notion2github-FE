@@ -252,6 +252,68 @@ main a:not(.ant-btn):not(.homepage-blog-link):not(.discourse-hero-link):not(.not
   top: 2rem;
 }
 
+.blog-series {
+  max-width: 64ch;
+}
+
+.blog-series__eyebrow,
+.series-navigation__eyebrow {
+  color: rgba(0, 0, 0, 0.58);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.blog-series__description {
+  max-width: 56ch;
+  color: rgba(0, 0, 0, 0.66);
+  font-size: 1.1rem;
+  line-height: 1.75;
+}
+
+.blog-series__list {
+  display: grid;
+  gap: 1rem;
+  padding: 0;
+  margin: 2rem 0 0;
+  list-style: none;
+}
+
+.blog-series__card-title {
+  margin-top: 0.35rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.blog-series__card .ant-typography:last-child {
+  margin-bottom: 0;
+  line-height: 1.7;
+}
+
+.series-navigation {
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: clamp(1.1rem, 3vw, 1.5rem);
+  border: 1px solid rgba(216, 111, 68, 0.28);
+  border-radius: 16px;
+  background: #fffaf7;
+}
+
+.series-navigation__title {
+  margin-top: 0.25rem !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.series-navigation__position {
+  margin-bottom: 0.9rem !important;
+  line-height: 1.6 !important;
+}
+
+.series-navigation__links {
+  display: grid;
+  gap: 0.6rem;
+}
+
 .linkedin-discussion-cta {
   padding: 1.5rem;
   border: 1px solid rgba(216, 111, 68, 0.28);

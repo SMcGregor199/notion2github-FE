@@ -7,6 +7,7 @@ import PublishUpdateDates from "../components/PublishUpdateDates";
 import ReactionsBar from "../components/ReactionsBar.tsx";
 import NewsletterSignup from "../components/NewsletterSignup";
 import LinkedInDiscussionCta from "../components/LinkedInDiscussionCta";
+import SeriesNavigation from "../components/SeriesNavigation";
 import { getValidLinkedInDiscussionUrl } from "../utils/linkedinDiscussionUrl";
 import NotFound from "./NotFound";
 
@@ -135,6 +136,7 @@ function BlogDetail({initialData = [], blogDataStatus = "ready", onRetryBlogData
                 {post.thumbnail ? (
                     <Image src={`${post.thumbnail}`} alt={post.title} preview={false}></Image>
                 ) : null}
+                <SeriesNavigation post={post} posts={posts} />
                 {discussionUrl ? <div ref={articleEndRef} className="blog-detail__end-sentinel" data-testid="article-end-sentinel" aria-hidden="true" /> : null}
                 {discussionUrl && !isDesktopDiscussionLayout ? <LinkedInDiscussionCta url={discussionUrl} placement="inline" /> : null}
                 <NewsletterSignup compact />

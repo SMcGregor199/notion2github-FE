@@ -104,7 +104,10 @@ describe("Blog series", () => {
     expect(nextCard).toHaveAttribute("href", `/blog/${secondPost.link}`);
     expect(nextCard).toHaveClass("series-preview-card--next");
     expect(nextCard.querySelector("img")).toHaveAttribute("src", secondPost.thumbnail);
-    expect(screen.getByRole("link", { name: `Part of the series: ${researchSeries.name}` })).toHaveAttribute("href", `/blog/series/${researchSeries.slug}`);
+    const seriesLink = screen.getByRole("link", { name: `Part of the series: ${researchSeries.name}` });
+    expect(seriesLink).toHaveAttribute("href", `/blog/series/${researchSeries.slug}`);
+    const summary = screen.getByRole("heading", { level: 2, name: firstPost.summary });
+    expect(summary.compareDocumentPosition(seriesLink) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it("omits the next link at the final series boundary", () => {

@@ -130,12 +130,12 @@ function BlogDetail({initialData = [], blogDataStatus = "ready", onRetryBlogData
                     {post.tag}
                 </Tag>
                 ) : null}
+                {post.summary ? <Typography.Title level={2}>{post.summary}</Typography.Title> : null}
                 {post.series?.name && post.series?.slug ? (
                     <Link className="blog-detail__series-link" to={`/blog/series/${post.series.slug}`}>
                         Part of the series: {post.series.name}
                     </Link>
                 ) : null}
-                {post.summary ? <Typography.Title level={2}>{post.summary}</Typography.Title> : null}
                 <ReactionsBar postId={post.id || post.link} slug={post.link} title={post.title}/>
                 {articleContent}
                 {post.thumbnail ? (

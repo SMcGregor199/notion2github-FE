@@ -392,15 +392,16 @@ export function injectSharePreviewHead(html, metadata) {
     }
 
     const htmlWithoutTitle = html.replace(/\s*<title>[\s\S]*?<\/title>\s*/i, "\n");
-    const headCloseIndex = htmlWithoutTitle.indexOf("</head>");
-    const headHtml = htmlWithoutTitle.slice(0, headCloseIndex);
+    const htmlWithoutCanonical = htmlWithoutTitle.replace(/\s*<link\b(?=[^>]*\brel=["']canonical["'])[^>]*>\s*/i, "\n");
+    const headCloseIndex = htmlWithoutCanonical.indexOf("</head>");
+    const headHtml = htmlWithoutCanonical.slice(0, headCloseIndex);
     const headScriptMatch = headHtml.match(/<script\b/i);
     const insertionIndex = headScriptMatch?.index ?? headCloseIndex;
 
     return [
-        htmlWithoutTitle.slice(0, insertionIndex),
+        htmlWithoutCanonical.slice(0, insertionIndex),
         renderSharePreviewHead(metadata),
         "\n",
-        htmlWithoutTitle.slice(insertionIndex),
+        htmlWithoutCanonical.slice(insertionIndex),
     ].join("");
 }

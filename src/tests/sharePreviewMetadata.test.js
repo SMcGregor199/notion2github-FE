@@ -221,7 +221,7 @@ describe("share preview metadata", () => {
         const html = [
             "<!doctype html>",
             "<html>",
-            '<head><title>Generic</title><script type="module" src="/assets/app.js"></script></head>',
+            '<head><title>Generic</title><link rel="canonical" href="https://shaynemcgregor.dev/"><script type="module" src="/assets/app.js"></script></head>',
             '<body><div id="root"></div></body>',
             "</html>",
         ].join("");
@@ -229,6 +229,8 @@ describe("share preview metadata", () => {
 
         expect(injected.indexOf('property="og:title"')).toBeLessThan(injected.indexOf("<script"));
         expect(injected).toContain("<title>A Useful Post | Shayne McGregor</title>");
+        expect(injected).toContain('<link rel="canonical" href="https://shaynemcgregor.dev/blog/a-useful-post">');
+        expect(injected.match(/rel="canonical"/g)).toHaveLength(1);
         expect(injected).not.toContain("<title>Generic</title>");
     });
 });

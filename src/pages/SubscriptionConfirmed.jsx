@@ -7,7 +7,7 @@ function SubscriptionConfirmed() {
     return (
         <article className="subscription-confirmed">
             <Typography.Title level={1}>{confirmed ? "You’re confirmed" : "That confirmation link is no longer available"}</Typography.Title>
-            <Typography.Paragraph>
+            <Typography.Paragraph className="subscription-confirmed__copy">
                 {confirmed ? "Thanks for confirming. New notes will arrive in your inbox when they’re published." : "For your privacy, confirmation links can only be used once and expire after a short time. You can submit the subscription form again to receive a new link."}
             </Typography.Paragraph>
             <Link to="/blog">Back to the blog</Link>

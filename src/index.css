@@ -230,6 +230,7 @@ main a:not(.ant-btn):not(.homepage-blog-link):not(.discourse-hero-link):not(.not
 .newsletter-signup__trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 .privacy-page, .subscription-confirmed { max-width: 64ch; margin-inline: auto; }
 .privacy-page .ant-typography { line-height: 2; }
+.subscription-confirmed__copy { line-height: 2; }
 
 .blog-detail--with-discussion {
   display: grid;

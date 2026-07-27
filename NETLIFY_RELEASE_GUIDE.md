@@ -25,7 +25,7 @@ Do not infer an account-wide remaining balance from this file. The table records
 
 | Billing cycle | Allowance | Releases recorded under this policy | Remaining | Last checked | Owner / notes |
 | --- | ---: | ---: | ---: | --- | --- |
-| Current cycle (policy start) | 20 | 0 | 20 | Pending first Usage & billing check | Record each successful production deployment below. |
+| Jul 21–Aug 20, 2026 | 20 | 2 | 18 | 2026-07-27 | 494 credits available before this batch; two successful production deploys recorded. |
 | Future monthly cycle | 30 | 0 | 30 | Reset only after the Netlify billing reset | Start a new row for each billing cycle. |
 
 ### Production release log
@@ -34,6 +34,8 @@ Add exactly one row after each successful production deployment. A release batch
 
 | Date (UTC) | Repository / site | PR | Netlify production deploy | Cycle count after deploy | Verified by |
 | --- | --- | --- | --- | ---: | --- |
+| 2026-07-27 | `notion2github-BE` / `shaynemcgregordev-be` | #8 | Ready (`6a67962e50d9a5000843fe33`) | 1 | Shayne |
+| 2026-07-27 | `notion2github-FE` / `thunderous-crepe-b85eb1` | #7 | Ready (`6a6796851773ac000854ef46`) | 2 | Shayne |
 
 ## Required release workflow
 

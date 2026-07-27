@@ -21,6 +21,10 @@ React/Vite frontend for `shaynemcgregor.dev`.
 - `npm run preview`: preview the production build locally.
 - `npm run img-optimize`: optimize local public PNGs into WebP files.
 
+## Production Releases
+
+Production deploy credits are shared across the Personal Netlify team. Follow the team-wide [Netlify release guide](NETLIFY_RELEASE_GUIDE.md): develop through PRs, review the Deploy Preview, and merge only approved release batches into `main`.
+
 ## Local Development Notes
 
 - This repo consumes backend data from the Netlify-hosted `notion2github-BE`.

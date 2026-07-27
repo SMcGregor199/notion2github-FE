@@ -271,10 +271,7 @@ main a:not(.ant-btn):not(.homepage-blog-link):not(.discourse-hero-link):not(.not
 }
 
 .blog-series__description {
-  max-width: 56ch;
-  color: rgba(0, 0, 0, 0.66);
-  font-size: 1.1rem;
-  line-height: 1.75;
+  line-height: 2;
 }
 
 .blog-series__list {

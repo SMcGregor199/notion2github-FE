@@ -98,14 +98,14 @@ function SeriesGroups({ series, posts }) {
                 return (
                     <section className="blog-series-group" key={item.slug} aria-labelledby={`series-${item.slug}`}>
                         <div className="blog-series-group__header">
-                            <div>
-                                <Typography.Text className="blog-series-group__eyebrow">Series</Typography.Text>
+                            <Typography.Text className="blog-series-group__eyebrow">Series</Typography.Text>
+                            <div className="blog-series-group__title-row">
                                 <Typography.Title id={`series-${item.slug}`} level={3} className="blog-series-group__title">
                                     {item.name}
                                 </Typography.Title>
-                                {item.description ? <Typography.Paragraph className="blog-series-group__description">{item.description}</Typography.Paragraph> : null}
+                                <Link className="blog-series-group__link" to={`/blog/series/${item.slug}`}>View series →</Link>
                             </div>
-                            <Link className="blog-series-group__link" to={`/blog/series/${item.slug}`}>View series →</Link>
+                            {item.description ? <Typography.Paragraph className="blog-series-group__description">{item.description}</Typography.Paragraph> : null}
                         </div>
                         <Row gutter={[24, 24]}>{members.map((post) => <BlogCard key={post.id || post.link} post={post} />)}</Row>
                     </section>

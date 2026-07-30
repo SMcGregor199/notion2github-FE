@@ -44,8 +44,6 @@ function SeriesPreviewCard({ post, direction }) {
           <span aria-hidden="true">{arrow}</span> {directionLabel}
         </Typography.Text>
         <Typography.Title level={4} className="series-preview-card__title">{post.title}</Typography.Title>
-        {post.tag ? <Typography.Text className="series-preview-card__tag">{post.tag}</Typography.Text> : null}
-        {post.summary ? <Typography.Paragraph className="series-preview-card__summary">{post.summary}</Typography.Paragraph> : null}
       </div>
     </Link>
   );

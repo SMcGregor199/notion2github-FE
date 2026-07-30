@@ -94,6 +94,7 @@ function SecondaryPostCard({ post }) {
                     </Typography.Title>
                     {post.summary ? (
                         <Typography.Paragraph
+                            className="homepage-blog-secondary-summary"
                             type="secondary"
                             ellipsis={{ rows: 2 }}
                             style={{ margin: 0, color: "rgba(0,0,0,0.62)", lineHeight: 1.55 }}

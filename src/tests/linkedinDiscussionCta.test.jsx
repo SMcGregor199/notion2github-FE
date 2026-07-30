@@ -22,7 +22,7 @@ const post = {
     updatedDate: "",
     bodyMarkdown: "A short article body.",
     thumbnail: "https://example.com/feature.webp",
-    linkedinDiscussionUrl: "https://www.linkedin.com/posts/example_123",
+    linkedinDiscussionUrl: "https://lnkd.in/p/example_123",
 };
 
 const originalMatchMedia = window.matchMedia;

@@ -1,6 +1,13 @@
 html{
   font-size:clamp(14px, 0.25vw + 13px, 16px);
 }
+
+/* Ant Design renders Typography.Paragraph as a div rather than a native paragraph. */
+p,
+div.ant-typography {
+  line-height: 2;
+}
+
 .skip-link {
   position: absolute;
   left: -999px;
@@ -271,10 +278,6 @@ main a:not(.ant-btn):not(.homepage-blog-link):not(.not-found-page__action):focus
   text-transform: uppercase;
 }
 
-.blog-series__description {
-  line-height: 2;
-}
-
 .blog-series__list {
   display: grid;
   gap: 1rem;
@@ -377,8 +380,7 @@ main a:not(.ant-btn):not(.homepage-blog-link):not(.not-found-page__action):focus
   padding: 0.85rem 1rem;
 }
 
-.series-preview-card__direction,
-.series-preview-card__tag {
+.series-preview-card__direction {
   color: rgba(0, 0, 0, 0.58);
   font-size: 0.82rem;
   font-weight: 700;
@@ -395,17 +397,6 @@ main a:not(.ant-btn):not(.homepage-blog-link):not(.not-found-page__action):focus
   line-height: 1.12 !important;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
-}
-
-.series-preview-card__summary {
-  display: -webkit-box;
-  margin: 0.2rem 0 0 !important;
-  overflow: hidden;
-  color: rgba(0, 0, 0, 0.62);
-  font-size: 0.88rem;
-  line-height: 1.45 !important;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
 }
 
 .blog-filters--mobile {
@@ -469,12 +460,15 @@ main a:not(.ant-btn):not(.homepage-blog-link):not(.not-found-page__action):focus
 }
 
 .blog-series-group__header {
+  margin-bottom: 1.25rem;
+}
+
+.blog-series-group__title-row {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 0.5rem 0.9rem;
   flex-wrap: wrap;
-  margin-bottom: 1.25rem;
 }
 
 .blog-series-group__title {
@@ -499,6 +493,7 @@ main a:not(.ant-btn):not(.homepage-blog-link):not(.not-found-page__action):focus
 
 .blog-series-group__link {
   flex: 0 0 auto;
+  margin-top: 0.1rem;
   font-weight: 700;
 }
 
@@ -649,6 +644,14 @@ main a:not(.ant-btn):not(.homepage-blog-link):not(.not-found-page__action):focus
 
 .homepage-blog-secondary-card {
   height: 100%;
+}
+
+.homepage-blog-feature-summary {
+  font-size: clamp(0.95rem, 0.25vw + 0.9rem, 1.1rem);
+}
+
+.homepage-blog-secondary-summary {
+  font-size: clamp(0.85rem, 0.2vw + 0.82rem, 1rem);
 }
 
 .homepage-feature-stack,

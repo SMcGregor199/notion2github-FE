@@ -40,11 +40,11 @@ function BlogCardLong(props){
                             {props.title}
                         </Typography.Title>
                         <Typography.Paragraph
+                            className="homepage-blog-feature-summary"
                             style={{
                             marginBottom: 16,
                             color: "rgba(0,0,0,0.62)",
                             lineHeight: 1.65,
-                            fontSize: "clamp(1rem, 0.4vw + 0.95rem, 1.25rem)",
                             maxWidth: "62ch"
                             }}
                         >

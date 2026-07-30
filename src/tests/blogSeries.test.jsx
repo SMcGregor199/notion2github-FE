@@ -26,6 +26,7 @@ const firstPost = {
   id: "first",
   title: "The First Point of Friction in Academic Research",
   link: "first-point-of-friction",
+  tag: "Scholarship",
   summary: "The first article.",
   thumbnail: "/first.webp",
   publishedDate: "2026-01-10T12:00:00.000Z",
@@ -37,6 +38,7 @@ const secondPost = {
   id: "second",
   title: "The Passage Is Not the Thought",
   link: "passage-is-not-the-thought",
+  tag: "Design",
   summary: "The second article.",
   thumbnail: "/second.webp",
   publishedDate: "2026-02-10T12:00:00.000Z",
@@ -104,6 +106,8 @@ describe("Blog series", () => {
     expect(nextCard).toHaveAttribute("href", `/blog/${secondPost.link}`);
     expect(nextCard).toHaveClass("series-preview-card--next");
     expect(nextCard.querySelector("img")).toHaveAttribute("src", secondPost.thumbnail);
+    expect(nextCard).not.toHaveTextContent(secondPost.tag);
+    expect(nextCard).not.toHaveTextContent(secondPost.summary);
     const seriesLink = screen.getByRole("link", { name: `Part of the series: ${researchSeries.name}` });
     expect(seriesLink).toHaveAttribute("href", `/blog/series/${researchSeries.slug}`);
     const summary = screen.getByRole("heading", { level: 2, name: firstPost.summary });
@@ -122,6 +126,9 @@ describe("Blog series", () => {
     const previousCard = screen.getByRole("link", { name: `Previous in the series: ${firstPost.title}` });
     expect(previousCard).toHaveAttribute("href", `/blog/${firstPost.link}`);
     expect(previousCard).toHaveClass("series-preview-card--previous");
+    expect(previousCard.querySelector("img")).toHaveAttribute("src", firstPost.thumbnail);
+    expect(previousCard).not.toHaveTextContent(firstPost.tag);
+    expect(previousCard).not.toHaveTextContent(firstPost.summary);
     expect(screen.queryByRole("link", { name: `Next in the series: ${secondPost.title}` })).not.toBeInTheDocument();
   });
 

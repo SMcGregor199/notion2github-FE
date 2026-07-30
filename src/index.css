@@ -3,10 +3,12 @@ html{
 }
 
 /* Ant Design renders Typography.Paragraph as a div rather than a native paragraph. */
+/*
 p,
 div.ant-typography {
   line-height: 2;
 }
+*/
 
 .skip-link {
   position: absolute;
@@ -276,6 +278,10 @@ main a:not(.ant-btn):not(.homepage-blog-link):not(.not-found-page__action):focus
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+.blog-series__description {
+  line-height: 2;
 }
 
 .blog-series__list {

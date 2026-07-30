@@ -25,7 +25,7 @@ Do not infer an account-wide remaining balance from this file. The table records
 
 | Billing cycle | Allowance | Releases recorded under this policy | Remaining | Last checked | Owner / notes |
 | --- | ---: | ---: | ---: | --- | --- |
-| Jul 21–Aug 20, 2026 | 20 | 4 | 16 | 2026-07-29 | 369 credits available after the backend PR #9 production deploy; four successful production deploys recorded. |
+| Jul 21–Aug 20, 2026 | 20 | 6 | 14 | 2026-07-30 | 353 credits available after backend PR #10 and frontend PR #12 production deploys; six successful production deploys recorded. |
 | Future monthly cycle | 30 | 0 | 30 | Reset only after the Netlify billing reset | Start a new row for each billing cycle. |
 
 ### Production release log
@@ -38,6 +38,8 @@ Add exactly one row after each successful production deployment. A release batch
 | 2026-07-27 | `notion2github-FE` / `thunderous-crepe-b85eb1` | #7 | Ready (`6a6796851773ac000854ef46`) | 2 | Shayne |
 | 2026-07-27 | `notion2github-FE` / `thunderous-crepe-b85eb1` | #9 | Ready (`6a67bb0fcc7a5f0008ee20c9`) | 3 | Shayne |
 | 2026-07-29 | `notion2github-BE` / `shaynemcgregordev-be` | #9 | Ready (`6a6a28848bf0b300087750f6`) | 4 | Shayne |
+| 2026-07-30 | `notion2github-BE` / `shaynemcgregordev-be` | #10 | Ready (`6a6bdcd394d4050008e4a9e5`) | 5 | Shayne |
+| 2026-07-30 | `notion2github-FE` / `thunderous-crepe-b85eb1` | #12 | Ready (`6a6bdcde338ee60008427fcb`) | 6 | Shayne |
 
 ## Required release workflow
 

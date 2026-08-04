@@ -30,6 +30,24 @@ type BlogPost = {
   series?: BlogSeries;
 };
 
+type ResourceGuideResource = {
+  id: string;
+  title: string;
+  url: string;
+  category: string;
+  dateAdded: string;
+  disciplines: string[];
+  researchStages: string[];
+  aiRoles: string[];
+  tags: string[];
+  resourceType?: string;
+  source?: string;
+  creator?: string;
+  publishedDate?: string;
+  description?: string;
+  publicAnnotation?: string;
+};
+
 type ReactionApiState = {
   postId: string;
   counts: ReactionCounts;
@@ -69,4 +87,5 @@ export type {
   ReactionApiErrorBody,
   BlogPost,
   BlogSeries,
+  ResourceGuideResource,
 }

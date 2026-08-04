@@ -12,6 +12,7 @@ function SiteHeader(){
     const navItems = [
         { key: "1", label: <Link to="/">Home</Link> },
         { key: "2", label: <Link to="/blog">Blog</Link> },
+        { key: "4", label: <Link to="/resources">Resources</Link> },
         { key: "5", label: <Link to="/resume">Resume</Link> },
         { key: "6", label: <Link to="/contact">Contact Me</Link> }
     ];

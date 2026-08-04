@@ -179,6 +179,15 @@ describe("share preview metadata", () => {
         });
     });
 
+    it("uses Resource Guide-specific metadata for the public resources route", () => {
+        expect(buildStaticSharePreviewMetadata("/resources")).toMatchObject({
+            routePath: "/resources",
+            title: "AI Research Resource Guide | Shayne McGregor",
+            canonicalUrl: "https://shaynemcgregor.dev/resources",
+            description: "A living guide to how artificial intelligence is reshaping academic research.",
+        });
+    });
+
     it("renders static metadata without article-only tags", () => {
         const head = renderSharePreviewHead(buildStaticSharePreviewMetadata("/contact"));
 

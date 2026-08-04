@@ -32,7 +32,8 @@ Production deploy credits are shared across the Personal Netlify team. Follow th
 - The current source of truth for runtime blog data is the backend contract, not local static content.
 - The share preview build step reads the stored backend JSON endpoint at `/.netlify/functions/blog-posts-json`; it does not use the refresh/write-oriented `notion-blog-data` endpoint.
 - Share-card images are generated as PNG files at 1200x630 using existing build-time `sharp` tooling. The card layout uses `public/profile-pic.png` for the circular author image and the post thumbnail for the dominant right-side visual when available.
-- `/sitemap.xml` is a build-generated sitemap index. Its static child, `/sitemap-pages.xml`, lists `/`, `/blog`, `/contact`, `/resume`, and `/privacy`; its dynamic child, `/sitemap-posts.xml`, proxies to the backend's current published-post sitemap.
+- `/sitemap.xml` is a build-generated sitemap index. Its static child, `/sitemap-pages.xml`, lists `/`, `/blog`, `/resources`, `/contact`, `/resume`, and `/privacy`; its dynamic child, `/sitemap-posts.xml`, proxies to the backend's current published-post sitemap.
+- `/resources` is the public AI Research Resource Guide. It loads the normalized backend `resource-guide-data` contract, derives category filters from returned data, and retains a browser cache only as an outage fallback. Set optional non-secret `VITE_RESOURCE_GUIDE_API_URL` to point local or preview builds at a different backend endpoint.
 - Every new indexable static route must be added to `scripts/generate-sitemap.js` in the same change. Published Notion blog posts need no frontend sitemap maintenance because the backend sitemap reads the refreshed content manifest.
 - Optional non-secret build variables:
   - `SHARE_PREVIEW_POSTS_URL`: override the stored blog JSON URL.

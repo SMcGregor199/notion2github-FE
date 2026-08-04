@@ -17,7 +17,7 @@ describe("sitemap generator", () => {
     it("uses absolute canonical URLs for the selected static routes only", () => {
         const sitemap = buildStaticPagesSitemap();
 
-        expect(STATIC_SITEMAP_PATHS).toEqual(["/", "/blog", "/contact", "/resume", "/privacy"]);
+        expect(STATIC_SITEMAP_PATHS).toEqual(["/", "/blog", "/resources", "/contact", "/resume", "/privacy"]);
         for (const routePath of STATIC_SITEMAP_PATHS) {
             expect(sitemap).toContain(`https://shaynemcgregor.dev${routePath}`);
         }

@@ -5,11 +5,17 @@ export const DEFAULT_DESCRIPTION = "Read Shayne McGregor's latest writing.";
 export const STATIC_SITE_TITLE = "Notes from Shayne";
 export const STATIC_SITE_DESCRIPTION = "Occasional notes on engineering, systems, and the ideas behind the work.";
 export const STATIC_SHARE_PREVIEW_IMAGE_PATH = "share/notes-from-shayne.png";
-export const STATIC_SHARE_PREVIEW_ROUTES = ["/", "/blog", "/contact", "/resume", "/privacy", "/case-studies"];
+export const STATIC_SHARE_PREVIEW_ROUTES = ["/", "/blog", "/resources", "/contact", "/resume", "/privacy", "/case-studies"];
 export const SHARE_PREVIEW_IMAGE_WIDTH = 1200;
 export const SHARE_PREVIEW_IMAGE_HEIGHT = 630;
 
 const MAX_DESCRIPTION_LENGTH = 200;
+const STATIC_PAGE_METADATA = {
+    "/resources": {
+        title: "AI Research Resource Guide | Shayne McGregor",
+        description: "A living guide to how artificial intelligence is reshaping academic research.",
+    },
+};
 
 function normalizeText(value) {
     return typeof value === "string" ? value.replace(/\s+/g, " ").trim() : "";
@@ -251,11 +257,12 @@ export function buildStaticSharePreviewMetadata(routePath, options = {}) {
         throw new Error("Static share preview requires an absolute HTTP(S) image URL.");
     }
 
+    const pageMetadata = STATIC_PAGE_METADATA[normalizedRoutePath] || {};
     return {
         routePath: normalizedRoutePath,
-        title: STATIC_SITE_TITLE,
-        documentTitle: STATIC_SITE_TITLE,
-        description: STATIC_SITE_DESCRIPTION,
+        title: pageMetadata.title || STATIC_SITE_TITLE,
+        documentTitle: pageMetadata.title || STATIC_SITE_TITLE,
+        description: pageMetadata.description || STATIC_SITE_DESCRIPTION,
         canonicalUrl: `${siteUrl}${normalizedRoutePath}`,
         siteName: STATIC_SITE_TITLE,
         imageUrl,

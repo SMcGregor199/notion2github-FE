@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import Privacy from "./pages/Privacy";
 import SubscriptionConfirmed from "./pages/SubscriptionConfirmed";
 import Resume from "./pages/Resume";
+import ResourceGuide from "./pages/ResourceGuide";
 function App({
   initialData,
   isBlogDataLoading = false,
@@ -37,6 +38,7 @@ function App({
         <Route path="/contact" element={<Contact/>}/>
         <Route path="/case-studies" element={<CaseStudies />} />
         <Route path="/resume" element={<Resume />} />
+        <Route path="/resources" element={<ResourceGuide />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/subscribe/confirmed" element={<SubscriptionConfirmed />} />
         <Route path="*" element={<NotFound />} />

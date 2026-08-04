@@ -495,12 +495,90 @@ main a:not(.ant-btn):not(.homepage-blog-link):not(.not-found-page__action):focus
   max-width: 56ch;
   margin-bottom: 0 !important;
   color: rgba(0, 0, 0, 0.62);
+  line-height: 2;
 }
 
 .blog-series-group__link {
   flex: 0 0 auto;
   margin-top: 0.1rem;
   font-weight: 700;
+}
+
+.resource-guide {
+  max-width: 72rem;
+}
+
+.resource-guide__header {
+  max-width: 68ch;
+  margin-bottom: 2rem;
+}
+
+.resource-guide__eyebrow {
+  color: rgba(0, 0, 0, 0.58);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.resource-guide__intro,
+.resource-guide__description,
+.resource-guide__annotation .ant-typography {
+  line-height: 2;
+}
+
+.resource-guide__filters,
+.resource-guide__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.resource-guide__filters {
+  margin-bottom: 0.8rem;
+}
+
+.resource-guide__count,
+.resource-guide__cache-note,
+.resource-guide__metadata {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.resource-guide__list {
+  display: grid;
+  gap: 1rem;
+}
+
+.resource-guide__card {
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.resource-guide__title {
+  margin: 0.5rem 0 !important;
+}
+
+.resource-guide__annotation {
+  margin: 1rem 0;
+  padding: 1rem;
+  border-left: 3px solid rgba(216, 111, 68, 0.65);
+  background: #fffaf7;
+}
+
+.resource-guide__annotation .ant-typography {
+  margin: 0.35rem 0 0 !important;
+}
+
+.resource-guide__loading,
+.resource-guide__empty {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.resource-guide__empty {
+  flex-wrap: wrap;
 }
 
 .linkedin-discussion-cta {

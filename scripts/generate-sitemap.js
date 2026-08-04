@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 export const SITE_URL = "https://shaynemcgregor.dev";
 
 // Keep this list in sync with indexable static routes in src/App.jsx.
-export const STATIC_SITEMAP_PATHS = ["/", "/blog", "/contact", "/resume", "/privacy"];
+export const STATIC_SITEMAP_PATHS = ["/", "/blog", "/resources", "/contact", "/resume", "/privacy"];
 
 function normalizeSiteUrl(siteUrl) {
     return siteUrl.trim().replace(/\/+$/, "");
